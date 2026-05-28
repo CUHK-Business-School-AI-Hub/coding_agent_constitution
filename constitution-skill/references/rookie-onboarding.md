@@ -1,5 +1,7 @@
 # Rookie Onboarding
 
+[简体中文](rookie-onboarding_CN.md) · [繁體中文（香港）](rookie-onboarding_HK.md)
+
 A short concept primer for anyone shipping a software product for the first time. Helpful if you are a product manager starting a new project, a side-project builder, a domain expert who is learning to ship code, or generally new to the moving parts of a software product.
 
 You do not need to write code to use the constitution skill. You will, however, encounter the concepts below in the files it produces. The point of this page is to give you a working grasp of each one in 15 to 20 minutes, so the rest of the skill reads as a tool rather than as a wall of jargon.
