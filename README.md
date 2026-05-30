@@ -326,6 +326,33 @@ Disposable plans can be replaced.
       └─ check-governance.sh           # drift and missing-section detector
 ```
 
+## About the Validation Warning
+
+The skill ships a small validation script, `constitution-skill/scripts/check-governance.sh`, that scans a project's governance files for common problems. It prints three kinds of lines:
+
+- `ERROR` — something is actually broken (for example, a task file is missing its `## Verification` section). This blocks "done".
+- `WARN` — a friendly heads-up worth a look, but not a blocker.
+- `OK` — passed.
+
+When you run it on the bundled example (or on your own project), you will likely see one `WARN` like this:
+
+```text
+WARN   Repeated lines across adapter files (top 5). Consider keeping AGENTS.md canonical:
+```
+
+**This is expected, and we keep it on purpose.** In plain language:
+
+Cursor and Claude Code each read their *own* rules file — Cursor reads `.cursor/rules/*.mdc`, Claude Code reads `.claude/rules/*.md`. They are two different files for two different tools, so a few important safety rules (for example "never log a raw email address" or "ask a human before changing the database schema, auth, or billing") end up written in both. The script notices the repeated lines and gives you a nudge.
+
+We deliberately do *not* remove these repeats, because:
+
+- Putting the safety rules directly in each tool's file guarantees that whichever agent you use, the rule is reliably in front of it.
+- "De-duplicating" them would mean each tool only points to `AGENTS.md` and has to load it to see the rule. Not every tool or version loads `AGENTS.md` automatically, so a critical safety rule could silently go missing — a worse outcome than a little repetition.
+
+So treat this particular `WARN` as accepted by design. The only thing to remember: if you edit one copy of a repeated rule, update the other copy too, so they do not drift apart.
+
+> Rule of thumb: `ERROR` must be fixed before you call a task done. `WARN` is advice — read it, then decide. This duplication `WARN` is one we have already decided to accept.
+
 ## License
 
 MIT License. Use it, fork it, remix it, and make your agents less chaotic.

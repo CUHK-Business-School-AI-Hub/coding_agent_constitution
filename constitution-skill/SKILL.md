@@ -1,6 +1,18 @@
 ---
 name: constitution-skill
-description: Transform vague software product intent into durable repo-native governance assets before coding, with adapters for Codex, Cursor, and Claude Code. Use when a user has an unclear idea, incomplete technical direction, undefined architecture, missing API/data contracts, unclear feature boundaries, or wants to establish SPEC.md, ARCH.md, RULES.md, CONTRACTS/, AGENTS.md, CLAUDE.md, .cursor/rules/*.mdc, .claude/rules/*.md, and bounded TASKS before implementation. Also use when converting chat-only requirements into reusable project files, designing a Codex/Cursor/Claude Code/Human collaboration workflow, or preparing a project so coding agents can implement safely in reviewable units. Supports three modes: standard (greenfield), retrofit (legacy repo), and minimal (solo or throwaway). Do not use for already-scoped small code changes unless the user asks to update governance assets first.
+description: >-
+  Transform vague software product intent into durable repo-native governance
+  assets before coding, with adapters for Codex, Cursor, and Claude Code. Use
+  when a user has an unclear idea, incomplete technical direction, undefined
+  architecture, missing API/data contracts, unclear feature boundaries, or
+  wants to establish SPEC.md, ARCH.md, RULES.md, CONTRACTS/, AGENTS.md,
+  CLAUDE.md, .cursor/rules/*.mdc, .claude/rules/*.md, and bounded TASKS before
+  implementation. Also use when converting chat-only requirements into reusable
+  project files, designing a Codex/Cursor/Claude Code/Human collaboration
+  workflow, or preparing a project so coding agents can implement safely in
+  reviewable units. Supports three modes: standard (greenfield), retrofit
+  (legacy repo), and minimal (solo or throwaway). Do not use for already-scoped
+  small code changes unless the user asks to update governance assets first.
 ---
 
 # Constitution Skill
