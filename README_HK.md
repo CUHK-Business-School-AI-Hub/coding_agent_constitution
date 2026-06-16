@@ -120,7 +120,16 @@ CLAUDE.md                     Claude Code 入口
 
 Cursor 雖然建基於 VS Code，但 agent 規則不應該主要放在 `.vscode/`。Cursor 的規則入口是 `.cursor/rules/`，skill 入口是 `.cursor/skills/`。
 
-## 安裝方式
+## 快速開始（推薦）
+
+將下面這段提示詞發給你的編碼智能體（Codex / Claude Code / Cursor）即可：
+
+```
+Install the skill in this repo: https://github.com/UbicusMyron/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
+```
+然後你可以去沖杯咖啡，等智能體把一切都搞定。
+
+## 如果你想自己動手安裝...
 
 ### Codex
 

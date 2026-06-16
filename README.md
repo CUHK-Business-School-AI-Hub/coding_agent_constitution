@@ -124,7 +124,16 @@ Important note:
 
 Cursor is based on VS Code, but agent governance does not primarily live in `.vscode/`. Use `.cursor/rules/` for Cursor rules and `.cursor/skills/` for Cursor Agent Skills.
 
-## Installation
+## Quick Start (Recommended)
+
+Just enter this prompt below to your coding agent (Codex/Claude Code/Cursor):
+
+```
+Install the skill in this repo: https://github.com/UbicusMyron/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
+```
+Then you can have a cup of coffee and wait for your agent to finish everything.
+
+## If you want to install this by yourself...
 
 ### Codex
 
