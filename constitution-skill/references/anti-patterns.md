@@ -121,6 +121,36 @@ Use this guide to recognize and avoid the common ways governance assets fail. Fo
 
 ## Cross-Cutting Anti-Patterns
 
+### Recipe As Constitution
+- Looks like: a framework or hosting provider is declared permanently mandatory because it appears in a shipped recipe.
+- Fails because: implementation ecosystems change faster than product and data boundaries.
+- Do instead: record the recipe, review date, fit, and deviations in ARCH. Keep stable principles separate from replaceable tools.
+
+### Every Capability Enabled By Default
+- Looks like: auth, LLM, workflow engine, queue, and multiple services appear in every new project.
+- Fails because: unused infrastructure adds failure modes and decisions without delivering product behavior.
+- Do instead: select one base profile and only capabilities proved necessary by product workflows.
+
+### Authentication Without Authorization
+- Looks like: users can sign in, but protected queries do not enforce resource ownership or tenant boundaries.
+- Fails because: authentication answers who the user is, not what the user may access.
+- Do instead: define action/resource rules and test owner, non-owner, and unauthenticated access.
+
+### Model Output As Authority
+- Looks like: model output directly selects records, grants access, or executes high-impact tools.
+- Fails because: model output is probabilistic and may be manipulated by untrusted content.
+- Do instead: validate structured output, re-run deterministic authorization, bound tool use, and require confirmation for high-impact side effects.
+
+### SQLite As A Shared Network Database
+- Looks like: multiple computers directly open one SQLite file from a network or synchronized drive.
+- Fails because: SQLite is an application-embedded database with one writer at a time; network filesystem locking and partial file synchronization can make correctness unreliable.
+- Do instead: keep application code and the SQLite file on one device, or put an application server in front of the file. Move to a client/server database when shared direct access or concurrent server writes are required.
+
+### Vector Search Before Search Requirements
+- Looks like: an embedding model and vector extension are added before ordinary filters and lexical search are evaluated.
+- Fails because: derived indexes, model lifecycle, platform extensions, and relevance evaluation add complexity that many local tools do not need.
+- Do instead: start with relational indexes and FTS5. Add vector search only with a representative evaluation set and a documented rebuild path.
+
 ### Chat-Only Decisions
 - Looks like: the human said "use Postgres" but no file mentions it.
 - Fails because: next session starts blind.

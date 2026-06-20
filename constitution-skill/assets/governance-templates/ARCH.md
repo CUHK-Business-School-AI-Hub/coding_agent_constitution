@@ -1,5 +1,12 @@
 # ARCH
 
+## Product Shape
+
+- Base profile: `<transactional-record-system | custom | none>`
+- Capability modules: `<identity-access, llm-boundary, deterministic-workflow | none>`
+- Technology recipe: `<typescript-web-postgres | local-python-sqlite | existing-stack | none>`
+- Deviations:
+
 ## Architecture Summary
 
 Describe the system shape and the main technical decisions.

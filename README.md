@@ -283,6 +283,25 @@ For beginners, the safest rule is:
 
 > One task, one agent implementation pass, one review pass, then move on.
 
+## Product-Aware Defaults
+
+The skill now composes governance instead of forcing every product through one
+blank template:
+
+```text
+project mode
++ base profile (for example, transactional record system)
++ capability modules (identity/access, LLM boundary, durable workflow)
++ optional reviewed technology recipe
+-> project-specific SPEC / ARCH / RULES / CONTRACTS / TASKS
+```
+
+The shipped recipes recommend TypeScript/PostgreSQL for a deployed web product
+or Python/SQLite for a single-device local tool. They are reviewed defaults,
+not permanent rules; the generated `ARCH.md` records the recipe and every
+deviation. SQLite starts with relational queries and FTS5; vector search is an
+optional escalation, not part of the default stack.
+
 ## Mental Model
 
 ```text
@@ -315,7 +334,14 @@ Disposable plans can be replaced.
    │  ├─ task-sizing.md                # quantifiable bounded-task rules
    │  ├─ retrofit-mode.md              # applying governance to a legacy repo
    │  ├─ governance-evolution.md       # versioning, ADRs, archival
-   │  └─ minimal-mode.md               # solo or throwaway lightweight setup
+   │  ├─ minimal-mode.md               # solo or throwaway lightweight setup
+   │  ├─ product-pattern-routing.md    # profile/module/recipe selection
+   │  ├─ profile-transactional-record-system.md
+   │  ├─ module-identity-access.md
+   │  ├─ module-llm-boundary.md
+   │  ├─ module-deterministic-workflow.md
+   │  ├─ recipe-typescript-web-postgres.md
+   │  └─ recipe-local-python-sqlite.md
    ├─ assets/
    │  ├─ governance-templates/
    │  │  ├─ AGENTS.md
@@ -328,6 +354,7 @@ Disposable plans can be replaced.
    │  │  ├─ CONTRACTS_README.md
    │  │  ├─ cursor-project-governance.mdc
    │  │  └─ claude-project-governance.md
+   │  ├─ module-overlays/               # composable governance and contract fragments
    │  ├─ contracts-examples/           # filled OpenAPI / JSON Schema / event / SQL / CLI / file-format
    │  └─ examples/
    │     └─ feedback-inbox/            # fully filled worked example

@@ -6,6 +6,13 @@ Status: Active
 
 # ARCH: Feedback Inbox
 
+## Product Shape
+
+- Base profile: `transactional-record-system`
+- Capability modules: `none`
+- Technology recipe: `typescript-web-postgres`
+- Deviations: Uses Fastify, Vite, and htmx instead of Next.js because the API and operator CLI are first-class consumers.
+
 ## Architecture Summary
 
 A single TypeScript service backed by Postgres. Public form is a thin static page that posts to the same API. Server-side rendering is used for the authenticated dashboard. A background worker handles outbound events to Slack and Zapier. No microservices, no message queue for v1; the worker reads `feedback_events` table rows with a polling cursor.

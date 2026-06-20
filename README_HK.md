@@ -282,6 +282,23 @@ CLAUDE.md
 
 > 一次只做一個任務，一次只讓一個智能體主實現，一次 review 之後再繼續。
 
+## 按產品形態組合預設方案
+
+skill 唔再要所有產品只套同一份空白模板，而係組合治理內容：
+
+```text
+項目模式
++ 基礎 profile（例如記錄型事務系統）
++ 能力模組（身份權限、LLM 邊界、持久化工作流）
++ 可選嘅已覆核技術 recipe
+-> 項目自己嘅 SPEC / ARCH / RULES / CONTRACTS / TASKS
+```
+
+當項目冇既有技術限制時，內置 recipe 會為部署型 Web 產品推薦
+TypeScript/PostgreSQL，為單機本地工具推薦 Python/SQLite。佢哋係可以
+覆核嘅預設方案，唔係永久規則；生成嘅 `ARCH.md` 會記錄所用 recipe 同
+所有偏離項。SQLite 預設先用關係查詢同 FTS5，向量檢索只係按需要升級。
+
 ## 核心原則
 
 ```text
@@ -324,7 +341,14 @@ review 工具檢查 diff。
    │  ├─ task-sizing.md                # 量化的 bounded task 限制
    │  ├─ retrofit-mode.md              # 把治理引入 legacy 倉庫
    │  ├─ governance-evolution.md       # 版本演進、ADR、歸檔
-   │  └─ minimal-mode.md               # 單人 / 極簡項目的輕量模式
+   │  ├─ minimal-mode.md               # 單人 / 極簡項目的輕量模式
+   │  ├─ product-pattern-routing.md    # profile/module/recipe 選擇
+   │  ├─ profile-transactional-record-system.md
+   │  ├─ module-identity-access.md
+   │  ├─ module-llm-boundary.md
+   │  ├─ module-deterministic-workflow.md
+   │  ├─ recipe-typescript-web-postgres.md
+   │  └─ recipe-local-python-sqlite.md
    ├─ assets/
    │  ├─ governance-templates/
    │  │  ├─ AGENTS.md
@@ -337,6 +361,7 @@ review 工具檢查 diff。
    │  │  ├─ CONTRACTS_README.md
    │  │  ├─ cursor-project-governance.mdc
    │  │  └─ claude-project-governance.md
+   │  ├─ module-overlays/               # 可組合嘅治理同 contract 片段
    │  ├─ contracts-examples/           # 填好的 OpenAPI / JSON Schema / event / SQL / CLI / 檔案格式範例
    │  └─ examples/
    │     └─ feedback-inbox/            # 完整填好的樣例項目

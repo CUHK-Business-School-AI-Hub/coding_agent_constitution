@@ -2,6 +2,23 @@
 
 Use these questions when the user has a vague idea and the project lacks durable governance assets. Ask only the smallest useful set; do not interrogate the user with every question.
 
+Read `product-pattern-routing.md` first. After selecting a profile and modules,
+use their focused question lists instead of asking every generic question below.
+
+## Product Shape
+
+- Is the product mainly a system of durable business records, a model-assisted
+  interaction, a multi-step durable workflow, or something else?
+- Will users sign in, own private records, or have different permissions?
+- Will any language model receive user/business data or select executable tools?
+- Must any operation pause, retry later, wait for approval, or resume after a
+  process failure?
+- Is there an existing stack to preserve, or may the skill apply a reviewed
+  technology recipe?
+- Will the tool run only on one device, or must multiple people or machines
+  access the same live data?
+- Does "embedding" mean an embedded local database or semantic vector search?
+
 ## Product Intent
 
 - Who is the primary user?

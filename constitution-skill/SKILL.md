@@ -1,18 +1,18 @@
 ---
 name: constitution-skill
 description: >-
-  Transform vague software product intent into durable repo-native governance
-  assets before coding, with adapters for Codex, Cursor, and Claude Code. Use
-  when a user has an unclear idea, incomplete technical direction, undefined
-  architecture, missing API/data contracts, unclear feature boundaries, or
-  wants to establish SPEC.md, ARCH.md, RULES.md, CONTRACTS/, AGENTS.md,
-  CLAUDE.md, .cursor/rules/*.mdc, .claude/rules/*.md, and bounded TASKS before
-  implementation. Also use when converting chat-only requirements into reusable
-  project files, designing a Codex/Cursor/Claude Code/Human collaboration
-  workflow, or preparing a project so coding agents can implement safely in
-  reviewable units. Supports three modes: standard (greenfield), retrofit
-  (legacy repo), and minimal (solo or throwaway). Do not use for already-scoped
-  small code changes unless the user asks to update governance assets first.
+  Transform vague software intent into durable repo-native governance before
+  coding, with adapters for Codex, Cursor, and Claude Code. Use for unclear
+  product ideas, incomplete technical direction, undefined architecture,
+  missing API/data contracts, unclear feature boundaries, or requests to create
+  SPEC.md, ARCH.md, RULES.md, CONTRACTS/, AGENTS.md, CLAUDE.md, agent rules, and
+  bounded TASKS. Also use to convert chat-only requirements into reusable files,
+  design cross-agent collaboration, or prepare safe reviewable implementation
+  units. Includes product-pattern routing, modules for transactional records,
+  identity/access, LLM boundaries, and durable workflows, plus reviewed
+  TypeScript/PostgreSQL web and local Python/SQLite recipes. Supports standard greenfield, legacy
+  retrofit, and minimal solo modes. Do not use for already-scoped small code
+  changes unless governance updates are explicitly requested.
 ---
 
 # Constitution Skill
@@ -58,7 +58,14 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - If requirements, architecture, technology choices, contracts, or acceptance criteria are unclear, pause coding and create or update governance assets first.
    - If the user only wants planning, produce files or proposed file diffs rather than implementation code.
 
-3. Convert vague intent into bounded project context.
+3. Select the product pattern.
+   - Read `references/product-pattern-routing.md` after selecting the mode.
+   - Select zero or one base profile, zero or more capability modules, and at most one technology recipe.
+   - Record the selection and deviations in the `Product Shape` section of `ARCH.md`.
+   - Load only the selected profile/module references and merge only applicable overlay sections.
+   - In Retrofit mode, preserve the existing stack unless stack migration is the explicit approved goal.
+
+4. Convert vague intent into bounded project context.
    - Capture product goals, users, non-goals, constraints, risks, and acceptance criteria in `SPEC.md`.
    - Capture architecture, module boundaries, data ownership, dependency choices, deployment assumptions, and tradeoffs in `ARCH.md`.
    - Capture coding rules, testing expectations, security/safety rails, and agent behavior in `RULES.md` and `AGENTS.md`.
@@ -74,21 +81,23 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Use `references/governance-evolution.md` for versioning, ADR superseded chains, and archival.
    - Point first-time product builders to `references/rookie-onboarding.md` so the engineering vocabulary in the generated files is approachable.
 
-4. Ask only the questions needed to remove dangerous ambiguity.
+5. Ask only the questions needed to remove dangerous ambiguity.
    - Prefer 3 to 7 high-leverage questions.
    - Offer reasonable defaults when the user is unsure.
    - If a decision is reversible, choose a conservative default and mark it as an assumption.
    - If a decision affects data models, public APIs, auth, payments, destructive operations, compliance, or deployment architecture, require explicit human confirmation.
    - Use `references/bootstrap-question-bank.md` for optional question prompts.
+   - Ask the selected profile/module questions only when the answer changes architecture, contracts, risk, or scope.
 
-5. Produce a governance asset set.
+6. Produce a governance asset set.
    - Prefer `docs/` for new projects unless the repo already uses root-level docs.
    - Use the templates in `assets/governance-templates/` when creating new files.
    - Keep `AGENTS.md` canonical and keep `CLAUDE.md`, `.cursor/rules/*.mdc`, and `.claude/rules/*.md` thin unless tool-specific behavior is truly needed.
    - Write concise, decision-oriented files. Avoid turning governance docs into generic essays.
    - Mark unresolved items as `Open Questions` or `Assumptions`, not hidden prose.
+   - Treat shipped technology recipes as versioned defaults. Copy decisions into `ARCH.md`; do not make a project depend on this skill at runtime.
 
-6. Create bounded implementation tasks.
+7. Create bounded implementation tasks.
    - Each task must have one clear goal, explicit constraints, limited touched surface area, acceptance criteria, and verification commands.
    - Apply the quantifiable sizing rules in `references/task-sizing.md`:
      - touched files <= 5, diff <= ~300 lines, new top-level modules <= 1, public API changes <= 2, schema changes <= 1, verification commands <= 3.
@@ -96,14 +105,14 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Acceptance criteria: 2-6 items. Verification: 1-3 exact commands (not "manually verify").
    - Do not create broad tasks like "clean up the codebase" or "improve reliability everywhere".
 
-7. Handoff for implementation and review.
+8. Handoff for implementation and review.
    - Before coding, name the governance files that define the task.
    - After coding, summarize what changed, checks run, residual risks, and what Cursor/human should review.
    - Promote repeated review feedback into `RULES.md`, `.cursor/rules/`, or `AGENTS.md`.
 
-8. Validate before declaring done.
+9. Validate before declaring done.
    - Run `scripts/check-governance.sh` from the project root.
-   - The script verifies adapter orphans, required sections in TASKS/SPEC/ARCH/RULES, contract references, adapter duplication, and `Last Reviewed` staleness.
+   - The script verifies adapter orphans, required sections in TASKS/SPEC/ARCH/RULES, contract references, product pattern declarations, adapter duplication, and `Last Reviewed` staleness.
    - Any reported `ERROR` blocks completion; `WARN` items should be addressed or explicitly accepted in handoff notes.
 
 ## Output Contract
@@ -122,6 +131,9 @@ The file set depends on mode.
 - `CLAUDE.md`
 - `.cursor/rules/project-governance.mdc`
 - `.claude/rules/project-governance.md`
+
+`docs/ARCH.md` must record the selected base profile, capability modules,
+technology recipe, and deviations. A product may use `custom` and no recipe.
 
 A fully filled example of this set lives in `assets/examples/feedback-inbox/`. Use it as a reference for what good looks like, not as a starter template.
 
@@ -210,6 +222,7 @@ The skill succeeds when a fresh coding agent can implement the next task by read
 Before finishing, check:
 
 - Major requirements are written in files, not only in chat.
+- Product shape, selected modules, recipe, and deviations are explicit in `ARCH.md`.
 - Every bounded task points to durable source context.
 - Risky decisions are explicit and assigned to the human.
 - Contracts exist before implementation when interfaces matter.
@@ -247,9 +260,17 @@ constitution-skill/
 │   ├── retrofit-mode.md                 # applying governance to legacy repos
 │   ├── governance-evolution.md          # versioning, ADRs, archival
 │   ├── minimal-mode.md                  # solo/throwaway lightweight setup
-│   └── rookie-onboarding.md             # concept primer for first-time product builders
+│   ├── rookie-onboarding.md             # concept primer for first-time product builders
+│   ├── product-pattern-routing.md       # base profile/module/recipe selection
+│   ├── profile-transactional-record-system.md
+│   ├── module-identity-access.md
+│   ├── module-llm-boundary.md
+│   ├── module-deterministic-workflow.md
+│   ├── recipe-typescript-web-postgres.md
+│   └── recipe-local-python-sqlite.md
 ├── assets/
 │   ├── governance-templates/            # blank starters for each file
+│   ├── module-overlays/                  # composable governance fragments and contracts
 │   ├── contracts-examples/              # filled OpenAPI / JSON Schema / event / SQL / CLI / file-format
 │   └── examples/
 │       └── feedback-inbox/              # fully filled worked example

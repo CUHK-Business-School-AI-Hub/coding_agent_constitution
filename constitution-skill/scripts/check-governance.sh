@@ -9,7 +9,8 @@
 #   4. Contract files referenced by ARCH.md/RULES.md actually exist.
 #   5. Significant duplication between AGENTS.md, CLAUDE.md, .cursor/rules/*, .claude/rules/*.
 #   6. TASKS that lack `## Verification` or `## Acceptance Criteria`.
-#   7. Files marked `Status: Active` whose `Last Reviewed` is older than 180 days.
+#   7. Product-profile/module declarations and their expected contract files.
+#   8. Files marked `Status: Active` whose `Last Reviewed` is older than 180 days.
 #
 # Exit code: 0 if no issues, 1 if any issue is reported.
 #
@@ -207,7 +208,61 @@ fi
 
 # 6. (covered by check 2)
 
-# 7. Last-reviewed staleness ---------------------------------------------------
+# 7. Product pattern declarations ---------------------------------------------
+
+check_product_shape() {
+    file="$1"
+
+    if ! grep -Eq '^## Product Shape$' "$file"; then
+        report_warn "$file has no Product Shape section. Record the selected profile, modules, recipe, and deviations."
+        return
+    fi
+
+    base=$(grep -E '^- Base profile:' "$file" | head -n 1 | sed -E 's/^- Base profile:[[:space:]]*//; s/`//g')
+    modules=$(grep -E '^- Capability modules:' "$file" | head -n 1 | sed -E 's/^- Capability modules:[[:space:]]*//; s/`//g')
+    recipe=$(grep -E '^- Technology recipe:' "$file" | head -n 1 | sed -E 's/^- Technology recipe:[[:space:]]*//; s/`//g')
+
+    if [ -z "$base" ] || [ -z "$modules" ] || [ -z "$recipe" ]; then
+        report_warn "$file Product Shape should declare Base profile, Capability modules, and Technology recipe."
+    fi
+
+    case "$base" in
+        transactional-record-system|custom|none|"") ;;
+        *) report_warn "$file declares an unknown base profile: $base" ;;
+    esac
+
+    case "$recipe" in
+        typescript-web-postgres|local-python-sqlite|existing-stack|none|"") ;;
+        *) report_warn "$file declares an unknown technology recipe: $recipe" ;;
+    esac
+
+    normalized_modules=$(printf '%s' "$modules" | tr ',' ' ')
+    for module in $normalized_modules; do
+        case "$module" in
+            identity-access)
+                [ -f "docs/CONTRACTS/identity-access.md" ] || [ -f "CONTRACTS/identity-access.md" ] || \
+                    report_warn "$file selects identity-access but its contract file is missing."
+                ;;
+            llm-boundary)
+                [ -f "docs/CONTRACTS/llm-boundary.md" ] || [ -f "CONTRACTS/llm-boundary.md" ] || \
+                    report_warn "$file selects llm-boundary but its contract file is missing."
+                ;;
+            deterministic-workflow)
+                [ -f "docs/CONTRACTS/workflow.md" ] || [ -f "CONTRACTS/workflow.md" ] || \
+                    report_warn "$file selects deterministic-workflow but its contract file is missing."
+                ;;
+            none|"") ;;
+            *) report_warn "$file declares an unknown capability module: $module" ;;
+        esac
+    done
+}
+
+for arch_path in docs/ARCH.md ARCH.md; do
+    [ -f "$arch_path" ] || continue
+    check_product_shape "$arch_path"
+done
+
+# 8. Last-reviewed staleness ---------------------------------------------------
 
 now_epoch=$(date +%s)
 stale_threshold=$((180 * 24 * 60 * 60))
