@@ -4,6 +4,10 @@ Use these questions when the user has a vague idea and the project lacks durable
 
 Read `product-pattern-routing.md` first. After selecting a profile and modules,
 use their focused question lists instead of asking every generic question below.
+If the user's business language matches a latent template in `assets/templates/`,
+apply that template quietly and ask only the questions that change architecture,
+contracts, risk, or scope. Do not ask the user to classify their idea by template
+name.
 
 ## Product Shape
 

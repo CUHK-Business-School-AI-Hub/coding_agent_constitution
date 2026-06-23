@@ -10,7 +10,8 @@ description: >-
   design cross-agent collaboration, or prepare safe reviewable implementation
   units. Includes product-pattern routing, modules for transactional records,
   identity/access, LLM boundaries, and durable workflows, plus reviewed
-  TypeScript/PostgreSQL web and local Python/SQLite recipes. Supports standard greenfield, legacy
+  TypeScript/PostgreSQL web and local Python/SQLite recipes and latent
+  templates for common MVP surfaces. Supports standard greenfield, legacy
   retrofit, and minimal solo modes. Do not use for already-scoped small code
   changes unless governance updates are explicitly requested.
 ---
@@ -61,6 +62,7 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
 3. Select the product pattern.
    - Read `references/product-pattern-routing.md` after selecting the mode.
    - Select zero or one base profile, zero or more capability modules, and at most one technology recipe.
+   - When the user's business language matches a common MVP surface, scan `assets/templates/` and apply relevant latent templates quietly. Do not present templates as modes or ask the user to choose them.
    - Record the selection and deviations in the `Product Shape` section of `ARCH.md`.
    - Load only the selected profile/module references and merge only applicable overlay sections.
    - In Retrofit mode, preserve the existing stack unless stack migration is the explicit approved goal.
@@ -80,6 +82,7 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Use `references/anti-patterns.md` to avoid common failure modes in each governance file.
    - Use `references/governance-evolution.md` for versioning, ADR superseded chains, and archival.
    - Point first-time product builders to `references/rookie-onboarding.md` so the engineering vocabulary in the generated files is approachable.
+   - Point learning-minded solo founders to the relevant `references/wiki-*.md` pages after templates are applied. The wiki is for engineering understanding; it is not a substitute for bounded tasks or governance assets.
 
 5. Ask only the questions needed to remove dangerous ambiguity.
    - Prefer 3 to 7 high-leverage questions.
@@ -261,6 +264,9 @@ constitution-skill/
 │   ├── governance-evolution.md          # versioning, ADRs, archival
 │   ├── minimal-mode.md                  # solo/throwaway lightweight setup
 │   ├── rookie-onboarding.md             # concept primer for first-time product builders
+│   ├── wiki-record-crud-apps.md         # engineering wiki for record apps
+│   ├── wiki-linear-workflows.md         # engineering wiki for workflows
+│   ├── wiki-conversational-assistants.md # engineering wiki for chat assistants
 │   ├── product-pattern-routing.md       # base profile/module/recipe selection
 │   ├── profile-transactional-record-system.md
 │   ├── module-identity-access.md
@@ -271,6 +277,7 @@ constitution-skill/
 ├── assets/
 │   ├── governance-templates/            # blank starters for each file
 │   ├── module-overlays/                  # composable governance fragments and contracts
+│   ├── templates/                        # latent MVP-surface templates, used on mention
 │   ├── contracts-examples/              # filled OpenAPI / JSON Schema / event / SQL / CLI / file-format
 │   └── examples/
 │       └── feedback-inbox/              # fully filled worked example

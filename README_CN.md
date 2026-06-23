@@ -342,6 +342,9 @@ review 工具检查 diff。
    │  ├─ retrofit-mode.md              # 把治理引入 legacy 仓库
    │  ├─ governance-evolution.md       # 版本演进、ADR、归档
    │  ├─ minimal-mode.md               # 单人 / 极简项目的轻量模式
+   │  ├─ wiki-record-crud-apps.md      # 记录型应用工程 wiki
+   │  ├─ wiki-linear-workflows.md      # 线性 / 持久化流程工程 wiki
+   │  ├─ wiki-conversational-assistants.md # 对话助手工程 wiki
    │  ├─ product-pattern-routing.md    # profile/module/recipe 选择
    │  ├─ profile-transactional-record-system.md
    │  ├─ module-identity-access.md
@@ -362,6 +365,7 @@ review 工具检查 diff。
    │  │  ├─ cursor-project-governance.mdc
    │  │  └─ claude-project-governance.md
    │  ├─ module-overlays/               # 可组合的治理与 contract 片段
+   │  ├─ templates/                     # 被提及时静默取用的 MVP 表面模板
    │  ├─ contracts-examples/           # 填好的 OpenAPI / JSON Schema / event / SQL / CLI / 文件格式范例
    │  └─ examples/
    │     └─ feedback-inbox/            # 完整填好的样例项目

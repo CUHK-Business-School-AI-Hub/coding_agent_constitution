@@ -6,6 +6,7 @@ the governance footprint; product pattern controls the content inside it.
 ## Contents
 
 - Selection rule
+- Latent template assets
 - Base profiles
 - Capability modules
 - Technology recipes
@@ -33,6 +34,30 @@ Record the selection in `ARCH.md`:
 - Technology recipe: `typescript-web-postgres`
 - Deviations: None.
 ```
+
+## Latent Template Assets
+
+Templates under `assets/templates/` are hidden working assets, not modes,
+profiles, or user-facing choices. Use them when the user's business language
+matches their trigger signals. Do not ask the human to choose a template.
+
+Scan the template directory when the user mentions concrete product surfaces
+such as records, dashboards, forms, approvals, queues, pipelines, chatbots,
+assistants, knowledge bases, or handoffs. Future templates may be added without
+changing this routing file; prefer the template's own trigger signals over a
+hard-coded list here.
+
+Current latent templates:
+
+| Template | Typical user language | Usually composes with |
+| --- | --- | --- |
+| `record-crud` | customers, leads, orders, inventory, documents, tickets, CRM, forms, lists, exports | `transactional-record-system`, optional `identity-access` |
+| `linear-workflow` | approvals, review, queue, pipeline, onboarding, fulfillment, retry, handoff | record lifecycle or `deterministic-workflow` |
+| `conversational-assistant` | chatbot, AI assistant, support bot, document Q&A, knowledge base, copilot | `llm-boundary`, optional records/workflow/auth |
+
+Use templates to improve defaults, questions, contracts, and task slicing. Keep
+the durable product shape recorded in `ARCH.md` as base profile + capability
+modules + technology recipe.
 
 ## Base Profiles
 

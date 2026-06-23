@@ -335,6 +335,9 @@ Disposable plans can be replaced.
    │  ├─ retrofit-mode.md              # applying governance to a legacy repo
    │  ├─ governance-evolution.md       # versioning, ADRs, archival
    │  ├─ minimal-mode.md               # solo or throwaway lightweight setup
+   │  ├─ wiki-record-crud-apps.md      # engineering wiki for record apps
+   │  ├─ wiki-linear-workflows.md      # engineering wiki for workflows
+   │  ├─ wiki-conversational-assistants.md # engineering wiki for chat assistants
    │  ├─ product-pattern-routing.md    # profile/module/recipe selection
    │  ├─ profile-transactional-record-system.md
    │  ├─ module-identity-access.md
@@ -355,6 +358,7 @@ Disposable plans can be replaced.
    │  │  ├─ cursor-project-governance.mdc
    │  │  └─ claude-project-governance.md
    │  ├─ module-overlays/               # composable governance and contract fragments
+   │  ├─ templates/                     # latent MVP-surface templates, used on mention
    │  ├─ contracts-examples/           # filled OpenAPI / JSON Schema / event / SQL / CLI / file-format
    │  └─ examples/
    │     └─ feedback-inbox/            # fully filled worked example
