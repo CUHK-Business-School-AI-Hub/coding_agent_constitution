@@ -125,7 +125,7 @@ Cursor 雖然建基於 VS Code，但 agent 規則不應該主要放在 `.vscode/
 將下面這段提示詞發給你的編碼智能體（Codex / Claude Code / Cursor）即可：
 
 ```
-Install the skill in this repo: https://github.com/UbicusMyron/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
+Install the skill in this repo: https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
 ```
 然後你可以去沖杯咖啡，等智能體把一切都搞定。
 

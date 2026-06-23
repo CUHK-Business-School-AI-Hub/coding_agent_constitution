@@ -129,7 +129,7 @@ Cursor is based on VS Code, but agent governance does not primarily live in `.vs
 Just enter this prompt below to your coding agent (Codex/Claude Code/Cursor):
 
 ```
-Install the skill in this repo: https://github.com/UbicusMyron/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
+Install the skill in this repo: https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
 ```
 Then you can have a cup of coffee and wait for your agent to finish everything.
 
