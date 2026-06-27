@@ -129,6 +129,23 @@ Install the skill in this repo: https://github.com/CUHK-Business-School-AI-Hub/c
 ```
 然後你可以去沖杯咖啡，等智能體把一切都搞定。
 
+## 可選聯動 Skill：`grill-me`
+
+如果你的想法仲太模糊，暫時好難直接寫成治理檔案，也建議安裝 Matt Pocock
+skills 倉庫入面的 [`grill-me`](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me)。
+
+`grill-me` 適合放在 `constitution-skill` 之前使用：它會一次問你一個問題，幫你
+壓力測試計劃，把產品、架構、風險這些關鍵決策先問清楚。問清楚之後，再由
+`constitution-skill` 把答案沉澱到 `SPEC.md`、`ARCH.md`、`RULES.md` 和
+`TASKS/*.md` 入面。
+
+它是可選輔助，不是必需依賴。一個好用的組合提示詞是：
+
+```text
+請先用 grill-me 幫我把這個軟件想法問清楚。等關鍵決策明確之後，
+再用 constitution-skill 把答案整理成治理檔案和一個有邊界的實現任務。
+```
+
 ## 如果你想自己動手安裝...
 
 ### Codex

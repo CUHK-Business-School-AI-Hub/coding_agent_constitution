@@ -133,6 +133,25 @@ Install the skill in this repo: https://github.com/CUHK-Business-School-AI-Hub/c
 ```
 Then you can have a cup of coffee and wait for your agent to finish everything.
 
+## Optional Companion Skill: `grill-me`
+
+If your idea is still too vague to turn into governance files, consider also
+installing [`grill-me`](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me)
+from Matt Pocock's skills repo.
+
+`grill-me` is useful before `constitution-skill`: it interviews you one
+question at a time, pressure-tests the plan, and helps surface the product,
+architecture, and risk decisions that should later be captured in `SPEC.md`,
+`ARCH.md`, `RULES.md`, and `TASKS/*.md`.
+
+It is optional, not a dependency. A good combined prompt is:
+
+```text
+Use grill-me to clarify this software idea first. Once the important decisions
+are clear, use constitution-skill to turn the answers into governance docs and
+one bounded implementation task.
+```
+
 ## If you want to install this by yourself...
 
 ### Codex
