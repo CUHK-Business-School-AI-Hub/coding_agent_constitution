@@ -16,6 +16,12 @@
 
 ---
 
+## 最近更新 - 2026-06-30
+
+- 增强架构决策纪律：非显然的架构、数据、部署、模块边界选择，需要记录候选方案、推荐方案和决策可逆性。
+- 增加治理文档自审 rubric：生成的治理资产现在有 blocking/advisory 检查，用来发现歧义、矛盾、范围过大、隐藏聊天上下文和缺失验证证据。
+- 强化 bounded task 作为 agent execution contract：任务模板现在包含接口、公开 contract 边界、验证证据和治理漂移检查。
+
 ## 这是什么？
 
 这是一个给 **Codex、Cursor、Claude Code** 使用的开源 Agent Skill。

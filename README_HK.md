@@ -16,6 +16,12 @@
 
 ---
 
+## 最近更新 - 2026-06-30
+
+- 加強架構決策紀律：非顯然的架構、數據、部署、模組邊界選擇，需要記錄候選方案、推薦方案同決策可逆性。
+- 增加治理文檔自審 rubric：生成的治理資產而家有 blocking/advisory 檢查，用嚟發現歧義、矛盾、範圍過大、隱藏聊天上下文同缺少驗證證據。
+- 強化 bounded task 作為 agent execution contract：任務模板而家包含介面、公開 contract 邊界、驗證證據同治理漂移檢查。
+
 ## 這是甚麼？
 
 這是一個給 **Codex、Cursor、Claude Code** 使用的開源 Agent Skill。

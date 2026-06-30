@@ -16,7 +16,7 @@
 
 ---
 
-## Recent Updates
+## Recent Updates - 2026-06-30
 
 - Added architecture decision discipline: non-obvious architecture, data, deployment, and module-boundary choices now ask agents to record considered approaches, a recommendation, and decision reversibility.
 - Added governance self-review rubrics: generated governance assets now have blocking/advisory checks for ambiguity, contradictions, oversized scope, hidden chat context, and missing verification evidence.
