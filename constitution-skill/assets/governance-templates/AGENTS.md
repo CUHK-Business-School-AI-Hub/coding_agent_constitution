@@ -11,6 +11,7 @@ Before implementation, read:
 - `docs/RULES.md`
 - `docs/CONTRACTS/`
 - the relevant file in `docs/TASKS/`
+- `constitution-skill/references/task-review-contract.md` when reviewing completed work, if available.
 
 ## Agent Roles
 
@@ -26,6 +27,8 @@ Before implementation, read:
 - Preserve existing code style and project conventions.
 - Do not overwrite durable docs without understanding existing decisions.
 - Promote repeated instructions into durable files.
+- Follow task interfaces, public contract boundaries, verification evidence, and governance drift expectations.
+- Do not claim done, fixed, passing, or complete without command, exit status, and relevant output summary.
 
 ## Approval Required
 
@@ -45,6 +48,13 @@ After implementation, report:
 - files changed
 - behavior changed
 - checks run
+- verification evidence
+- governance docs changed or why no durable docs changed
 - known risks or skipped checks
 - what Cursor should review
 - what the human should decide
+
+## Review Expectations
+
+- Separate Spec Compliance from Implementation Quality.
+- Flag missing verification evidence, contract drift, architecture drift, and task scope violations.

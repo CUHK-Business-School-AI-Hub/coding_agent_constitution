@@ -11,6 +11,7 @@ Before implementation, read:
 - `docs/RULES.md` -- coding, testing, contract, and security rules.
 - `docs/CONTRACTS/` -- API, schema, event, file, and CLI contracts.
 - the relevant file in `docs/TASKS/` -- the bounded task to execute.
+- `constitution-skill/references/task-review-contract.md` when reviewing completed work, if available.
 
 ## Commands
 
@@ -36,6 +37,8 @@ Before implementation, read:
 - Preserve existing code style and module boundaries.
 - Do not overwrite durable docs without first understanding the existing decision.
 - Promote repeated instructions into durable files (`RULES.md`, `AGENTS.md`, scoped rules).
+- Follow task interfaces, public contract boundaries, verification evidence, and governance drift expectations.
+- Do not claim done, fixed, passing, or complete without command, exit status, and relevant output summary.
 
 ## Sensitive Surfaces
 
@@ -55,9 +58,16 @@ After implementation, report:
 - Files changed.
 - Behavior changed.
 - Checks run (lint, typecheck, tests).
+- Verification evidence.
+- Governance docs changed or why no durable docs changed.
 - Known risks or skipped checks.
 - What Cursor should review.
 - What the human should decide.
+
+## Review Expectations
+
+- Separate Spec Compliance from Implementation Quality.
+- Flag missing verification evidence, contract drift, architecture drift, and task scope violations.
 
 ## Cross-Cutting Reminders
 

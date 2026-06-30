@@ -8,11 +8,14 @@ alwaysApply: true
 
 - Check changes against `docs/SPEC.md`, `docs/ARCH.md`, and `docs/RULES.md`.
 - Read the relevant `docs/TASKS/*.md` before implementation.
+- Check task interfaces, public contract boundaries, verification evidence, and governance drift expectations.
 - Flag any change crossing module boundaries without updating `docs/ARCH.md`.
 - Flag changes to API, schema, event, file format, or CLI without a matching `docs/CONTRACTS/` update.
 - Flag handlers that bypass `api/feedback` and access `api/persistence` directly from `web/dashboard` or `cli/`.
 - Flag `integrations/*` code that imports from `api/feedback` or `api/persistence`.
 - Flag any log statement that includes a raw email field.
 - Flag any new `any` type in production code.
+- Flag completion claims without command, exit status, and relevant output summary.
+- During review, separate Spec Compliance from Implementation Quality.
 - Prefer small local rewrites during review; do not perform broad rewrites unless the task asks.
 - Escalate risky changes (auth, schema, destructive ops, deployment) to the human before merge.

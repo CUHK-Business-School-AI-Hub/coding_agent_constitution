@@ -14,6 +14,13 @@ Keep one shared source of truth and create thin adapters for each tool:
 
 Avoid copying long rules into three places. Duplicated rules drift.
 
+Apply governance review consistently across tools:
+
+- Codex implementers should follow the bounded task file and report verification evidence.
+- Cursor reviewers should check task compliance, architecture boundaries, contracts, tests, and governance drift.
+- Claude Code implementers or reviewers should use the same task review contract through `CLAUDE.md` and `.claude/rules/`.
+- All tools should separate `Spec Compliance` from `Implementation Quality` during review.
+
 ## Skill Installation Targets
 
 For project-local installation, prefer the tool-native path the user is actually using:
@@ -31,6 +38,8 @@ Use `AGENTS.md` for repository instructions:
 - Keep it concise and agent-focused.
 - Include setup, test, coding, review, and approval rules.
 - Reference durable docs instead of pasting large specs into `AGENTS.md`.
+- Require command, exit status, and output summary before claiming done, fixed, passing, or complete.
+- Ask implementers to report whether `SPEC.md`, `ARCH.md`, `CONTRACTS/`, `RULES.md`, or `AGENTS.md` changed or did not need to change.
 - Use nested `AGENTS.md` files only when subdirectories need distinct rules.
 
 ## Cursor
@@ -42,6 +51,7 @@ Use Cursor Project Rules for persistent project behavior:
 - Use `alwaysApply: true` for governance rules that must be included every session.
 - Use `globs` for path-scoped rules.
 - Use Cursor skills under `.cursor/skills/<skill-name>/SKILL.md` for task-specific workflows.
+- Keep Cursor rules review-focused: flag missing verification evidence, contract drift, architecture drift, and task scope violations.
 
 Cursor is based on VS Code, but `.vscode/` is not the main agent-governance location. Use `.vscode/` only for editor settings, extensions, launch configs, or tasks.
 
@@ -54,6 +64,7 @@ Use `CLAUDE.md` for project instructions:
 - Add Claude-specific guidance below the import only when necessary.
 - Use `.claude/rules/*.md` for modular rules; rules without `paths` frontmatter are loaded broadly.
 - Use path-scoped frontmatter when a rule only applies to certain files.
+- Keep Claude rules thin and aligned with `AGENTS.md`; put Claude-specific behavior in `.claude/rules/` only when it cannot live in shared governance.
 
 ## File Map
 
