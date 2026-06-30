@@ -33,6 +33,18 @@ Stand up the Fastify service with health check, request logging, env loading, an
 - Authentication middleware (the POST endpoint is public per SPEC).
 - Production deployment configuration.
 
+### Public Contracts
+
+- Allowed to change: `docs/CONTRACTS/db-schema.sql` only for the initial `feedback` table if the contract and migration stay aligned.
+- Forbidden to change: `docs/CONTRACTS/feedback-api.openapi.yaml` endpoint paths, request body, response envelope, and error schema.
+
+## Interfaces
+
+- Consumes: `POST /v1/feedback` request and response schemas from `docs/CONTRACTS/feedback-api.openapi.yaml`; `feedback` table from `docs/CONTRACTS/db-schema.sql`.
+- Produces: Fastify route handler, feedback domain service, feedback repository insert function, and initial migration.
+- Public contracts touched: `docs/CONTRACTS/db-schema.sql`.
+- Downstream tasks relying on this: dashboard list view, CLI list/export, and event outbox tasks.
+
 ## Requirements
 
 - Server starts on `PORT` env var (default 3000).
@@ -51,9 +63,20 @@ Stand up the Fastify service with health check, request logging, env loading, an
 
 ## Verification
 
-- `pnpm lint`
-- `pnpm typecheck`
-- `pnpm test -- tests/api/feedback-post.test.ts tests/integration/feedback-repo.test.ts`
+- Command: `pnpm lint`
+  - Expected evidence: exits 0 with no lint errors.
+- Command: `pnpm typecheck`
+  - Expected evidence: exits 0 with no TypeScript errors.
+- Command: `pnpm test -- tests/api/feedback-post.test.ts tests/integration/feedback-repo.test.ts`
+  - Expected evidence: exits 0; happy path, validation-error, and repository insert tests pass.
+
+## Governance Drift Check
+
+- SPEC changed? No; this task implements the existing Customer Submits Feedback workflow.
+- ARCH changed? No; this task uses the existing `api/http`, `api/feedback`, and `api/persistence` boundaries.
+- CONTRACTS changed? Only `docs/CONTRACTS/db-schema.sql` may be reconciled with the initial migration if needed.
+- RULES/AGENTS changed? No expected change; promote any repeated setup/review rule only if discovered during implementation.
+- If no durable docs changed, why is that safe? The task is the first implementation slice for already-authored contracts and architecture.
 
 ## Risks
 

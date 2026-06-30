@@ -106,6 +106,19 @@ In those cases:
 - Quote which limit was crossed and why.
 - Ask Cursor or a human reviewer to spot-check rather than line-by-line review.
 
+## Interface Clarity
+
+Tasks that create or change a reusable surface must state the interface before implementation:
+
+- APIs and schemas
+- events and queues
+- file formats
+- CLI commands
+- tool inputs/outputs
+- reusable functions or modules consumed by downstream tasks
+
+If no interface is created or changed, write `None`. Do not leave names, payload shapes, or compatibility promises for the implementer to invent.
+
 ## Acceptance Criteria Sizing
 
 Each task should have 2-6 acceptance criteria. Fewer means under-specified. More means under-scoped.
@@ -125,6 +138,19 @@ Each task should have 1-3 verification commands. Examples of good verification c
 
 Bad verification: "manually click around" or "make sure it works".
 
+Each verification entry should include the command and expected evidence. "Expected evidence" can be an exit code, assertion name, API response, generated file, log line, or other observable proof.
+
+## Governance Drift
+
+Every task should say whether implementation is expected to change durable governance:
+
+- `SPEC.md` for changed product behavior.
+- `ARCH.md` for changed module boundaries, data ownership, deployment assumptions, or tradeoffs.
+- `CONTRACTS/` for changed APIs, schemas, events, file formats, CLI behavior, or tool interfaces.
+- `RULES.md` or `AGENTS.md` for repeated engineering, safety, testing, or agent behavior.
+
+If no durable docs should change, the task should say why that is safe.
+
 ## Smell Tests
 
 Run these checks before handing the task to an agent.
@@ -133,3 +159,4 @@ Run these checks before handing the task to an agent.
 2. Could two reviewers reach the same conclusion about whether the task is done? If no, the criteria are too vague.
 3. Could the task be reverted with a single `git revert`? If no, it is too entangled.
 4. Does the task name describe one action? "Implement feedback list endpoint" is good. "Improve feedback system" is bad.
+5. Are produced interfaces and governance drift expectations explicit? If no, the task is not ready for agent execution.

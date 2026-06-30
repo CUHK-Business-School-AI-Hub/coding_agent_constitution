@@ -18,6 +18,12 @@ Accepted
 
 The product needs to emit `feedback.submitted` and `feedback.theme.created` events for downstream Slack and Zapier integrations. Options considered for the transport layer.
 
+## Reversibility
+
+- Classification: `expensive-to-change`
+- Human confirmation required: `yes`
+- Why: the choice affects persistence schema, worker behavior, deployment operations, and future integration contracts.
+
 ## Decision
 
 Use a `feedback_events` table in the same Postgres database as durable storage, polled by a small worker. No message broker (RabbitMQ, NATS, Kafka, SQS) in v1.

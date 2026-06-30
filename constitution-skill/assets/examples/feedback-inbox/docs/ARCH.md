@@ -64,6 +64,22 @@ Source of truth: Postgres. No secondary cache in v1.
 - File formats: JSONL export per `docs/CONTRACTS/file-format.md`.
 - CLI: `feedback list`, `feedback export`. See `docs/CONTRACTS/cli.md`.
 
+## Considered Approaches
+
+### Recommended: Single TypeScript Service With Postgres
+
+- Why it fits: the first useful version needs a public intake API, operator dashboard, CLI, and durable records without cross-service coordination.
+- Main cost: the service must keep module boundaries clear to avoid becoming a tangled monolith.
+- Main risk: background integrations can become coupled to domain logic unless they consume events only.
+
+### Alternative 1: Hosted Form Provider Plus Manual Spreadsheet
+
+- Why rejected: it would ship intake quickly but cannot support tagging, themes, CLI export, and candidate-task generation as durable product behavior.
+
+### Alternative 2: Split API, Worker, Dashboard, And CLI Into Separate Services
+
+- Why rejected: operational overhead is too high for v1; module boundaries inside one service preserve a later split path.
+
 ## Dependency Rules
 
 - `api/http` may depend on `api/feedback`. Reverse is forbidden.

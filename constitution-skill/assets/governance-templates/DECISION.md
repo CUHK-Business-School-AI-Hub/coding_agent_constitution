@@ -8,6 +8,12 @@ Proposed
 
 What problem or constraint requires this decision?
 
+## Reversibility
+
+- Classification: `<reversible | expensive-to-change | irreversible>`
+- Human confirmation required: `<yes | no>`
+- Why:
+
 ## Decision
 
 What are we choosing?

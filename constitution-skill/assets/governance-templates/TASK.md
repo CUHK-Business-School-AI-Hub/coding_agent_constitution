@@ -21,6 +21,18 @@ Describe one concrete outcome.
 
 - 
 
+### Public Contracts
+
+- Allowed to change:
+- Forbidden to change:
+
+## Interfaces
+
+- Consumes:
+- Produces:
+- Public contracts touched:
+- Downstream tasks relying on this:
+
 ## Requirements
 
 - 
@@ -31,7 +43,17 @@ Describe one concrete outcome.
 
 ## Verification
 
-- 
+- Command:
+- Expected evidence:
+- If not run:
+
+## Governance Drift Check
+
+- SPEC changed?
+- ARCH changed?
+- CONTRACTS changed?
+- RULES/AGENTS changed?
+- If no durable docs changed, why is that safe?
 
 ## Risks
 

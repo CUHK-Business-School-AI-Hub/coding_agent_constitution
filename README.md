@@ -16,6 +16,12 @@
 
 ---
 
+## Recent Updates
+
+- Added architecture decision discipline: non-obvious architecture, data, deployment, and module-boundary choices now ask agents to record considered approaches, a recommendation, and decision reversibility.
+- Added governance self-review rubrics: generated governance assets now have blocking/advisory checks for ambiguity, contradictions, oversized scope, hidden chat context, and missing verification evidence.
+- Strengthened bounded tasks as agent execution contracts: task templates now include interfaces, public contract boundaries, verification evidence, and governance drift checks.
+
 ## What Is This?
 
 Coding Agent Constitution is an open-source Agent Skill for **Codex, Cursor, and Claude Code**.

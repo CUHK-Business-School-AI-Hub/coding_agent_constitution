@@ -8,9 +8,11 @@
 #   3. Required sections present in SPEC.md, ARCH.md, RULES.md.
 #   4. Contract files referenced by ARCH.md/RULES.md actually exist.
 #   5. Significant duplication between AGENTS.md, CLAUDE.md, .cursor/rules/*, .claude/rules/*.
-#   6. TASKS that lack `## Verification` or `## Acceptance Criteria`.
-#   7. Product-profile/module declarations and their expected contract files.
-#   8. Files marked `Status: Active` whose `Last Reviewed` is older than 180 days.
+#   6. TASKS that lack execution-contract sections such as Interfaces,
+#      Verification, or Governance Drift Check.
+#   7. Placeholder and vague wording in governance assets.
+#   8. Product-profile/module declarations and their expected contract files.
+#   9. Files marked `Status: Active` whose `Last Reviewed` is older than 180 days.
 #
 # Exit code: 0 if no issues, 1 if any issue is reported.
 #
@@ -75,7 +77,7 @@ fi
 # 2. TASKS sections ------------------------------------------------------------
 
 TASK_DIRS="docs/TASKS TASKS"
-TASK_REQUIRED="^## Goal$ ^## Scope$ ^## Acceptance Criteria$ ^## Verification$"
+TASK_REQUIRED="^## Goal$ ^## Source Context$ ^## Scope$ ^## Interfaces$ ^## Acceptance Criteria$ ^## Verification$ ^## Governance Drift Check$"
 
 for dir in $TASK_DIRS; do
     if [ -d "$dir" ]; then
@@ -123,6 +125,9 @@ for arch_path in docs/ARCH.md ARCH.md; do
     [ -f "$arch_path" ] || continue
     check_required_sections "$arch_path" \
         "Architecture Summary" "Module Boundaries" "Dependency Rules"
+    if ! grep -Eq '^## Considered Approaches$' "$arch_path"; then
+        report_warn "$arch_path has no Considered Approaches section. Add 2-3 approaches for non-obvious choices or state why it is not needed."
+    fi
 done
 
 for rules_path in docs/RULES.md RULES.md; do
@@ -206,9 +211,49 @@ if [ -n "$dup_inputs" ]; then
     fi
 fi
 
-# 6. (covered by check 2)
+# 6. Task execution-contract content -----------------------------------------
 
-# 7. Product pattern declarations ---------------------------------------------
+for dir in $TASK_DIRS; do
+    if [ -d "$dir" ]; then
+        for f in "$dir"/*.md; do
+            [ -e "$f" ] || continue
+            if ! grep -Eq '^- (Command|`[^`]+`):|^- `[^`]+`' "$f"; then
+                report_error "$f Verification should include exact command(s), not only prose."
+            fi
+            if grep -Eq '^## Interfaces$' "$f" && ! grep -Eq '^- (Consumes|Produces|Public contracts touched|Downstream tasks relying on this):' "$f"; then
+                report_error "$f Interfaces section should name consumed/produced interfaces or say None."
+            fi
+        done
+    fi
+done
+
+# 7. Placeholder and vague wording -------------------------------------------
+
+scan_governance_text() {
+    for f in "$@"; do
+        [ -f "$f" ] || continue
+        if grep -Ein '(TBD|TODO|as discussed|implement later|add proper error handling|write tests|make sure it works)' "$f" >/dev/null; then
+            report_error "$f contains placeholder or vague wording. Move real uncertainty to Open Questions or replace it with concrete requirements."
+        fi
+    done
+}
+
+scan_governance_text \
+    AGENTS.md CLAUDE.md \
+    docs/SPEC.md docs/ARCH.md docs/RULES.md \
+    SPEC.md ARCH.md RULES.md
+
+for dir in docs/TASKS TASKS docs/DECISIONS DECISIONS docs/CONTRACTS CONTRACTS; do
+    if [ -d "$dir" ]; then
+        for f in "$dir"/*; do
+            case "$f" in
+                *.md|*.yaml|*.yml|*.json|*.sql) scan_governance_text "$f" ;;
+            esac
+        done
+    fi
+done
+
+# 8. Product pattern declarations ---------------------------------------------
 
 check_product_shape() {
     file="$1"
@@ -262,7 +307,7 @@ for arch_path in docs/ARCH.md ARCH.md; do
     check_product_shape "$arch_path"
 done
 
-# 8. Last-reviewed staleness ---------------------------------------------------
+# 9. Last-reviewed staleness ---------------------------------------------------
 
 now_epoch=$(date +%s)
 stale_threshold=$((180 * 24 * 60 * 60))

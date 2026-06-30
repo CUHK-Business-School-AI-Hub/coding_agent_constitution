@@ -69,7 +69,8 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
 
 4. Convert vague intent into bounded project context.
    - Capture product goals, users, non-goals, constraints, risks, and acceptance criteria in `SPEC.md`.
-   - Capture architecture, module boundaries, data ownership, dependency choices, deployment assumptions, and tradeoffs in `ARCH.md`.
+   - Capture architecture, module boundaries, data ownership, dependency choices, deployment assumptions, considered approaches, and tradeoffs in `ARCH.md`.
+   - For non-obvious architecture, data, deployment, or module-boundary decisions, record 2-3 viable approaches, the recommendation, and why the rejected approaches do not fit the product constraints.
    - Capture coding rules, testing expectations, security/safety rails, and agent behavior in `RULES.md` and `AGENTS.md`.
    - Use `AGENTS.md` as the shared cross-agent instruction source when possible.
    - Use `CLAUDE.md` as the Claude Code adapter, usually importing `@AGENTS.md` and adding Claude-specific guidance.
@@ -88,7 +89,8 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Prefer 3 to 7 high-leverage questions.
    - Offer reasonable defaults when the user is unsure.
    - If a decision is reversible, choose a conservative default and mark it as an assumption.
-   - If a decision affects data models, public APIs, auth, payments, destructive operations, compliance, or deployment architecture, require explicit human confirmation.
+   - If a decision affects data models, public APIs, auth, payments, destructive operations, compliance, production deployment, or another expensive-to-change surface, require explicit human confirmation.
+   - Use `docs/DECISIONS/` for irreversible or expensive-to-change decisions discovered during bootstrap or task slicing.
    - Use `references/bootstrap-question-bank.md` for optional question prompts.
    - Ask the selected profile/module questions only when the answer changes architecture, contracts, risk, or scope.
 
@@ -99,14 +101,16 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Write concise, decision-oriented files. Avoid turning governance docs into generic essays.
    - Mark unresolved items as `Open Questions` or `Assumptions`, not hidden prose.
    - Treat shipped technology recipes as versioned defaults. Copy decisions into `ARCH.md`; do not make a project depend on this skill at runtime.
+   - Before declaring governance complete, use `references/governance-review-rubrics.md` to self-review the generated or changed assets.
 
 7. Create bounded implementation tasks.
-   - Each task must have one clear goal, explicit constraints, limited touched surface area, acceptance criteria, and verification commands.
+   - Each task must have one clear goal, explicit constraints, limited touched surface area, acceptance criteria, interface expectations, verification commands, and governance drift checks.
    - Apply the quantifiable sizing rules in `references/task-sizing.md`:
      - touched files <= 5, diff <= ~300 lines, new top-level modules <= 1, public API changes <= 2, schema changes <= 1, verification commands <= 3.
      - Crossing one limit is acceptable; crossing two means consider splitting; crossing three means split now.
-   - Acceptance criteria: 2-6 items. Verification: 1-3 exact commands (not "manually verify").
+   - Acceptance criteria: 2-6 items. Verification: 1-3 exact commands (not "manually verify") plus expected evidence.
    - Do not create broad tasks like "clean up the codebase" or "improve reliability everywhere".
+   - Use `references/task-review-contract.md` when preparing review handoff for a bounded task.
 
 8. Handoff for implementation and review.
    - Before coding, name the governance files that define the task.
@@ -204,6 +208,12 @@ Use this shape for every implementation task:
 - Touch: <files/modules>
 - Do not touch: <files/modules/APIs/schemas>
 
+## Interfaces
+- Consumes: <APIs/schemas/events/files/CLI/functions or None>
+- Produces: <APIs/schemas/events/files/CLI/functions or None>
+- Public contracts touched: <CONTRACTS paths or None>
+- Downstream tasks relying on this: <task ids or None>
+
 ## Requirements
 - <behavioral requirement>
 
@@ -211,7 +221,14 @@ Use this shape for every implementation task:
 - <observable outcome>
 
 ## Verification
-- <commands/checks/manual review>
+- Command: <exact command>
+- Expected evidence: <exit status/output/assertion>
+
+## Governance Drift Check
+- SPEC changed? <yes/no + why>
+- ARCH changed? <yes/no + why>
+- CONTRACTS changed? <yes/no + why>
+- RULES/AGENTS changed? <yes/no + why>
 
 ## Handoff Notes
 - Cursor should review: <architecture/risk hotspots>
@@ -226,7 +243,9 @@ Before finishing, check:
 
 - Major requirements are written in files, not only in chat.
 - Product shape, selected modules, recipe, and deviations are explicit in `ARCH.md`.
+- Non-obvious architecture or deployment choices include considered approaches and a recommendation.
 - Every bounded task points to durable source context.
+- Every bounded task states interfaces, verification evidence, and governance drift expectations.
 - Risky decisions are explicit and assigned to the human.
 - Contracts exist before implementation when interfaces matter.
 - Repeated standards are promoted into persistent rules.
@@ -242,6 +261,8 @@ Read `references/anti-patterns.md` for the full catalog. The most common pitfall
 - RULES file full of generic programming advice rather than repo-specific rules.
 - CONTRACTS expressed as prose instead of schemas; no error envelope defined.
 - Tasks named after whole features, with no `Do Not Touch` and no verification command.
+- Tasks that leave interface names, contract changes, or verification evidence for the implementer to invent.
+- Governance files with placeholders, "as discussed", or requirements that rely on hidden chat context.
 - Three near-identical copies of the same rules in `AGENTS.md`, `CLAUDE.md`, and `.cursor/rules/`.
 - Governance files created at bootstrap and never updated again.
 
@@ -259,6 +280,8 @@ constitution-skill/
 │   ├── cross-agent-compatibility.md     # Codex/Cursor/Claude adapter mapping
 │   ├── governance-asset-guide.md        # durable vs disposable, promotion rules
 │   ├── anti-patterns.md                 # common failure modes to avoid
+│   ├── governance-review-rubrics.md     # readiness checks for generated governance
+│   ├── task-review-contract.md          # review contract for bounded task execution
 │   ├── task-sizing.md                   # quantifiable bounded-task rules
 │   ├── retrofit-mode.md                 # applying governance to legacy repos
 │   ├── governance-evolution.md          # versioning, ADRs, archival

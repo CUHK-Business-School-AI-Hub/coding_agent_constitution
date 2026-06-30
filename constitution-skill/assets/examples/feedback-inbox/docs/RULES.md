@@ -50,11 +50,13 @@ Status: Active
 - Read `AGENTS.md`, `docs/SPEC.md`, `docs/ARCH.md`, and the relevant `docs/TASKS/*.md` before implementation.
 - Implement only the requested task; do not opportunistically refactor adjacent code.
 - Run the verification commands listed in the task before declaring it complete.
-- Summarize files changed, checks run, residual risks, and what Cursor/human should review.
+- Do not claim done, fixed, passing, or complete without fresh verification evidence: command, exit status, and relevant output summary.
+- Summarize files changed, checks run, governance docs changed or not changed, residual risks, and what Cursor/human should review.
 - Do not change public APIs, database schemas, authentication, billing, destructive operations, or production deployment without explicit human approval.
 
 ## Review Rules
 
+- Reviewers separately assess Spec Compliance and Implementation Quality.
 - Cursor enforces architectural boundaries via `.cursor/rules/project-governance.mdc`.
 - Claude Code review uses `.claude/rules/project-governance.md`.
 - Human reviewer must check: contract drift, dependency justification, security rule compliance, and verification evidence.

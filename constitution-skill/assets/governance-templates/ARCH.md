@@ -37,6 +37,24 @@ Describe important entities, ownership, and lifecycle rules.
 - File formats:
 - CLI/tool interfaces:
 
+## Considered Approaches
+
+Use this section for non-obvious architecture, data, deployment, or module-boundary choices. For straightforward choices, write `Not needed: <reason>`.
+
+### Recommended: <approach>
+
+- Why it fits:
+- Main cost:
+- Main risk:
+
+### Alternative 1: <approach>
+
+- Why rejected:
+
+### Alternative 2: <approach>
+
+- Why rejected:
+
 ## Dependency Rules
 
 - 
