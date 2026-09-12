@@ -1,10 +1,10 @@
 # AGENTS
 
-This is the shared project instruction file for coding agents. Codex can read this directly. Cursor may read it alongside `.cursor/rules/`. Claude Code should read it through `CLAUDE.md` using `@AGENTS.md`.
+This is the shared project instruction file for coding agents. Codex can read this directly. Current Cursor versions can read it directly; use `.cursor/rules/` only for additional tool-specific or scoped behavior. Claude Code should read it through `CLAUDE.md` using `@AGENTS.md`.
 
 ## Project Context
 
-Before implementation, read:
+Before implementation, read the relevant task and the documents it depends on. Use this map to load only the context needed for the change:
 
 - `docs/SPEC.md`
 - `docs/ARCH.md`
@@ -15,9 +15,9 @@ Before implementation, read:
 
 ## Agent Roles
 
-- Codex: implement bounded tasks, edit files, run checks, and produce reviewable diffs.
-- Cursor: review diffs, enforce architecture rules, inspect risky areas, and apply small local refinements.
-- Claude Code: implement or review bounded tasks using the same governance docs and Claude-specific adapters.
+- Implementer: edit bounded tasks, run checks, and produce reviewable diffs.
+- Reviewer: check task compliance, architecture, contracts, and verification evidence.
+- Codex, Cursor, or Claude Code can fill either role; use the user's chosen tools.
 - Human: define intent, approve risky decisions, and decide what merges.
 
 ## Work Rules
@@ -32,7 +32,7 @@ Before implementation, read:
 
 ## Approval Required
 
-Ask before changing:
+An explicitly approved task authorizes its stated implementation scope. Do not ask again for the same decision. Ask before introducing new or expanded changes to:
 
 - public APIs
 - database schemas or migrations
@@ -40,6 +40,8 @@ Ask before changing:
 - billing, payments, legal, privacy, or compliance behavior
 - destructive data operations
 - production deployment architecture
+
+Implementation approval does not by itself authorize production deployment or destructive production operations. Follow the agreed execution permissions. These instructions do not replace permissions, sandbox controls, or required CI checks.
 
 ## Handoff Format
 
@@ -51,7 +53,7 @@ After implementation, report:
 - verification evidence
 - governance docs changed or why no durable docs changed
 - known risks or skipped checks
-- what Cursor should review
+- what the reviewer should check
 - what the human should decide
 
 ## Review Expectations

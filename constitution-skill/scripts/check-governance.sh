@@ -14,7 +14,8 @@
 #   8. Product-profile/module declarations and their expected contract files.
 #   9. Files marked `Status: Active` whose `Last Reviewed` is older than 180 days.
 #
-# Exit code: 0 if no issues, 1 if any issue is reported.
+# Exit code: 0 for no errors (warnings allowed), 1 for errors, 2 for invalid input.
+# This is a structural lint, not proof of completeness or successful execution.
 #
 # Usage:
 #   scripts/check-governance.sh              # run in current repo root
@@ -74,39 +75,41 @@ if [ "$has_agents" -eq 0 ] && { [ "$has_claude" -eq 1 ] || [ "$has_cursor_rules"
     report_error "Tool adapter files exist (CLAUDE.md / .cursor/rules / .claude/rules) but AGENTS.md is missing. Add a canonical AGENTS.md."
 fi
 
-# 2. TASKS sections ------------------------------------------------------------
+# Read Markdown outside fenced examples. Normalize CRLF and trailing whitespace.
+markdown_text() {
+    awk -v keep_code="${2:-0}" '
+        { sub(/\r$/, ""); sub(/[ \t]+$/, "") }
+        {
+            line = $0
+            sub(/^ ? ? ?/, "", line)
+            if (match(line, /^```+|^~~~+/)) {
+                mark = substr(line, 1, 1)
+                size = RLENGTH
+                if (!fence) { fence = mark; width = size; next }
+                if (mark == fence && size >= width && substr(line, size + 1) ~ /^[ \t]*$/) {
+                    fence = ""
+                    next
+                }
+            }
+            if (!fence) print
+            else if (keep_code) print "| " $0
+        }
+    ' "$1"
+}
 
-TASK_DIRS="docs/TASKS TASKS"
-TASK_REQUIRED="^## Goal$ ^## Source Context$ ^## Scope$ ^## Interfaces$ ^## Acceptance Criteria$ ^## Verification$ ^## Governance Drift Check$"
-
-for dir in $TASK_DIRS; do
-    if [ -d "$dir" ]; then
-        for f in "$dir"/*.md; do
-            [ -e "$f" ] || continue
-            missing=""
-            for pat in $TASK_REQUIRED; do
-                if ! grep -Eq "$pat" "$f"; then
-                    missing="$missing $(printf '%s' "$pat" | tr -d '^$')"
-                fi
-            done
-            if [ -n "$missing" ]; then
-                report_error "$f missing sections:$missing"
-            fi
-        done
-    fi
-done
-
-# 3. Required sections in SPEC/ARCH/RULES --------------------------------------
+section_text() {
+    markdown_text "$1" | awk -v heading="## $2" '
+        /^##? / { active = ($0 == heading); next }
+        active { print }
+    '
+}
 
 check_required_sections() {
-    file="$1"
+    local file="$1" sec missing=""
     shift
-    if [ ! -f "$file" ]; then
-        return 0
-    fi
-    missing=""
+    [ -f "$file" ] || return 0
     for sec in "$@"; do
-        if ! grep -Eq "^## $sec$" "$file"; then
+        if ! markdown_text "$file" | grep -Fxq "## $sec"; then
             missing="$missing '$sec'"
         fi
     done
@@ -114,6 +117,22 @@ check_required_sections() {
         report_error "$file missing sections:$missing"
     fi
 }
+
+# 2. TASKS sections ------------------------------------------------------------
+
+TASK_DIRS="docs/TASKS TASKS"
+TASK_REQUIRED=("Goal" "Source Context" "Scope" "Interfaces" "Acceptance Criteria" "Verification" "Governance Drift Check")
+
+for dir in $TASK_DIRS; do
+    if [ -d "$dir" ]; then
+        for f in "$dir"/*.md; do
+            [ -f "$f" ] || continue
+            check_required_sections "$f" "${TASK_REQUIRED[@]}"
+        done
+    fi
+done
+
+# 3. Required sections in SPEC/ARCH/RULES --------------------------------------
 
 for spec_path in docs/SPEC.md SPEC.md; do
     [ -f "$spec_path" ] || continue
@@ -217,12 +236,19 @@ for dir in $TASK_DIRS; do
     if [ -d "$dir" ]; then
         for f in "$dir"/*.md; do
             [ -e "$f" ] || continue
-            if ! grep -Eq '^- (Command|`[^`]+`):|^- `[^`]+`' "$f"; then
-                report_error "$f Verification should include exact command(s), not only prose."
+            verification=$(section_text "$f" "Verification")
+            if ! printf '%s\n' "$verification" | grep -Eq '^- Command:[[:space:]]+[^[:space:]`]|^- Command:[[:space:]]+`[^`[:space:]][^`]*`|^- `[^`[:space:]][^`]*`'; then
+                report_error "$f Verification should include exact non-empty command(s) in that section."
             fi
-            if grep -Eq '^## Interfaces$' "$f" && ! grep -Eq '^- (Consumes|Produces|Public contracts touched|Downstream tasks relying on this):' "$f"; then
-                report_error "$f Interfaces section should name consumed/produced interfaces or say None."
+            if ! printf '%s\n' "$verification" | grep -Eq '^[[:space:]]*- Expected evidence:[[:space:]]+[^[:space:]]'; then
+                report_error "$f Verification should include non-empty Expected evidence in that section."
             fi
+            interfaces=$(section_text "$f" "Interfaces")
+            for field in "Consumes" "Produces" "Public contracts touched" "Downstream tasks relying on this"; do
+                if ! printf '%s\n' "$interfaces" | grep -Eq "^- $field:[[:space:]]+[^[:space:]]"; then
+                    report_error "$f Interfaces should include $field with a value or None in that section."
+                fi
+            done
         done
     fi
 done
@@ -232,7 +258,15 @@ done
 scan_governance_text() {
     for f in "$@"; do
         [ -f "$f" ] || continue
-        if grep -Ein '(TBD|TODO|as discussed|implement later|add proper error handling|write tests|make sure it works)' "$f" >/dev/null; then
+        # Open Questions may hold unresolved decisions; other sections may not.
+        # Keep code blocks in this scan so unfinished contract examples are caught.
+        if { case "$f" in
+            *.md) markdown_text "$f" 1 | awk '
+                /^##? / { questions = ($0 ~ /^## Open Questions[[:space:]]*$/) }
+                !questions { print }
+            ' ;;
+            *) cat "$f" ;;
+        esac; } | grep -Ei '(TBD|TODO|as discussed|implement later|add proper error handling|write tests|make sure it works)' >/dev/null; then
             report_error "$f contains placeholder or vague wording. Move real uncertainty to Open Questions or replace it with concrete requirements."
         fi
     done
@@ -351,11 +385,23 @@ if [ -d "docs/CONTRACTS" ]; then
     scan_for_stale $(ls docs/CONTRACTS/*.md 2>/dev/null)
 fi
 
+# Do not present an empty scan or an unchecked Minimal plan as full validation.
+found_governance=0
+for f in AGENTS.md CLAUDE.md docs/SPEC.md SPEC.md docs/ARCH.md ARCH.md docs/RULES.md RULES.md \
+    docs/TASKS/*.md TASKS/*.md docs/CONTRACTS/* CONTRACTS/* .cursor/rules/*.mdc .claude/rules/*.md; do
+    [ -f "$f" ] && found_governance=1
+done
+if [ -f docs/PLAN.md ]; then
+    report_warn "Minimal docs/PLAN.md is not structurally checked by this lint; review its scope, acceptance criteria, and verification separately."
+elif [ "$found_governance" -eq 0 ]; then
+    report_warn "No governance files found. No project readiness check was performed."
+fi
+
 # Summary ----------------------------------------------------------------------
 
 printf "\n"
 if [ "$ISSUES" -eq 0 ] && [ "$WARNINGS" -eq 0 ]; then
-    report_ok "Governance check passed."
+    report_ok "Governance structural checks passed. Execution and project readiness still require review."
     exit 0
 fi
 

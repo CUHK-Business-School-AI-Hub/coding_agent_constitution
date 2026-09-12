@@ -38,14 +38,14 @@ Default to Standard. Drop to Minimal only when at least three of these are true:
 
 ## Operating Model
 
-Use this role split:
+Assign these roles using the tools the user already has:
 
 - Human owns product intent, boundaries, architecture decisions, risk approval, and merge decisions.
-- Codex implements bounded units, edits files, runs checks, and produces reviewable changes.
-- Cursor reviews diffs, checks architecture compliance, catches hidden coupling, and helps with local refinements.
-- Claude Code can implement or review bounded units when it has the same governance files and tool-specific adapter files.
+- An implementer edits bounded units, runs checks, and produces reviewable changes.
+- A reviewer checks the task, architecture, contracts, and verification evidence.
+- Codex, Cursor, or Claude Code can fill either role using the same project context.
 
-Keep one main editor per work cycle. Let Codex perform the main modification, then hand off a clean review surface to Cursor and the human.
+Keep one main editor per change, then hand off a clean review surface to the reviewer and the human.
 
 ## Workflow
 
@@ -63,7 +63,7 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Read `references/product-pattern-routing.md` after selecting the mode.
    - Select zero or one base profile, zero or more capability modules, and at most one technology recipe.
    - When the user's business language matches a common MVP surface, scan `assets/templates/` and apply relevant latent templates quietly. Do not present templates as modes or ask the user to choose them.
-   - Record the selection and deviations in the `Product Shape` section of `ARCH.md`.
+   - Record the selection and deviations in the `Product Shape` section of `ARCH.md`, or `docs/PLAN.md` in Minimal mode.
    - Load only the selected profile/module references and merge only applicable overlay sections.
    - In Retrofit mode, preserve the existing stack unless stack migration is the explicit approved goal.
 
@@ -89,7 +89,7 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Prefer 3 to 7 high-leverage questions.
    - Offer reasonable defaults when the user is unsure.
    - If a decision is reversible, choose a conservative default and mark it as an assumption.
-   - If a decision affects data models, public APIs, auth, payments, destructive operations, compliance, production deployment, or another expensive-to-change surface, require explicit human confirmation.
+   - Require explicit human confirmation for new or changed decisions affecting data models, public APIs, auth, payments, destructive operations, compliance, production deployment, or another expensive-to-change surface. An explicitly approved task already authorizes its stated implementation scope: do not ask again for the same decision. Ask when the scope or risk changes; approval to implement does not by itself authorize production deployment or destructive production operations.
    - Use `docs/DECISIONS/` for irreversible or expensive-to-change decisions discovered during bootstrap or task slicing.
    - Use `references/bootstrap-question-bank.md` for optional question prompts.
    - Ask the selected profile/module questions only when the answer changes architecture, contracts, risk, or scope.
@@ -97,7 +97,7 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
 6. Produce a governance asset set.
    - Prefer `docs/` for new projects unless the repo already uses root-level docs.
    - Use the templates in `assets/governance-templates/` when creating new files.
-   - Keep `AGENTS.md` canonical and keep `CLAUDE.md`, `.cursor/rules/*.mdc`, and `.claude/rules/*.md` thin unless tool-specific behavior is truly needed.
+   - Keep `AGENTS.md` canonical. Add `CLAUDE.md` when Claude Code is used; generate `.cursor/rules/*.mdc` or `.claude/rules/*.md` only for needed tool-specific or scoped behavior. Preserve existing adapters and their project-specific rules.
    - Write concise, decision-oriented files. Avoid turning governance docs into generic essays.
    - Mark unresolved items as `Open Questions` or `Assumptions`, not hidden prose.
    - Treat shipped technology recipes as versioned defaults. Copy decisions into `ARCH.md`; do not make a project depend on this skill at runtime.
@@ -107,19 +107,19 @@ Keep one main editor per work cycle. Let Codex perform the main modification, th
    - Each task must have one clear goal, explicit constraints, limited touched surface area, acceptance criteria, interface expectations, verification commands, and governance drift checks.
    - Apply the quantifiable sizing rules in `references/task-sizing.md`:
      - touched files <= 5, diff <= ~300 lines, new top-level modules <= 1, public API changes <= 2, schema changes <= 1, verification commands <= 3.
-     - Crossing one limit is acceptable; crossing two means consider splitting; crossing three means split now.
-   - Acceptance criteria: 2-6 items. Verification: 1-3 exact commands (not "manually verify") plus expected evidence.
+     - Treat these as review signals: one may be acceptable, two suggest splitting, and three require splitting or a documented atomicity/size justification. Never omit necessary checks or break an atomic change merely to meet a number.
+   - Acceptance criteria: 2-6 items. Verification: usually 1-3 exact commands (not "manually verify") plus expected evidence; include all necessary checks.
    - Do not create broad tasks like "clean up the codebase" or "improve reliability everywhere".
    - Use `references/task-review-contract.md` when preparing review handoff for a bounded task.
 
 8. Handoff for implementation and review.
    - Before coding, name the governance files that define the task.
-   - After coding, summarize what changed, checks run, residual risks, and what Cursor/human should review.
+   - After coding, summarize what changed, checks run, residual risks, and what the reviewer/human should review.
    - Promote repeated review feedback into `RULES.md`, `.cursor/rules/`, or `AGENTS.md`.
 
 9. Validate before declaring done.
-   - Run `scripts/check-governance.sh` from the project root.
-   - The script verifies adapter orphans, required sections in TASKS/SPEC/ARCH/RULES, contract references, product pattern declarations, adapter duplication, and `Last Reviewed` staleness.
+   - Run `bash <installed-skill-directory>/scripts/check-governance.sh <project-root>` using the actual skill path; do not assume the script was copied into the generated project.
+   - The script lints adapter orphans, required sections in TASKS/SPEC/ARCH/RULES, contract references, product pattern declarations, adapter duplication, and `Last Reviewed` staleness. It does not execute task commands or prove project readiness; review Minimal `docs/PLAN.md` separately. Open Questions may remain, but tasks depending on unresolved decisions are not ready for implementation.
    - Any reported `ERROR` blocks completion; `WARN` items should be addressed or explicitly accepted in handoff notes.
 
 ## Output Contract
@@ -135,11 +135,11 @@ The file set depends on mode.
 - `docs/TASKS/001-<slug>.md`
 - `docs/DECISIONS/001-<slug>.md` for any irreversible decision discovered during bootstrap
 - `AGENTS.md`
-- `CLAUDE.md`
-- `.cursor/rules/project-governance.mdc`
-- `.claude/rules/project-governance.md`
+- `CLAUDE.md` when Claude Code is used
+- `.cursor/rules/project-governance.mdc` only for needed Cursor-specific or scoped rules
+- `.claude/rules/project-governance.md` only for needed Claude-specific or scoped rules
 
-`docs/ARCH.md` must record the selected base profile, capability modules,
+In Standard and Retrofit modes, `docs/ARCH.md` must record the selected base profile, capability modules,
 technology recipe, and deviations. A product may use `custom` and no recipe.
 
 A fully filled example of this set lives in `assets/examples/feedback-inbox/`. Use it as a reference for what good looks like, not as a starter template.
@@ -231,7 +231,7 @@ Use this shape for every implementation task:
 - RULES/AGENTS changed? <yes/no + why>
 
 ## Handoff Notes
-- Cursor should review: <architecture/risk hotspots>
+- Reviewer should check: <architecture/risk hotspots>
 - Human should decide: <open product/merge/risk decisions>
 ```
 
@@ -242,7 +242,7 @@ The skill succeeds when a fresh coding agent can implement the next task by read
 Before finishing, check:
 
 - Major requirements are written in files, not only in chat.
-- Product shape, selected modules, recipe, and deviations are explicit in `ARCH.md`.
+- Product shape, selected modules, recipe, and deviations are explicit in `ARCH.md` (or `docs/PLAN.md` in Minimal mode).
 - Non-obvious architecture or deployment choices include considered approaches and a recommendation.
 - Every bounded task points to durable source context.
 - Every bounded task states interfaces, verification evidence, and governance drift expectations.

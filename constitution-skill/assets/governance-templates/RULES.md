@@ -28,9 +28,9 @@
 
 ## Agent Rules
 
-- Read durable project docs before implementation.
+- Read the task and its relevant source documents before implementation.
 - Keep implementation tasks bounded.
-- Do not change public APIs, database schemas, auth, billing, or destructive behavior without explicit approval.
+- Follow the approval boundaries in `AGENTS.md`. Existing task approval covers its stated scope; ask about new or expanded decisions.
 - Add or update tests for changed behavior.
 - Do not claim done, fixed, passing, or complete without fresh verification evidence: command, exit status, and relevant output summary.
 - Summarize checks run, governance docs changed or not changed, and residual risk after each change.

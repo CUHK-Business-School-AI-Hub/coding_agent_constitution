@@ -9,4 +9,4 @@
 - Flag new behavior without acceptance criteria or tests.
 - Flag completion claims without command, exit status, and relevant output summary.
 - During review, separate Spec Compliance from Implementation Quality.
-- Ask before changing public APIs, database schemas, auth, billing, destructive operations, or production deployment architecture.
+- Follow the approval boundaries in `AGENTS.md`, including existing task authorization.

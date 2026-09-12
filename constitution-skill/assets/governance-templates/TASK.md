@@ -61,5 +61,5 @@ Describe one concrete outcome.
 
 ## Handoff Notes
 
-- Cursor should review:
+- Reviewer should check:
 - Human should decide:

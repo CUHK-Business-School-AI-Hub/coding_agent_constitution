@@ -2,7 +2,7 @@
 
 # Coding Agent Constitution
 
-**Turn vague software ideas into durable project governance before any agent starts coding.**
+**Turn your software idea into a clear plan, then let AI build it one step at a time.**
 
 [Simplified Chinese](README_CN.md) · [Traditional Chinese (Hong Kong)](README_HK.md)
 
@@ -16,328 +16,198 @@
 
 ---
 
+## Recent Updates - 2026-09-12
+
+- More reliable checks: fixed cases where incomplete task documents could pass, and added regression tests.
+- Smoother handoffs: approved tasks do not need repeated approval for the same decision; use your preferred AI tool to implement or review.
+- Updated installation guidance: keep shared rules in one place and add tool-specific files only when needed.
+- Clearer documentation: less jargon and more prompts you can copy without a technical background.
+
 ## Recent Updates - 2026-06-30
 
-- Added architecture decision discipline: non-obvious architecture, data, deployment, and module-boundary choices now ask agents to record considered approaches, a recommendation, and decision reversibility.
-- Added governance self-review rubrics: generated governance assets now have blocking/advisory checks for ambiguity, contradictions, oversized scope, hidden chat context, and missing verification evidence.
-- Strengthened bounded tasks as agent execution contracts: task templates now include interfaces, public contract boundaries, verification evidence, and governance drift checks.
+- Important technical choices now explain the options, the recommendation, and how easily the choice can be changed later.
+- Generated documents are checked for unclear requirements, contradictions, and missing information.
+- Each task explains what to build, what may change, and how to check that it is done.
 
 ## What Is This?
 
-Coding Agent Constitution is an open-source Agent Skill for **Codex, Cursor, and Claude Code**.
+Coding Agent Constitution is a free, open-source skill for **Codex, Cursor, and Claude Code**. Think of it as a working guide for your AI assistant.
 
-It helps coding agents slow down before implementation and turn unclear software intent into durable repo-native governance files.
+For example, you might say:
 
-Instead of jumping from:
+> I want a tool that helps a small team collect customer feedback, but I do not know where to start.
 
-> I have an idea. Please build it.
+The skill helps you answer three questions: **who is it for, what should come first, and how will we know it works?** It saves the answers in your project folder so a new conversation, another AI tool, or an engineer can pick up the work.
 
-straight into code, this skill creates:
+You will usually get these files. You do not need to learn the names first:
 
-```text
-docs/SPEC.md                  product goals, boundaries, non-goals
-docs/ARCH.md                  architecture, module boundaries, technical choices
-docs/RULES.md                 coding, testing, and safety rules
-docs/CONTRACTS/README.md      APIs, schemas, events, interfaces
-docs/TASKS/001-*.md           small executable implementation tasks
-AGENTS.md                     shared instructions for Codex and other agents
-CLAUDE.md                     Claude Code entrypoint
-.cursor/rules/*.mdc           Cursor Project Rules
-.claude/rules/*.md            Claude Code modular rules
-```
+| File | What it means |
+| --- | --- |
+| `SPEC.md` | What to build, and what to leave out for now |
+| `ARCH.md` | How the parts fit together and why the technology was chosen |
+| `RULES.md` | Rules to follow during development |
+| `CONTRACTS/` | Agreements about the data and behavior shared between parts |
+| `TASKS/` | Small next steps with a way to check each result |
+| `AGENTS.md` | Project instructions for AI tools |
 
-In one sentence:
+The number of files depends on the project. A small personal project can use just two main files. Instructions for specific tools are added when needed.
 
-> It turns chat-only intent into reusable repository assets.
-
-If most of the filenames above are unfamiliar, that is expected. Start with [`constitution-skill/references/rookie-onboarding.md`](constitution-skill/references/rookie-onboarding.md) for a short concept primer, then come back.
+Read the [beginner guide](constitution-skill/references/rookie-onboarding.md) if you want to learn the terms, or go straight to Quick Start below.
 
 ## Why Does This Exist?
 
-Coding agents are powerful, but starting with code too early creates drift:
+Asking AI to start coding immediately can lead to a few familiar problems:
 
-- requirements live only in chat
-- architecture decisions disappear between sessions
-- interfaces are implemented before they are agreed on
-- tests and review rules are inconsistent
-- Codex, Cursor, and Claude Code each see different context
-- humans cannot easily review what the agent was following
+- Features get built before the requirements are clear.
+- A new conversation or tool needs everything explained again.
+- You cannot tell what instructions the AI followed or how to check its work.
 
-This skill creates a safer flow:
-
-```text
-vague intent
--> governance assets
--> bounded tasks
--> agent implementation
--> Cursor / Claude / human review
--> durable decisions go back into files
-```
+This skill writes down the requirements and important decisions first, then breaks the work into small tasks. After each step, check the result and save useful discoveries back into the project.
 
 ## Who This Is For
 
-This is a stage-specific tool, useful in the window between "I have an idea for a software product" and "I have an engineer who has fully taken over the project". It is meant to be sharp, not exhaustive.
+For people who have a software idea and want AI help while keeping the work understandable:
 
-Likely useful if you are:
+- Product managers starting a new project.
+- People building a personal project who may bring in collaborators later.
+- Designers, analysts, or operators turning their experience into a tool.
+- Founders who do not write code but want to understand and adjust the plan.
+- Engineers who want AI to work from clear requirements.
 
-- a product manager starting a new project and want the docs to outlive the kickoff chat
-- someone building a side project and planning to bring in collaborators later
-- a domain expert (designer, analyst, operator) shipping a first software product
-- a non-technical founder who is willing to learn a little engineering so the work is portable
-- an engineer who wants to set a clean baseline before letting agents touch the repo
-
-If you are new to the engineering vocabulary in the generated files, read [`constitution-skill/references/rookie-onboarding.md`](constitution-skill/references/rookie-onboarding.md) first. It is a short concept primer aimed at first-time product builders and does not assume coding skill.
+You explain the need, check the result, and make important tradeoffs. The AI helps write the plan and break it into tasks.
 
 ## When Should I Use It?
 
-Use it when:
+Use it when your idea is unclear, you do not know what to build first, or you are preparing to hand the project to someone else.
 
-- the product idea is still fuzzy
-- the tech stack is undecided
-- architecture boundaries are unclear
-- APIs or data contracts are missing
-- you want Codex, Cursor, and Claude Code to share one project context
-- you want to create `SPEC.md`, `ARCH.md`, `RULES.md`, or `AGENTS.md`
-- a big request needs to become smaller reviewable tasks
-
-Do not use it for:
-
-- tiny already-scoped bug fixes
-- single-function edits
-- pure formatting
-- replacing human product or architecture decisions
-- avoiding the need to understand any engineering at all (it is a learning scaffold, not a no-code platform)
+For a typo or a small, well-understood bug, ask the AI to make the change directly. You do not need to plan the whole project again. Important product decisions remain yours.
 
 ## When To Stop Using It
 
-This skill is designed to step out of the way once a project has stabilized. Reasonable graduation signals:
+Once the project has a clear plan and an engineer or team can maintain it, you do not need to invoke this skill for every change. The files you created can keep serving the project.
 
-- a full-time engineer has taken over maintenance of `docs/SPEC.md`, `docs/ARCH.md`, and `docs/RULES.md`
-- code review by humans is happening regularly on every change
-- the team has its own onboarding doc that supersedes the rookie primer
-
-After that point, the durable files keep working, but the skill itself is no longer the daily entrypoint.
+Use it again when a new, unclear requirement needs working through.
 
 ## Compatibility
 
-| Agent | Recommended entrypoint | Best role |
-| --- | --- | --- |
-| Codex | `AGENTS.md` + `constitution-skill/SKILL.md` | Implement bounded tasks and run checks |
-| Cursor | `.cursor/rules/*.mdc` + optional `.cursor/skills/` | Review diffs and enforce project rules |
-| Claude Code | `CLAUDE.md` + `.claude/rules/*.md` + optional `.claude/skills/` | Implement or review bounded tasks with Claude project memory |
+**Use the tool you already have. You do not need all three.** Each can implement tasks or review changes.
 
-Important note:
+| Tool | How it reads project instructions |
+| --- | --- |
+| Codex | Reads `AGENTS.md` |
+| Cursor | Current versions read `AGENTS.md`; add dedicated rules only when needed |
+| Claude Code | Reads shared instructions through `CLAUDE.md` |
 
-Cursor is based on VS Code, but agent governance does not primarily live in `.vscode/`. Use `.cursor/rules/` for Cursor rules and `.cursor/skills/` for Cursor Agent Skills.
+Keep common rules in one place so a change does not leave another copy out of date. Preserve existing project-specific rules. See the [compatibility guide](constitution-skill/references/cross-agent-compatibility.md) for configuration details.
 
 ## Quick Start (Recommended)
 
-Just enter this prompt below to your coding agent (Codex/Claude Code/Cursor):
-
-```
-Install the skill in this repo: https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
-```
-Then you can have a cup of coffee and wait for your agent to finish everything.
-
-## Optional Companion Skill: `grill-me`
-
-If your idea is still too vague to turn into governance files, consider also
-installing [`grill-me`](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me)
-from Matt Pocock's skills repo.
-
-`grill-me` is useful before `constitution-skill`: it interviews you one
-question at a time, pressure-tests the plan, and helps surface the product,
-architecture, and risk decisions that should later be captured in `SPEC.md`,
-`ARCH.md`, `RULES.md`, and `TASKS/*.md`.
-
-It is optional, not a dependency. A good combined prompt is:
+Open your project folder in your AI coding tool and send this:
 
 ```text
-Use grill-me to clarify this software idea first. Once the important decisions
-are clear, use constitution-skill to turn the answers into governance docs and
-one bounded implementation task.
+Install the constitution-skill skill from this repository:
+https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution
+Choose the installation location for the tool I am using and check that it can find the skill.
+```
+
+After installation, start a new conversation and try the prompt under “The Simplest Prompt” below. If the skill is not found, ask the AI to check its installation location.
+
+## Optional Companion Skill: `waymark`
+
+To clarify your idea through a question-and-answer conversation first, try [Waymark](https://github.com/CUHK-Business-School-AI-Hub/waymark), developed by our team. It is a variant of `grill-me` designed to be friendlier to people without a technical background. Describe your work in everyday language; Waymark asks one question at a time to clarify who does what, how it works, and how to handle exceptions, then writes instructions people can follow.
+
+If you then want to turn that process into software, use `constitution-skill` to create the project plan and development tasks. Waymark is an optional companion, not a required dependency.
+
+To combine them:
+
+```text
+Use waymark to help me clarify the real workflow and requirements.
+Explain decisions I need to make in plain language.
+If we decide to build software, use constitution-skill to turn the agreed details
+into a project plan and the first small task.
 ```
 
 ## If you want to install this by yourself...
 
+These commands assume you have downloaded this repository and opened a terminal in its root folder. They are for a fresh installation; if a copy already exists, ask the AI to compare it before updating.
+
 ### Codex
 
+Install for your user account:
+
 ```bash
-mkdir -p ~/.codex/skills
-cp -R constitution-skill ~/.codex/skills/constitution-skill
+mkdir -p ~/.agents/skills
+cp -R constitution-skill ~/.agents/skills/constitution-skill
 ```
 
-Then ask:
-
-```text
-Use constitution-skill to turn this software idea into governance docs before coding.
-```
+For project-only use, copy the skill into the target project's `.agents/skills/constitution-skill/` folder instead.
 
 ### Cursor
 
-Project-local installation:
-
-```bash
-mkdir -p .cursor/skills
-cp -R constitution-skill .cursor/skills/constitution-skill
-```
-
-Recommended generated Cursor rule:
-
-```text
-.cursor/rules/project-governance.mdc
-```
+Copy `constitution-skill/` into the target project's `.agents/skills/` folder. A Codex project copy in this location can be shared with current Cursor versions. `.cursor/skills/` also remains an option.
 
 ### Claude Code
 
-Project-local installation:
-
-```bash
-mkdir -p .claude/skills
-cp -R constitution-skill .claude/skills/constitution-skill
-```
-
-Recommended Claude Code entrypoint:
-
-```text
-CLAUDE.md
-```
-
-Example:
+Copy `constitution-skill/` into the target project's `.claude/skills/` folder. For shared project instructions, `CLAUDE.md` can import them with:
 
 ```markdown
 @AGENTS.md
-
-## Claude Code
-
-- Read governance docs before implementation.
-- Ask before changing risky surfaces.
 ```
+
+Start a new conversation and check that the skill is available. Keep existing working installations until you have checked your tool's supported paths; do not create extra copies unnecessarily.
 
 ## The Simplest Prompt
 
-```text
-I want to build a SaaS tool for small teams to collect customer feedback,
-summarize feature requests, and generate development tasks.
-I do not know the stack, architecture, database, or API design yet.
-Use constitution-skill to create governance assets before coding.
-```
-
-Expected output:
+Replace this example with your idea:
 
 ```text
-docs/SPEC.md
-docs/ARCH.md
-docs/RULES.md
-docs/CONTRACTS/README.md
-docs/TASKS/001-bootstrap-feedback-inbox.md
-AGENTS.md
-CLAUDE.md
-.cursor/rules/project-governance.mdc
-.claude/rules/project-governance.md
+I want a tool for small teams to collect customer feedback and summarize common requests.
+I do not know how to choose the technology.
+Use constitution-skill to explain what the first version should and should not do.
+Save the plan in my project, then define the first small task and how to check it.
+Explain decisions I need to make in plain language. Do not write application code yet.
 ```
+
+You will get a project plan you can read and change, plus the next task. Files for a standard project usually live under `docs/`; a small personal project may only need `AGENTS.md` and `docs/PLAN.md`.
+
+Check whether the plan matches your intent, especially what it leaves out and how it defines success. Ask the AI to correct anything it misunderstood.
 
 ## After The Docs Exist, How Do I Actually Build The Thing?
 
-Once the governance files exist, do not ask the agent to "build the whole app". That is how projects get messy again. Instead, use the first task file as the bridge from planning to implementation.
+Once you agree with the plan, start with the first small task:
 
-1. Open the first task.
+```text
+Find the first task in the plan and explain what it will deliver.
+Complete it within the scope we have already agreed on, and run the relevant checks.
+If a new important decision or a scope change is needed, explain why first.
+When finished, tell me in plain language what changed, what checks passed,
+and how I can try it myself.
+```
 
-   Start with something like:
+After each task, check three things:
 
-   ```text
-   docs/TASKS/001-bootstrap-feedback-inbox.md
-   ```
+1. Is the result what you wanted? Did the AI add features you did not need?
+2. What did it actually check, and what remains unchecked?
+3. Were important new decisions saved back into the project files?
 
-   This file should describe one small, reviewable implementation slice.
-
-2. Ask one coding agent to implement only that task.
-
-   Example prompt:
-
-   ```text
-   Read AGENTS.md, docs/SPEC.md, docs/ARCH.md, docs/RULES.md,
-   and docs/TASKS/001-bootstrap-feedback-inbox.md.
-
-   Implement only this task.
-   Do not change public APIs, database schemas, auth, billing,
-   or destructive behavior unless the task explicitly says so.
-
-   Run the listed verification checks.
-   Then summarize files changed, checks run, risks, and what needs review.
-   ```
-
-3. Review the change before doing the next task.
-
-   Use Cursor, Claude Code, Codex review mode, or a human reviewer to check:
-
-   - does the diff match the task?
-   - did the agent change files outside the allowed scope?
-   - are tests or verification steps present?
-   - did any architecture, contract, or product decision change?
-
-4. Promote durable discoveries back into files.
-
-   If implementation reveals a rule, contract, architecture choice, or product clarification that should matter later, update:
-
-   ```text
-   docs/SPEC.md
-   docs/ARCH.md
-   docs/RULES.md
-   docs/CONTRACTS/
-   AGENTS.md
-   CLAUDE.md
-   .cursor/rules/
-   .claude/rules/
-   ```
-
-5. Repeat with the next small task.
-
-   The loop is simple:
-
-   ```text
-   pick one task
-   -> implement it
-   -> run checks
-   -> review the diff
-   -> update durable docs if needed
-   -> pick the next task
-   ```
-
-For beginners, the safest rule is:
-
-> One task, one agent implementation pass, one review pass, then move on.
+Another AI or an engineer can review the changes before the next task. Permission to implement does not automatically authorize deployment or deleting production data; those actions follow your agreed permissions.
 
 ## Product-Aware Defaults
 
-The skill now composes governance instead of forcing every product through one
-blank template:
+You do not need to choose internal templates. Describe whether you need customer records, an approval process, a chat assistant, or a tool that runs only on your computer. The skill selects the relevant guidance.
 
-```text
-project mode
-+ base profile (for example, transactional record system)
-+ capability modules (identity/access, LLM boundary, durable workflow)
-+ optional reviewed technology recipe
--> project-specific SPEC / ARCH / RULES / CONTRACTS / TASKS
-```
+For an existing project, it starts with the technology already in use. For a new project, its suggestions include TypeScript/PostgreSQL for a website and Python/SQLite for a local personal tool. It explains the fit and records any adjustments.
 
-The shipped recipes recommend TypeScript/PostgreSQL for a deployed web product
-or Python/SQLite for a single-device local tool. They are reviewed defaults,
-not permanent rules; the generated `ARCH.md` records the recipe and every
-deviation. SQLite starts with relational queries and FTS5; vector search is an
-optional escalation, not part of the default stack.
+These are starting points. Your requirements determine the choice.
 
 ## Mental Model
 
-```text
-Human owns intent.
-Agents implement bounded work.
-Review layers inspect diffs.
-Durable knowledge belongs in files.
-Disposable plans can be replaced.
-```
+You decide what problem to solve. The AI works within the agreed scope. Check each result, and keep important instructions in the project so they can be used again.
 
 ## Repository Structure
+
+<details>
+<summary>Show files and developer references</summary>
 
 ```text
 .
@@ -388,35 +258,30 @@ Disposable plans can be replaced.
    │  └─ examples/
    │     └─ feedback-inbox/            # fully filled worked example
    └─ scripts/
-      └─ check-governance.sh           # drift and missing-section detector
+      ├─ check-governance.sh           # checks project documents for missing information
+      └─ test_check_governance.py       # regression tests for the checker
 ```
+
+</details>
 
 ## About the Validation Warning
 
-The skill ships a small validation script, `constitution-skill/scripts/check-governance.sh`, that scans a project's governance files for common problems. It prints three kinds of lines:
+The skill includes a script that looks for missing information in project documents:
 
-- `ERROR` — something is actually broken (for example, a task file is missing its `## Verification` section). This blocks "done".
-- `WARN` — a friendly heads-up worth a look, but not a blocker.
-- `OK` — passed.
+- `ERROR`: something needs fixing, such as a task without a verification section.
+- `WARN`: something deserves attention; you or the AI should decide how to handle it.
+- `OK`: this document structure check found no errors.
 
-When you run it on the bundled example (or on your own project), you will likely see one `WARN` like this:
+**Passing this check does not mean the software has passed its tests or is ready to deploy.** The script does not execute task commands or check the lightweight `docs/PLAN.md`; review those separately. It reports when there are no files to check.
 
-```text
-WARN   Repeated lines across adapter files (top 5). Consider keeping AGENTS.md canonical:
+The example's “repeated rules” warning means some instructions appear in more than one tool file. Existing projects may retain copies that serve a purpose, but keep them consistent when editing. New projects should share `AGENTS.md` where possible.
+
+If you are unfamiliar with commands, ask the AI to run the check and explain the result. Developers maintaining this skill can run:
+
+```bash
+bash constitution-skill/scripts/check-governance.sh constitution-skill/assets/examples/feedback-inbox
+python3 constitution-skill/scripts/test_check_governance.py
 ```
-
-**This is expected, and we keep it on purpose.** In plain language:
-
-Cursor and Claude Code each read their *own* rules file — Cursor reads `.cursor/rules/*.mdc`, Claude Code reads `.claude/rules/*.md`. They are two different files for two different tools, so a few important safety rules (for example "never log a raw email address" or "ask a human before changing the database schema, auth, or billing") end up written in both. The script notices the repeated lines and gives you a nudge.
-
-We deliberately do *not* remove these repeats, because:
-
-- Putting the safety rules directly in each tool's file guarantees that whichever agent you use, the rule is reliably in front of it.
-- "De-duplicating" them would mean each tool only points to `AGENTS.md` and has to load it to see the rule. Not every tool or version loads `AGENTS.md` automatically, so a critical safety rule could silently go missing — a worse outcome than a little repetition.
-
-So treat this particular `WARN` as accepted by design. The only thing to remember: if you edit one copy of a repeated rule, update the other copy too, so they do not drift apart.
-
-> Rule of thumb: `ERROR` must be fixed before you call a task done. `WARN` is advice — read it, then decide. This duplication `WARN` is one we have already decided to accept.
 
 ## License
 

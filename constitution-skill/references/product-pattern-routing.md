@@ -24,7 +24,7 @@ Select:
 Do not force a known profile onto a product that does not fit. Use the universal
 templates and record `custom` when the product shape is genuinely different.
 
-Record the selection in `ARCH.md`:
+Record the selection in `ARCH.md`, or in `docs/PLAN.md` for Minimal mode (do not create an ARCH file just for routing):
 
 ```markdown
 ## Product Shape
@@ -153,6 +153,6 @@ Ask only questions that change a durable decision. Prefer these defaults:
 - database-backed state before a workflow engine
 - provider adapters at external boundaries
 
-Require explicit confirmation for public APIs, data models with migration cost,
+Honor the scope of explicitly approved tasks; do not ask again for the same decision. Require explicit confirmation for new or expanded decisions involving public APIs, data models with migration cost,
 credential handling, authorization rules, destructive operations, model-driven
 side effects, regulated data, payments, and production deployment.

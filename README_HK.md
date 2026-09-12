@@ -2,7 +2,7 @@
 
 # Coding Agent Constitution
 
-**將模糊的軟件想法，先變成可重用的項目前置治理資產，再交給智能體寫程式碼。**
+**先把軟件想法說清楚、寫下來，再讓 AI 一步步做出來。**
 
 [English](README.md) · [簡體中文](README_CN.md)
 
@@ -16,333 +16,195 @@
 
 ---
 
+## 最近更新 - 2026-09-12
+
+- 檢查更可靠：修復了「任務漏寫重要段落，也可能顯示通過」的問題，並加入自動測試。
+- 使用更順暢：已經確認的任務，不再為同一個決定反覆詢問；實作和檢查可以交給你常用的 AI 工具。
+- 安裝說明已更新：通用規則盡量只寫一份，有需要才增加工具專用檔案。
+- 文檔更易讀：減少術語，補充可以直接複製使用的提示詞。
+
 ## 最近更新 - 2026-06-30
 
-- 加強架構決策紀律：非顯然的架構、數據、部署、模組邊界選擇，需要記錄候選方案、推薦方案同決策可逆性。
-- 增加治理文檔自審 rubric：生成的治理資產而家有 blocking/advisory 檢查，用嚟發現歧義、矛盾、範圍過大、隱藏聊天上下文同缺少驗證證據。
-- 強化 bounded task 作為 agent execution contract：任務模板而家包含介面、公開 contract 邊界、驗證證據同治理漂移檢查。
+- 做重要技術選擇時，會寫清楚有哪些方案、推薦哪個，以及日後是否容易調整。
+- 產生檔案後，會檢查有沒有說不清楚、互相矛盾或遺漏的地方。
+- 每個任務會寫明：要做甚麼、哪些地方可以改，以及怎樣檢查是否完成。
 
 ## 這是甚麼？
 
-這是一個給 **Codex、Cursor、Claude Code** 使用的開源 Agent Skill。
+這是一個給 **Codex、Cursor、Claude Code** 使用的免費開源技能（Agent Skill）。你可以把它理解成一份給 AI 用的工作指南。
 
-它不會一開始就急着寫程式碼。它會先幫你把一句很模糊的說法：
+例如你說：
 
-> 我想做一個工具，幫我把這個項目做起來。
+> 我想做一個工具，幫小團隊收集客戶意見，但不知道從哪裏開始。
 
-整理成真正可以重用的倉庫檔案：
+它會先幫你理清三個問題：**給誰用、先做甚麼、做到怎樣算完成**，再把答案儲存在項目資料夾。日後換一個對話、換一個 AI，或者交給工程師，都能接着做。
 
-```text
-docs/SPEC.md                  產品目標、功能邊界、非目標
-docs/ARCH.md                  架構、模組邊界、技術選擇
-docs/RULES.md                 編碼規則、測試規則、安全邊界
-docs/CONTRACTS/README.md      API、資料結構、事件、介面約束
-docs/TASKS/001-*.md           可執行的小任務
-AGENTS.md                     Codex / 多智能體共享規則
-CLAUDE.md                     Claude Code 入口
-.cursor/rules/*.mdc           Cursor Project Rules
-.claude/rules/*.md            Claude Code 模組化規則
-```
+通常會得到這些檔案，你不需要先學會它們的名稱：
 
-一句話：
+| 檔案 | 簡單解釋 |
+| --- | --- |
+| `SPEC.md` | 要做甚麼，暫時不做甚麼 |
+| `ARCH.md` | 各部分怎樣配合，為甚麼這樣選技術 |
+| `RULES.md` | 開發時要遵守的規則 |
+| `CONTRACTS/` | 不同部分交換資料時，約定好格式和行為 |
+| `TASKS/` | 下一步要完成的小任務，以及檢查方法 |
+| `AGENTS.md` | 給 AI 的項目說明 |
 
-> 它把「聊天入面的想法」變成「倉庫入面的資產」。
+檔案數量會按項目情況調整，小型個人項目可以只保留兩份主要檔案。有需要時，還會為你使用的工具產生讀取說明。
 
-如果上面這些檔名你大部分都未熟，沒問題。先讀 [`constitution-skill/references/rookie-onboarding.md`](constitution-skill/references/rookie-onboarding.md)，這份是給「第一次做軟件產品的人」準備的簡短入門，讀完再回來這裡。
+想了解這些概念，可以看[第一次做軟件產品的入門說明](constitution-skill/references/rookie-onboarding_HK.md)，也可以直接看下面的快速開始。
 
 ## 為甚麼需要它？
 
-直接叫智能體寫程式碼，常見問題是：
+直接請 AI 寫程式，有時會遇到這些問題：
 
-- 需求還未清楚，程式碼已經開始長出來
-- 架構判斷藏在聊天記錄入面，下一輪就不見了
-- API、資料模型、測試標準沒有人寫低
-- Cursor、Codex、Claude Code 各自讀不同上下文
-- 人類審查時不知道智能體到底跟了甚麼規則
+- 需求還未想清楚，就已經做了很多功能。
+- 換一個對話或工具，又要從頭解釋。
+- 不知道 AI 按甚麼要求做，也不知道怎樣檢查結果。
 
-這個 skill 的思路是：
-
-```text
-模糊意圖
--> 前置治理檔案
--> 有邊界的小任務
--> 智能體實現
--> Cursor / Claude / 人類審查
--> 決策再沉澱回檔案
-```
+這個技能先把需求和重要決定寫下來，再拆成小任務。每做完一步，檢查結果，有用的新發現也寫回項目檔案。
 
 ## 適合邊個用？
 
-這是一個**階段性工具**：用在「我有一個軟件產品的想法」同「我已經有一位工程師完全接手項目」之間嘅一段時間。它的設計係鋒利、專注，唔會試圖乜都做。
+適合已經有一個軟件想法，想請 AI 幫忙實現、又希望事情保持清楚的人，例如：
 
-如果你係以下其中一種，這個 skill 可能適合你：
+- 準備啟動新項目的產品經理。
+- 做個人項目、日後可能找人合作的你。
+- 想把工作經驗做成工具的設計師、分析師或營運人員。
+- 不會寫程式，但希望能看懂計劃、提出修改意見的創業者。
+- 想讓 AI 按明確要求工作的工程師。
 
-- 一位準備啟動新項目的產品經理，希望文檔比 kickoff 聊天活得更耐
-- 喺做副業項目、之後會搵協作者入嚟的人
-- 領域專家（設計師、分析員、營運）第一次做軟件產品
-- 願意學少少工程的非技術 founder，令成品可以順利移交
-- 想喺 agent 開始改程式碼之前先建立好基線的工程師
-
-如果你對生成出嚟的檔案中的工程術語仲好陌生，請先讀 [`constitution-skill/references/rookie-onboarding.md`](constitution-skill/references/rookie-onboarding.md)。呢份係給「第一次做軟件產品的人」準備的簡短概念入門，唔要求你識寫程式碼。
+你負責說明需求、檢查結果，並決定重要取捨；AI 幫你整理檔案和拆分任務。
 
 ## 甚麼時候適合用？
 
-適合：
+適合在想法還不清楚、不知道先做哪一步，或者準備把項目交給別人接手時使用。
 
-- 你只有一個產品想法，但未知道技術棧
-- 你不知道應該先做哪個功能
-- 你想讓 Codex / Cursor / Claude Code 協同工作
-- 你想建立 `SPEC.md`、`ARCH.md`、`RULES.md`
-- 你想把聊天入面的規則沉澱到倉庫入面
-- 你要把一個大需求拆成多個安全的小任務
-
-不適合：
-
-- 已經很清楚的小 bug
-- 只改一個函數
-- 純粹格式化程式碼
-- 取代人類做產品或架構最終決策
-- 想完全唔接觸任何工程概念（這是學習腳手架，唔係 no-code 平台）
+如果只是改錯字、修一個已經明確的小問題，直接讓 AI 修改就可以，不需要每次重新整理整個項目。重要的產品選擇仍由你決定。
 
 ## 幾時應該停止用？
 
-這個 skill 的設計是：當項目穩定之後，它會主動退出日常流程。合理的「畢業」信號包括：
+當項目已有清楚的計劃、工程師或團隊能接着維護時，就不必每次都使用這個技能。已經整理好的檔案可以繼續使用。
 
-- 已經有一位全職工程師在維護 `docs/SPEC.md`、`docs/ARCH.md`、`docs/RULES.md`
-- 每個改動都會經人手 code review
-- 團隊已經有自己的 onboarding 文檔，可以取代 rookie primer
-
-到這一步之後，那啲長期檔案仲會繼續用，但 skill 本身已經唔再係你日常入口。
+日後遇到新的模糊需求，再請它幫忙整理即可。
 
 ## 三大智能體兼容方式
 
-| 智能體 | 建議入口 | 用途 |
-| --- | --- | --- |
-| Codex | `AGENTS.md` + `constitution-skill/SKILL.md` | 實現 bounded tasks、執行檢查、產出 reviewable changes |
-| Cursor | `.cursor/rules/*.mdc` + optional `.cursor/skills/` | 做 IDE review、架構邊界檢查、局部修正 |
-| Claude Code | `CLAUDE.md` + `.claude/rules/*.md` + optional `.claude/skills/` | 實現或 review bounded tasks，讀取 Claude 項目記憶 |
+**選你已經在用的工具就可以，不需要同時安裝三個。** 三者都可以實作任務或檢查改動。
 
-注意：
+| 工具 | 怎樣讀取項目說明 |
+| --- | --- |
+| Codex | 讀取 `AGENTS.md` |
+| Cursor | 目前版本可直接讀取 `AGENTS.md`；有特別需要才加專用規則 |
+| Claude Code | 透過 `CLAUDE.md` 讀取共享說明 |
 
-Cursor 雖然建基於 VS Code，但 agent 規則不應該主要放在 `.vscode/`。Cursor 的規則入口是 `.cursor/rules/`，skill 入口是 `.cursor/skills/`。
+通用規則盡量只保留一份，避免改了一處、忘了另一處。已有項目的專用規則會保留。[詳細兼容說明](constitution-skill/references/cross-agent-compatibility.md)供需要設定工具的讀者參考。
 
 ## 快速開始（推薦）
 
-將下面這段提示詞發給你的編碼智能體（Codex / Claude Code / Cursor）即可：
-
-```
-Install the skill in this repo: https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution. Make sure you always call it when I mention `constitution-skill`.
-```
-然後你可以去沖杯咖啡，等智能體把一切都搞定。
-
-## 可選聯動 Skill：`grill-me`
-
-如果你的想法仲太模糊，暫時好難直接寫成治理檔案，也建議安裝 Matt Pocock
-skills 倉庫入面的 [`grill-me`](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me)。
-
-`grill-me` 適合放在 `constitution-skill` 之前使用：它會一次問你一個問題，幫你
-壓力測試計劃，把產品、架構、風險這些關鍵決策先問清楚。問清楚之後，再由
-`constitution-skill` 把答案沉澱到 `SPEC.md`、`ARCH.md`、`RULES.md` 和
-`TASKS/*.md` 入面。
-
-它是可選輔助，不是必需依賴。一個好用的組合提示詞是：
+先打開你的項目資料夾，再把這段話發給 AI：
 
 ```text
-請先用 grill-me 幫我把這個軟件想法問清楚。等關鍵決策明確之後，
-再用 constitution-skill 把答案整理成治理檔案和一個有邊界的實現任務。
+請安裝這個倉庫裏的 constitution-skill 技能：
+https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution
+請按我正在使用的工具選擇安裝位置，並檢查能否找到這個技能。
+```
+
+安裝後開一個新對話，試着發送下面「最簡單的使用方式」裏的提示詞。如果找不到技能，請讓 AI 檢查安裝位置。
+
+## 可選聯動 Skill：`waymark`
+
+如果你想先透過一問一答把想法講清楚，可以使用我們團隊開發的 [Waymark](https://github.com/CUHK-Business-School-AI-Hub/waymark)。它是 `grill-me` 的變種，對非技術人士更友善：你用日常語言描述工作，它會逐個提問，幫你理清誰來做、怎樣做、遇到例外怎樣處理，再整理成可以跟着執行的說明。
+
+如果接下來想把這套流程做成軟件，再交給 `constitution-skill` 整理項目計劃和開發任務。Waymark 是可選輔助，不是必須安裝的依賴。
+
+配合使用時可以說：
+
+```text
+先用 waymark 幫我把實際工作流程和需求問清楚，用淺白文字解釋需要我決定的地方。
+如果確定要做成軟件，再用 constitution-skill 把確認的內容寫成項目計劃和第一個小任務。
 ```
 
 ## 如果你想自己動手安裝...
 
+以下命令假設你已下載本倉庫，並在倉庫根目錄打開終端，適用於首次安裝。如果已經安裝過，請讓 AI 先比較版本，避免覆蓋自己的修改。
+
 ### Codex
 
-將 skill 目錄放到你的 Codex skills 目錄：
+安裝到你的個人技能目錄：
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -R constitution-skill ~/.codex/skills/constitution-skill
+mkdir -p ~/.agents/skills
+cp -R constitution-skill ~/.agents/skills/constitution-skill
 ```
 
-然後對 Codex 說：
-
-```text
-Use constitution-skill to turn this software idea into governance docs before coding.
-```
+如果只想在一個項目裏使用，把技能複製到目標項目的 `.agents/skills/constitution-skill/` 即可。
 
 ### Cursor
 
-項目級安裝：
-
-```bash
-mkdir -p .cursor/skills
-cp -R constitution-skill .cursor/skills/constitution-skill
-```
-
-Cursor 項目規則建議使用生成出來的：
-
-```text
-.cursor/rules/project-governance.mdc
-```
+把 `constitution-skill/` 複製到目標項目的 `.agents/skills/` 資料夾。這裏已有 Codex 的項目副本時，目前 Cursor 版本可以共用；也仍可使用 `.cursor/skills/`。
 
 ### Claude Code
 
-項目級安裝：
-
-```bash
-mkdir -p .claude/skills
-cp -R constitution-skill .claude/skills/constitution-skill
-```
-
-Claude Code 的項目入口建議使用：
-
-```text
-CLAUDE.md
-```
-
-其中 `CLAUDE.md` 可以直接導入共享規則：
+把 `constitution-skill/` 複製到目標項目的 `.claude/skills/` 資料夾。共享項目說明時，`CLAUDE.md` 可以用這一行讀取：
 
 ```markdown
 @AGENTS.md
-
-## Claude Code
-
-- Read the governance docs before implementation.
-- Ask before changing risky surfaces.
 ```
+
+安裝後開一個新對話，檢查技能是否可用。已有安裝能正常使用時，先核實工具支援的位置，再決定是否遷移，不必重複複製。
 
 ## 最簡單的使用方式
 
-直接把你的想法告訴 agent：
+把下面的例子換成你的想法即可：
 
 ```text
-我想做一個 SaaS 工具，幫小團隊追蹤客戶反饋、自動總結需求、生成開發任務。
-我還不知道技術棧、資料庫、API 應該怎樣設計。
-請先用 constitution-skill 做前置治理，不要急着寫程式碼。
+我想做一個給小團隊用的客戶意見收集工具，能整理大家最常提的需求。
+我不懂設計技術方案。
+請用 constitution-skill 先幫我說清楚第一版做甚麼、不做甚麼，
+把計劃儲存在項目裏，再列出第一個小任務和檢查方法。
+需要我決定的地方，請用淺白文字解釋；先不要寫應用程式碼。
 ```
 
-理想輸出不是一堆程式碼，而是：
+你會得到一份能查看和修改的項目計劃，以及下一步任務。一般項目的檔案通常放在 `docs/` 下；小型個人項目可能只需要 `AGENTS.md` 和 `docs/PLAN.md`。
 
-```text
-docs/SPEC.md
-docs/ARCH.md
-docs/RULES.md
-docs/CONTRACTS/README.md
-docs/TASKS/001-bootstrap-feedback-inbox.md
-AGENTS.md
-CLAUDE.md
-.cursor/rules/project-governance.mdc
-.claude/rules/project-governance.md
-```
+先看看它有沒有理解你的意思，尤其是「暫時不做甚麼」和「怎樣算完成」。不對的地方，直接讓 AI 改。
 
 ## 文件生成之後，怎樣真正開始實現？
 
-當前置治理檔案已經生成，不要直接對智能體說「把整個 app 做出來」。這樣項目很容易再次失控。正確做法是：把第一個任務檔案當成由規劃進入實現的橋。
+確認計劃後，先做第一個小任務。可以直接對 AI 說：
 
-1. 打開第一個任務。
+```text
+請找到計劃裏的第一個任務，向我說明它要實現甚麼。
+按照我們已經確認的範圍完成它，執行相應檢查。
+如果需要新增重要決定或超出範圍，先告訴我原因。
+完成後，請用淺白文字說明做了甚麼、檢查結果，以及我該怎樣試用。
+```
 
-   通常由類似這個檔案開始：
+每完成一個任務，看三件事：
 
-   ```text
-   docs/TASKS/001-bootstrap-feedback-inbox.md
-   ```
+1. 結果是不是你想要的，有沒有順手加了不需要的功能？
+2. AI 實際做了哪些檢查，還有甚麼未檢查？
+3. 新做出的重要決定，是否已經寫回項目檔案？
 
-   這個檔案應該只描述一個細小、清楚、方便 review 的實現切片。
-
-2. 讓一個編碼智能體只實現這個任務。
-
-   可以這樣說：
-
-   ```text
-   Read AGENTS.md, docs/SPEC.md, docs/ARCH.md, docs/RULES.md,
-   and docs/TASKS/001-bootstrap-feedback-inbox.md.
-
-   Implement only this task.
-   Do not change public APIs, database schemas, auth, billing,
-   or destructive behavior unless the task explicitly says so.
-
-   Run the listed verification checks.
-   Then summarize files changed, checks run, risks, and what needs review.
-   ```
-
-3. 做完之後先 review，再做下一個任務。
-
-   你可以用 Cursor、Claude Code、Codex review mode，或者自己人工檢查：
-
-   - diff 是否符合任務？
-   - 智能體有沒有改到範圍外的檔案？
-   - 有沒有測試或驗證步驟？
-   - 有沒有改變架構、契約、產品決策？
-
-4. 把長期有用的新發現寫回檔案。
-
-   如果實現過程中發現了之後還會用到的規則、介面、架構選擇或產品澄清，就更新：
-
-   ```text
-   docs/SPEC.md
-   docs/ARCH.md
-   docs/RULES.md
-   docs/CONTRACTS/
-   AGENTS.md
-   CLAUDE.md
-   .cursor/rules/
-   .claude/rules/
-   ```
-
-5. 再進入下一個小任務。
-
-   循環很簡單：
-
-   ```text
-   選擇一個任務
-   -> 實現它
-   -> 執行檢查
-   -> review diff
-   -> 必要時更新長期文件
-   -> 選擇下一個任務
-   ```
-
-對新手來說，最安全的規則是：
-
-> 一次只做一個任務，一次只讓一個智能體主實現，一次 review 之後再繼續。
+可以請另一個 AI 或工程師檢查改動，再繼續下一項。寫程式的許可不自動等於上線或刪除正式資料的許可，這些操作按你們約定的權限處理。
 
 ## 按產品形態組合預設方案
 
-skill 唔再要所有產品只套同一份空白模板，而係組合治理內容：
+你不需要挑選內部模板。告訴 AI 你要做的是客戶記錄、審批流程、聊天助手，還是只在自己電腦上執行的小工具，它會選取相關說明。
 
-```text
-項目模式
-+ 基礎 profile（例如記錄型事務系統）
-+ 能力模組（身份權限、LLM 邊界、持久化工作流）
-+ 可選嘅已覆核技術 recipe
--> 項目自己嘅 SPEC / ARCH / RULES / CONTRACTS / TASKS
-```
+項目已有技術方案時，優先沿用。新項目才會參考內置建議：例如網站可考慮 TypeScript/PostgreSQL，本地個人工具可考慮 Python/SQLite。它會解釋為甚麼適合你，並記錄需要調整的地方。
 
-當項目冇既有技術限制時，內置 recipe 會為部署型 Web 產品推薦
-TypeScript/PostgreSQL，為單機本地工具推薦 Python/SQLite。佢哋係可以
-覆核嘅預設方案，唔係永久規則；生成嘅 `ARCH.md` 會記錄所用 recipe 同
-所有偏離項。SQLite 預設先用關係查詢同 FTS5，向量檢索只係按需要升級。
+這些是起點，具體選擇仍取決於你的需求。
 
 ## 核心原則
 
-```text
-Human owns intent.
-Agents implement bounded work.
-Review layers inspect diffs.
-Durable knowledge belongs in files.
-Disposable plans can be replaced.
-```
-
-中文解釋：
-
-```text
-人類定義意圖。
-智能體只做有邊界的改動。
-review 工具檢查 diff。
-長期知識寫進檔案。
-一次性執行計劃可以丟掉。
-```
+你決定要解決甚麼問題；AI 按確認的範圍做事；每一步都要檢查。日後還會用到的重要說明，儲存在項目裏。
 
 ## 倉庫結構
+
+<details>
+<summary>展開檔案目錄和開發者參考資料</summary>
 
 ```text
 .
@@ -393,35 +255,30 @@ review 工具檢查 diff。
    │  └─ examples/
    │     └─ feedback-inbox/            # 完整填好的樣例項目
    └─ scripts/
-      └─ check-governance.sh           # 漂移與缺失段落檢測腳本
+      ├─ check-governance.sh           # 檢查項目說明是否有遺漏
+      └─ test_check_governance.py       # 檢查腳本的自動測試
 ```
+
+</details>
 
 ## 關於那條校驗警告（WARN）
 
-skill 自帶一個細小的校驗腳本 `constitution-skill/scripts/check-governance.sh`，用嚟掃描項目入面嘅治理檔案有冇常見問題。它會輸出三種結果：
+技能附有一個檢查腳本，幫助找出項目說明中的遺漏：
 
-- `ERROR` —— 真係有問題（例如某個任務檔案漏咗 `## Verification` 段落），呢樣會阻斷「完成」。
-- `WARN` —— 善意提醒，值得睇一眼，但唔會阻斷。
-- `OK` —— 通過。
+- `ERROR`：有需要修正的問題，例如任務沒有寫檢查方法。
+- `WARN`：需要留意的提醒，由你或 AI 判斷怎樣處理。
+- `OK`：本次文檔結構檢查未發現錯誤。
 
-當你攞佢去跑自帶樣例（或者你自己嘅項目）時，多數會見到一條咁嘅 `WARN`：
+**通過這項檢查，不代表軟件已經測試通過或可以上線。** 它不會替你執行任務中的命令，也不檢查輕量模式的 `docs/PLAN.md`；這些需要另外核實。沒有找到檔案時，它會明確提醒。
 
-```text
-WARN   Repeated lines across adapter files (top 5). Consider keeping AGENTS.md canonical:
+樣例中的「規則重複」警告，意思是有些說明在多個工具檔案裏各寫了一遍。舊項目可以保留確有用途的副本，但修改時要保持一致；新項目優先共用 `AGENTS.md`。
+
+如果你不熟悉命令，讓 AI 執行並解釋結果即可。維護本技能的開發者可以執行：
+
+```bash
+bash constitution-skill/scripts/check-governance.sh constitution-skill/assets/examples/feedback-inbox
+python3 constitution-skill/scripts/test_check_governance.py
 ```
-
-**呢個係預期之內，而且我哋係故意保留嘅。** 通俗啲解釋：
-
-Cursor 同 Claude Code 各自讀自己嘅規則檔案——Cursor 讀 `.cursor/rules/*.mdc`，Claude Code 讀 `.claude/rules/*.md`。呢個係兩個工具嘅兩個唔同檔案，所以有幾條重要嘅安全規則（例如「唔好將原始 email 地址寫入 log」或者「改資料庫結構、認證、計費之前要先問人類」）會喺兩個檔案各寫一份。腳本見到呢啲重複行，就提你一提。
-
-我哋**故意唔刪**呢啲重複，原因係：
-
-- 將安全規則直接寫喺每個工具自己嘅檔案入面，可以保證：無論你用邊個智能體，呢條規則都實實在在擺喺佢面前。
-- 如果為咗「去重」，淨係叫每個工具寫一句「見 AGENTS.md」，咁呢條規則就要靠工具去載入 `AGENTS.md` 先睇到。但唔係每個工具、每個版本都會自動載入 `AGENTS.md`，萬一冇載入，關鍵安全規則就會靜雞雞咁消失——呢樣比多寫幾行重複更差。
-
-所以呢條 `WARN` 請當佢係「設計上已經接受」。唯一要記住嘅係：如果你改咗某條重複規則嘅其中一處，記得連另一處都一齊改，唔好等佢哋慢慢變到唔一致。
-
-> 一句話原則：`ERROR` 一定要先修好先算任務完成；`WARN` 係建議——睇一睇，再自己判斷。而呢條「重複」 `WARN`，係我哋已經決定接受嗰一類。
 
 ## 授權
 

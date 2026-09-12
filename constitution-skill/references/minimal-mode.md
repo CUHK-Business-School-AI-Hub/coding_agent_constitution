@@ -129,7 +129,7 @@ The flow is identical in shape to standard mode, just shorter:
 3. After implementation, append to `Decisions Log` if anything irreversible happened.
 4. Move next item up from `Backlog` into `Current Slice`.
 
-The skill's standard rules still apply: ask before changing public APIs, auth, schemas, billing, destructive ops, deployment. In minimal mode those usually do not exist, so the constraint is light by default.
+The skill's standard approval rules still apply. An explicitly approved task covers its stated implementation scope; ask about new or expanded decisions, not the same decision again. Production deployment and destructive production operations still need the agreed execution permissions.
 
 ## What You Lose
 

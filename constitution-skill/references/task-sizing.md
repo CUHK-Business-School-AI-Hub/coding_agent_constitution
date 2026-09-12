@@ -2,9 +2,9 @@
 
 Use this guide to keep bounded tasks small enough for one agent pass and one review pass. A "task" here means one `docs/TASKS/NNN-*.md` file.
 
-## Hard Limits
+## Sizing Signals
 
-A task is too large if any of these are true. Split it.
+Use these signals to estimate review effort. They are starting points, not hard limits.
 
 | Signal | Limit |
 | --- | --- |
@@ -16,7 +16,7 @@ A task is too large if any of these are true. Split it.
 | Verification commands | > 3 distinct commands |
 | Distinct review concerns | > 1 (e.g., auth AND payments) |
 
-These are guidelines, not laws. Crossing one signal is acceptable. Crossing two is a split candidate. Crossing three means split now.
+Crossing one signal may be acceptable. Crossing two suggests splitting. Crossing three requires splitting or a documented reason why one atomic change is safer. Run all checks required by the change even when there are more than three commands.
 
 ## Soft Limits
 
@@ -94,17 +94,18 @@ Long-running migrations become a series of small, reversible tasks.
 
 ## When You Cannot Split Further
 
-Some tasks legitimately need more lines. Acceptable reasons:
+Some tasks legitimately exceed these signals. Acceptable reasons:
 
 - Generated code, schema diff, or vendored file.
 - Single mechanical rename across many files.
+- An API, schema, and implementation change that must remain atomic to preserve correctness.
 - One large fixture or seed dataset.
 
 In those cases:
 
 - Add a `## Size Justification` section to the task.
 - Quote which limit was crossed and why.
-- Ask Cursor or a human reviewer to spot-check rather than line-by-line review.
+- Ask the reviewer to verify the invariant and rollback boundary; mechanical or generated changes may be spot-checked.
 
 ## Interface Clarity
 
@@ -130,7 +131,7 @@ Each task should have 2-6 acceptance criteria. Fewer means under-specified. More
 
 ## Verification Sizing
 
-Each task should have 1-3 verification commands. Examples of good verification commands:
+Aim for 1-3 verification commands; include more when needed for correctness. Examples of good verification commands:
 
 - `npm test -- src/feedback/api.test.ts`
 - `pytest tests/test_feedback_repo.py -x`

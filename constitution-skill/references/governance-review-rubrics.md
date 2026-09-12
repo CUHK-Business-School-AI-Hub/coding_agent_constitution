@@ -13,7 +13,7 @@ Blocking:
 - Placeholder text remains outside explicit `Open Questions`: `TBD`, `TODO`, `<placeholder>`, `as discussed`, `implement later`.
 - A requirement depends on hidden chat context instead of file content.
 - Two governance files contradict each other on product behavior, module ownership, contracts, or approval boundaries.
-- A risky decision affects data models, public APIs, auth, payments, destructive behavior, compliance, or production deployment without explicit human confirmation.
+- A new or expanded risky decision affects data models, public APIs, auth, payments, destructive behavior, compliance, or production deployment without explicit human confirmation. Existing task approval covers only its stated scope.
 
 Advisory:
 - The document repeats generic engineering advice instead of project-specific decisions.
@@ -34,7 +34,7 @@ Advisory:
 ## ARCH.md
 
 Blocking:
-- Product Shape is missing or does not name the selected base profile, modules, recipe, and deviations.
+- In Standard or Retrofit mode, Product Shape is missing or does not name the selected base profile, modules, recipe, and deviations.
 - Module boundaries omit ownership or `Must Not Own` constraints.
 - Interfaces are named in prose but not captured in `CONTRACTS/` when another module, app, team, or agent depends on them.
 - A non-obvious architecture, data, deployment, or module-boundary choice lacks considered approaches and a recommendation.
@@ -75,7 +75,7 @@ Blocking:
 
 Advisory:
 - Acceptance criteria exceed six items, suggesting the task should be split.
-- Handoff notes do not name what Cursor or the human should review.
+- Handoff notes do not name what the reviewer or the human should check.
 
 ## AGENTS.md And Tool Adapters
 

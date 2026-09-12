@@ -1,4 +1,6 @@
 # AI-Native Dev Workflow
+
+> Historical design note: the Codex/ Cursor role split below is one example, not a requirement. For current behavior and setup, use [README](README.md) and [SKILL.md](constitution-skill/SKILL.md).
 **Codex for implementation. Cursor for review. Human for control.**
 
 ## Core Principle
