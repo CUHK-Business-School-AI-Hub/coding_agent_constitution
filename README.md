@@ -16,6 +16,12 @@
 
 ---
 
+## Recent Updates - 2026-09-14
+
+- Clearer skill selection: small, well-defined edits no longer enter the planning workflow first.
+- Fewer unnecessary questions: reuse agreed decisions and compare alternatives only when useful.
+- Clearer stopping points: planning stays planning; authorized implementation continues through its agreed checks. Unrelated old issues are reported separately.
+
 ## Recent Updates - 2026-09-12
 
 - More reliable checks: fixed cases where incomplete task documents could pass, and added regression tests.

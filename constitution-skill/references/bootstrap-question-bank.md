@@ -1,6 +1,6 @@
 # Bootstrap Question Bank
 
-Use these questions when the user has a vague idea and the project lacks durable governance assets. Ask only the smallest useful set; do not interrogate the user with every question.
+Use these questions when the user has a vague idea and the project lacks durable governance assets. Ask only unanswered questions whose answers could change the result. There is no minimum count; reuse existing answers and do not treat this list as a questionnaire to complete.
 
 Read `product-pattern-routing.md` first. After selecting a profile and modules,
 use their focused question lists instead of asking every generic question below.

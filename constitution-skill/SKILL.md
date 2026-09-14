@@ -1,19 +1,11 @@
 ---
 name: constitution-skill
 description: >-
-  Transform vague software intent into durable repo-native governance before
-  coding, with adapters for Codex, Cursor, and Claude Code. Use for unclear
-  product ideas, incomplete technical direction, undefined architecture,
-  missing API/data contracts, unclear feature boundaries, or requests to create
-  SPEC.md, ARCH.md, RULES.md, CONTRACTS/, AGENTS.md, CLAUDE.md, agent rules, and
-  bounded TASKS. Also use to convert chat-only requirements into reusable files,
-  design cross-agent collaboration, or prepare safe reviewable implementation
-  units. Includes product-pattern routing, modules for transactional records,
-  identity/access, LLM boundaries, and durable workflows, plus reviewed
-  TypeScript/PostgreSQL web and local Python/SQLite recipes and latent
-  templates for common MVP surfaces. Supports standard greenfield, legacy
-  retrofit, and minimal solo modes. Do not use for already-scoped small code
-  changes unless governance updates are explicitly requested.
+  Turn unclear software requirements into reusable project docs and a bounded
+  next task. Use when the user needs to clarify product scope, architecture,
+  or interface agreements before implementation, or explicitly requests project
+  governance files. Skip already-scoped code changes unless governance updates
+  are requested.
 ---
 
 # Constitution Skill
@@ -24,9 +16,17 @@ Turn ambiguous software intent into durable project files before implementation.
 
 This skill follows the portable `SKILL.md` shape so it can be installed as a Codex skill, Claude Code skill, or Cursor Agent Skill. The governance assets it creates should also work when different agents rotate through the same repository.
 
+## Applicability And User Intent
+
+Check whether this workflow is needed before choosing a mode or loading references. An already-scoped code change can proceed normally without generating governance files. Merely mentioning a database, API, or coding agent does not require this skill.
+
+The user's explicit instructions take precedence over this skill's workflow guidelines and templates. Preserve the requested scope and existing project conventions; this does not override system/tool permissions or authorize unrelated actions. If the user only requests planning, produce the requested documents and stop before implementation. If implementation is also authorized, continue through its agreed verification and fixes rather than stopping at a first draft.
+
+If a skill instruction makes you pause, request confirmation, or leave authorized work unfinished, identify and link the exact file and quote the relevant rule. Explain what decision is missing, distinguish a requirement from your interpretation, and continue independent authorized work where possible.
+
 ## Modes
 
-Pick the mode that matches the project before doing anything else.
+Once the request needs governance work, choose the matching mode. For a bounded update to existing governance, preserve its structure and edit only the relevant files rather than recreating a full set.
 
 | Mode | When | Output Footprint | Reference |
 | --- | --- | --- | --- |
@@ -49,15 +49,17 @@ Keep one main editor per change, then hand off a clean review surface to the rev
 
 ## Workflow
 
-1. Discover existing context.
-   - Read durable assets if present: `SPEC.md`, `docs/SPEC.md`, `ARCH.md`, `docs/ARCH.md`, `RULES.md`, `docs/RULES.md`, `CONTRACTS/`, `docs/CONTRACTS/`, `AGENTS.md`, `CLAUDE.md`, `.cursor/rules/`, `.claude/rules/`.
+Use the steps relevant to the request; this is not a requirement to complete every phase on every invocation.
+
+1. Discover relevant context.
+   - Follow applicable agent instructions. Read `SPEC.md` for product scope, `ARCH.md` for architecture choices, `RULES.md` for project conventions, and the relevant `CONTRACTS/` entries for interfaces (using root or `docs/` paths as the repo does). Do not load every document or adapter just because it exists.
    - Identify disposable assets if present: `TASKS/`, `docs/TASKS/`, implementation notes, migration checklists, experiment logs.
    - Preserve existing project conventions and avoid overwriting durable assets without first understanding them.
 
-2. Classify the request.
-   - If the user asks for direct implementation and the task is already bounded, proceed with normal coding behavior and only update governance files if the task reveals durable knowledge.
-   - If requirements, architecture, technology choices, contracts, or acceptance criteria are unclear, pause coding and create or update governance assets first.
-   - If the user only wants planning, produce files or proposed file diffs rather than implementation code.
+2. Set the requested outcome.
+   - Identify which decisions the requested work actually needs. Fill routine reversible gaps with stated assumptions; ask about unresolved choices that materially change scope, risk, or correctness.
+   - Record consequential decisions before the implementation that depends on them. Unrelated open questions need not block useful work.
+   - For planning-only requests, completion means the requested documents are usable and material unresolved decisions are visible; it does not include building the application.
 
 3. Select the product pattern.
    - Read `references/product-pattern-routing.md` after selecting the mode.
@@ -70,7 +72,7 @@ Keep one main editor per change, then hand off a clean review surface to the rev
 4. Convert vague intent into bounded project context.
    - Capture product goals, users, non-goals, constraints, risks, and acceptance criteria in `SPEC.md`.
    - Capture architecture, module boundaries, data ownership, dependency choices, deployment assumptions, considered approaches, and tradeoffs in `ARCH.md`.
-   - For non-obvious architecture, data, deployment, or module-boundary decisions, record 2-3 viable approaches, the recommendation, and why the rejected approaches do not fit the product constraints.
+   - For non-obvious architecture, data, deployment, or module-boundary decisions, record the rationale and compare genuinely viable alternatives when they help the decision. Do not invent options to reach a count; an already-chosen or straightforward approach only needs its relevant rationale.
    - Capture coding rules, testing expectations, security/safety rails, and agent behavior in `RULES.md` and `AGENTS.md`.
    - Use `AGENTS.md` as the shared cross-agent instruction source when possible.
    - Use `CLAUDE.md` as the Claude Code adapter, usually importing `@AGENTS.md` and adding Claude-specific guidance.
@@ -86,7 +88,7 @@ Keep one main editor per change, then hand off a clean review surface to the rev
    - Point learning-minded solo founders to the relevant `references/wiki-*.md` pages after templates are applied. The wiki is for engineering understanding; it is not a substitute for bounded tasks or governance assets.
 
 5. Ask only the questions needed to remove dangerous ambiguity.
-   - Prefer 3 to 7 high-leverage questions.
+   - Ask only unanswered questions that could materially change the result; there is no minimum count. Reuse answers already in the conversation or project files.
    - Offer reasonable defaults when the user is unsure.
    - If a decision is reversible, choose a conservative default and mark it as an assumption.
    - Require explicit human confirmation for new or changed decisions affecting data models, public APIs, auth, payments, destructive operations, compliance, production deployment, or another expensive-to-change surface. An explicitly approved task already authorizes its stated implementation scope: do not ask again for the same decision. Ask when the scope or risk changes; approval to implement does not by itself authorize production deployment or destructive production operations.
@@ -120,7 +122,9 @@ Keep one main editor per change, then hand off a clean review surface to the rev
 9. Validate before declaring done.
    - Run `bash <installed-skill-directory>/scripts/check-governance.sh <project-root>` using the actual skill path; do not assume the script was copied into the generated project.
    - The script lints adapter orphans, required sections in TASKS/SPEC/ARCH/RULES, contract references, product pattern declarations, adapter duplication, and `Last Reviewed` staleness. It does not execute task commands or prove project readiness; review Minimal `docs/PLAN.md` separately. Open Questions may remain, but tasks depending on unresolved decisions are not ready for implementation.
-   - Any reported `ERROR` blocks completion; `WARN` items should be addressed or explicitly accepted in handoff notes.
+   - Fix findings introduced by this change and findings that prevent the current deliverable or its dependencies from being correct or verifiable. A pre-existing problem is not exempt if the current task depends on it.
+   - For pre-existing, unrelated findings, record the file, evidence that the issue predates the change, and why it does not affect the current task. Do not expand scope or suppress the checker result. Report completion of the scoped task separately from repository-wide status; a nonzero checker exit remains nonzero. `WARN` items need judgment, not automatic new work.
+   - Run verification appropriate to the change and required project checks. After they pass, broaden or repeat only for new changes, failures, or unresolved concerns.
 
 ## Output Contract
 
@@ -193,47 +197,7 @@ Disposable assets:
 
 ## Bounded Task Format
 
-Use this shape for every implementation task:
-
-```markdown
-# Task: <action-oriented title>
-
-## Goal
-<one outcome>
-
-## Source Context
-- <SPEC/ARCH/RULES/CONTRACTS links or sections>
-
-## Scope
-- Touch: <files/modules>
-- Do not touch: <files/modules/APIs/schemas>
-
-## Interfaces
-- Consumes: <APIs/schemas/events/files/CLI/functions or None>
-- Produces: <APIs/schemas/events/files/CLI/functions or None>
-- Public contracts touched: <CONTRACTS paths or None>
-- Downstream tasks relying on this: <task ids or None>
-
-## Requirements
-- <behavioral requirement>
-
-## Acceptance Criteria
-- <observable outcome>
-
-## Verification
-- Command: <exact command>
-- Expected evidence: <exit status/output/assertion>
-
-## Governance Drift Check
-- SPEC changed? <yes/no + why>
-- ARCH changed? <yes/no + why>
-- CONTRACTS changed? <yes/no + why>
-- RULES/AGENTS changed? <yes/no + why>
-
-## Handoff Notes
-- Reviewer should check: <architecture/risk hotspots>
-- Human should decide: <open product/merge/risk decisions>
-```
+Use [the task template](assets/governance-templates/TASK.md) when creating a task. Fill its goal, source context, allowed scope, consumed/produced interfaces, acceptance criteria, verification commands and expected evidence, governance drift, and handoff notes. Use `None` for genuinely absent interfaces.
 
 ## Quality Bar
 
@@ -243,14 +207,14 @@ Before finishing, check:
 
 - Major requirements are written in files, not only in chat.
 - Product shape, selected modules, recipe, and deviations are explicit in `ARCH.md` (or `docs/PLAN.md` in Minimal mode).
-- Non-obvious architecture or deployment choices include considered approaches and a recommendation.
+- Non-obvious architecture or deployment choices include their rationale and any alternatives needed for an informed decision.
 - Every bounded task points to durable source context.
 - Every bounded task states interfaces, verification evidence, and governance drift expectations.
 - Risky decisions are explicit and assigned to the human.
 - Contracts exist before implementation when interfaces matter.
 - Repeated standards are promoted into persistent rules.
 - Codex, Cursor, and Claude Code each have a readable entrypoint into the same governance source of truth.
-- `scripts/check-governance.sh` reports zero `ERROR` items.
+- No unresolved findings introduced by this change or affecting its deliverable remain. Report any unrelated baseline findings separately with evidence; do not describe a failing repository check as passing.
 
 ## Anti-Patterns To Avoid
 

@@ -7,6 +7,10 @@ Use these rubrics after creating or changing governance assets. The goal is to c
 - Blocking: prevents a fresh agent from implementing or reviewing safely.
 - Advisory: improves clarity or maintainability but does not block the next bounded task.
 
+Apply these checks to the requested deliverable and its dependencies. Fix findings introduced by the change and any existing issue that prevents this task from being correct or verifiable. Report pre-existing, unrelated findings separately with file references and baseline evidence; do not repair unrelated areas or suppress a failing check. A scoped task may be complete while a repository-wide check still fails, but state both outcomes accurately.
+
+Respect explicit user scope. For a new full governance set, all requested assets are in scope. If a rule requires pausing, identify its file and text and explain the missing decision.
+
 ## Universal Checks
 
 Blocking:
@@ -37,10 +41,10 @@ Blocking:
 - In Standard or Retrofit mode, Product Shape is missing or does not name the selected base profile, modules, recipe, and deviations.
 - Module boundaries omit ownership or `Must Not Own` constraints.
 - Interfaces are named in prose but not captured in `CONTRACTS/` when another module, app, team, or agent depends on them.
-- A non-obvious architecture, data, deployment, or module-boundary choice lacks considered approaches and a recommendation.
+- A non-obvious architecture, data, deployment, or module-boundary choice lacks a rationale, or omits viable alternatives needed to make an informed decision. Do not require a fixed number of options or reopen a settled decision without new evidence.
 
 Advisory:
-- Tradeoffs omit rejected alternatives.
+- Tradeoffs omit relevant rejected alternatives when such alternatives exist.
 - Operational concerns omit backups, migrations, failure handling, or security where relevant.
 
 ## RULES.md

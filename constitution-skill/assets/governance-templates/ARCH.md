@@ -39,7 +39,7 @@ Describe important entities, ownership, and lifecycle rules.
 
 ## Considered Approaches
 
-Use this section for non-obvious architecture, data, deployment, or module-boundary choices. For straightforward choices, write `Not needed: <reason>`.
+Record the rationale for non-obvious architecture, data, deployment, or module-boundary choices. Compare genuinely viable alternatives when useful; do not invent options to fill this template. Remove unused alternative sections. For straightforward or already-settled choices, record the relevant rationale without reopening the decision.
 
 ### Recommended: <approach>
 

@@ -32,7 +32,7 @@
 - Keep implementation tasks bounded.
 - Follow the approval boundaries in `AGENTS.md`. Existing task approval covers its stated scope; ask about new or expanded decisions.
 - Add or update tests for changed behavior.
-- Do not claim done, fixed, passing, or complete without fresh verification evidence: command, exit status, and relevant output summary.
+- Follow the verification and baseline-finding rules in `AGENTS.md`; report actual evidence and never describe a failing check as passing.
 - Summarize checks run, governance docs changed or not changed, and residual risk after each change.
 
 ## Review Rules

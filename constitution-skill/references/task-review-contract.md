@@ -59,7 +59,7 @@ Advisory:
 - Important: missed requirement, fragile implementation, missing regression test, architecture-boundary violation, or unverifiable acceptance criterion.
 - Minor: naming, small duplication, documentation clarity, or polish that does not change correctness.
 
-Critical and Important findings block task completion. Minor findings may be recorded for later unless they accumulate into real risk.
+Critical and Important findings introduced by the change or affecting its deliverable or dependencies block task completion. Report pre-existing, unrelated findings separately with baseline evidence and their lack of impact on this task; do not reclassify relevant failures as unrelated. Preserve actual check exit statuses. Minor findings may be recorded for later unless they accumulate into real risk.
 
 ## Review Output Shape
 

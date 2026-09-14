@@ -145,7 +145,7 @@ for arch_path in docs/ARCH.md ARCH.md; do
     check_required_sections "$arch_path" \
         "Architecture Summary" "Module Boundaries" "Dependency Rules"
     if ! grep -Eq '^## Considered Approaches$' "$arch_path"; then
-        report_warn "$arch_path has no Considered Approaches section. Add 2-3 approaches for non-obvious choices or state why it is not needed."
+        report_warn "$arch_path has no Considered Approaches section. Record the rationale and any useful alternatives for non-obvious choices, or state why it is not needed."
     fi
 done
 
