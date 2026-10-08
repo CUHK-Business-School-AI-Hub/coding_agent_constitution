@@ -2,7 +2,7 @@
 
 # Coding Agent Constitution
 
-**把任务说清楚，选好工作结构，再检查 AI 交付的结果。**
+**让 AI 先听懂你要什么再动手，做完了也查得清楚。**
 
 [English](README.md) · [繁體中文（香港）](README_HK.md)
 
@@ -14,137 +14,84 @@
 
 </div>
 
----
-
-## 最近更新 - 2026-10-08
-
-- 新增 Flash，作为日常工作、研究、文档、软件和可复用能力的统一轻量入口；Standard 保留完整软件项目流程。
-- 更新 Claude Code 兼容说明：优先共用 `AGENTS.md`，先检查工具实际读取了什么，再按需添加简短的兼容入口。
-- 统一入门说明：文件数和代码行数用于提醒检查难度，不再强制拆分任务；一起验证更安全的相关改动，可以保持完整。
-- 保留现有工作方式：沿用已确认的决定，自选实现和检查工具，明确验证要求与安全边界。
-
-## 最近更新 - 2026-09-14
-
-- 更准确地判断何时需要这个技能：已经说清楚的小修改，不必先走一遍规划流程。
-- 少问重复问题：已有决定直接沿用，有实际取舍时才比较方案。
-- 更清楚地判断何时完成：只要规划就不写代码；已同意实施的任务，会做到约定的检查完成。与当前任务无关的旧问题单独说明。
-
-## 最近更新 - 2026-09-12
-
-- 检查更可靠：修复了“任务漏写重要段落，也可能显示通过”的问题，并加入自动测试。
-- 使用更顺畅：已经确认过的任务，不再为同一个决定反复询问；实现和检查可以交给你常用的 AI 工具。
-- 安装说明已更新：通用规则尽量只写一份，需要时才增加工具专用文件。
-- 文档更好读：减少术语，补充普通人能直接复制使用的提示词。
-
-## 最近更新 - 2026-06-30
-
-- 做重要技术选择时，会写清楚有哪些方案、推荐哪个，以及以后是否容易调整。
-- 生成文件后，会检查有没有说不清楚、互相矛盾或遗漏的地方。
-- 每个任务会写明：要做什么、哪些地方可以改，以及怎样检查是否完成。
+> 最近更新（2026-10-08）：新增轻量的 Flash 模式，重写了新手入门说明，还新增了一份新手词典。更早的变化见[更新记录](#更新记录)。
 
 ## 这是什么？
 
-这是一个给 **Codex、Cursor、Claude Code** 使用的免费开源技能（Agent Skill）。你可以把它理解成一份给 AI 用的工作指南：Standard 用于完整软件项目规划，Flash 用于不同工作中的轻量任务。
+Coding Agent Constitution 是一个免费开源的技能（skill），给三款 AI 编程工具用：Codex（OpenAI 出品）、Cursor（内置 AI 的代码编辑器）和 Claude Code（Anthropic 出品）。这几款工具可以打开你电脑上某个文件夹里的文件，帮你修改、运行命令、写代码。技能就是一包写给 AI 看的说明，工具遇到相关的请求时会去读它。你可以把它想成新同事入职第一天，你递过去的那本“我们团队是这样干活的”。
 
-做 Standard 软件项目时，比如你说：
+装上这个技能以后，AI 在写代码之前会先做些准备：问清楚你想达到什么目的，把你的回答写进项目文件夹，再把工作拆成一个个小步骤，每一步都带着检查办法。下周你回来接着做、开一个新对话，或者换一个 AI 工具，都可以从这些记录接上，不用全靠你自己记着。
 
-> 我想做一个工具，帮小团队收集客户意见，但不知道从哪里开始。
+你不需要会写代码。你要做的，是说清楚想要什么，读一读 AI 写回来的东西，在重要的地方拍板。
 
-它会先帮你理清三个问题：**给谁用、先做什么、做到怎样算完成**，再把答案保存在项目文件夹里。以后换一个聊天、换一个 AI，或者交给工程师，都能接着做。
+## 它能帮你解决什么问题？
 
-Standard 模式通常会得到这些文件，你不需要先学会它们的名字：
+如果你试过直接让 AI “帮我做出来”，下面这些情况你可能不陌生：
 
-| 文件 | 用人话说 |
+- 想法还没想清楚，它已经做了一大堆，还顺手加了你没要的功能。
+- 每开一个新对话都从零开始，背景又得从头讲一遍。
+- 它说“做好了”，你却不知道它到底检查过什么。
+- 过了几个星期，没人记得某个东西当初为什么这么做，包括你自己。
+
+这个技能把计划和重要决定写成普通的文本文件，放在你的项目里。你自己、一个新对话、另一个 AI 工具，或者以后加入的工程师，打开这些文件就能知道事情做到了哪一步。
+
+## 按需要选择工作方式
+
+这个技能有两种工作方式，也知道什么时候不该插手。
+
+| 你的需求 | 会发生什么 | 例子 |
+| --- | --- | --- |
+| 一个已经说清楚的小改动 | AI 直接改，做相应的检查，不走规划流程 | “把注册页上的错别字改掉。” |
+| Flash：日常工作，需要先理一理 | AI 先写一份简短的任务约定，只补充这个任务用得上的结构 | “帮我们团队比较三种收集客户意见的方法。” |
+| Standard：一个正式的软件项目 | AI 先把想法问清楚，写出整套项目文档，再规划一个个小任务 | “我想做一个帮小团队收集客户意见的工具，但不知道从哪儿开始。” |
+
+这些名字不用记。说清楚你要什么、希望 AI 帮到什么程度，它会自己选一种方式，并用一两句话告诉你为什么。如果你手上已经有一套代码，但没有这些文档，还有一个 Retrofit（补建）模式：从你马上要改的那部分代码开始，一点点把文档补上。
+
+### Flash 是怎样工作的
+
+Flash 适合日常工作、调研、写文档、做小软件，也适合做可以反复使用的能力，比如技能。它从一份简短的任务约定开始（文档里叫 task contract），写清楚这几件事：
+
+- 目标是什么，结果给谁用
+- 背景情况，要用到哪些材料
+- 哪些在范围内，哪些不做
+- 限制条件，比如截止时间、格式、预算
+- 做到什么程度算完成，怎么检查
+- 还没想清楚的问题，以及暂时的假设
+
+约定定下来的是“怎样才算成功”。至于怎么做到，可以边做边调整，但不能悄悄降低标准，也不能为了迁就做法把目标换掉。
+
+根据任务的需要，AI 可能再补充下面一种或几种细节：
+
+- 行为：用在会反复运行的东西上，比如脚本、软件功能或技能。输入什么、输出什么、举几个例子、遇到错误的输入怎么办。
+- 证据与判断：用在调研和给建议上。要回答哪些问题、用哪些来源、按什么标准比较、结论有几成把握。
+- 内容与结构：用在文档、幻灯片和消息上。写给谁看、最想说的是什么、提纲和格式。
+- 行动：用在真正要改动某样东西的时候，比如改会议时间、更新一条记录、发出一份报告。具体改什么、事先要满足什么条件、按什么顺序做、怎么确认真的改好了。
+
+一个任务可以同时用到好几种，而且哪一种都不要求单独建文件。很多时候，在对话里说清楚就够了。如果是持续进行的项目，通常从一个 `AGENTS.md` 文件加一份简短的任务简报开始，简报常放在 `docs/PLAN.md`。
+
+想了解更多，可以看 [Flash 指南](constitution-skill/references/flash-mode.md)、[组件说明](constitution-skill/references/flash-components.md)和[场景示例](constitution-skill/references/flash-scenarios.md)（这三份是英文）。可选的起步模板有 [AGENTS.md](constitution-skill/assets/flash-templates/AGENTS.md) 和 [PLAN.md](constitution-skill/assets/flash-templates/PLAN.md)。
+
+### Standard 是怎样工作的
+
+Standard 是做软件项目的完整流程。AI 会先问你要解决什么问题、给谁用、第一版必须做到什么，然后把下面这类文件写进你的项目，一般放在 `docs/` 文件夹里。这些文件名不用提前背。
+
+| 文件 | 里面写什么 |
 | --- | --- |
-| `SPEC.md` | 要做什么，暂时不做什么 |
-| `ARCH.md` | 各部分怎么配合，为什么这样选技术 |
-| `RULES.md` | 开发时要遵守的规则 |
-| `CONTRACTS/` | 不同部分交换数据时，约定好格式和行为 |
-| `TASKS/` | 下一步要完成的小任务，以及检查方法 |
-| `AGENTS.md` | 给 AI 的项目说明 |
+| `SPEC.md` | 要做什么、给谁用、这一版先不做什么 |
+| `ARCH.md` | 各个部分怎么配合，为什么选这些技术 |
+| `RULES.md` | 每次改动都要遵守的规则，包括测试和安全方面的 |
+| `CONTRACTS/` | 各部分之间传递数据的精确约定，比如接口和数据库的格式 |
+| `DECISIONS/` | 很难反悔的大决定，以及当时比较过哪些方案 |
+| `TASKS/` | 接下来的一个个小任务，每个都带着检查办法 |
+| `AGENTS.md` | 写给所有 AI 工具的项目说明 |
 
-文件数量会按项目情况调整，Flash 可以采用下文所述的更轻量结构。需要时，还会为你使用的工具生成读取说明。
+具体有哪些文件，看项目情况而定。想看看写好之后是什么样子，可以打开 [Feedback Inbox](constitution-skill/assets/examples/feedback-inbox/)，这是一个所有文件都已填好的样例项目。
 
-想了解这些概念，可以看[第一次做软件产品的入门说明](constitution-skill/references/rookie-onboarding_CN.md)，也可以直接看下面的快速开始。
+## 快速开始
 
-## 为什么需要它？
+先在你的 AI 编程工具里打开项目文件夹。项目文件夹就是你电脑上的一个普通文件夹，用来放这个项目的所有文件。如果是从零开始，新建一个空文件夹就行。
 
-直接请 AI 写代码，有时会遇到这些问题：
-
-- 需求还没想清楚，就已经做了很多功能。
-- 换一个聊天或工具，又要从头解释。
-- 不知道 AI 按什么要求做，也不知道怎样检查结果。
-
-Standard 先把需求和重要决定写下来，再拆成小任务。每做完一步，检查结果，有用的新发现也写回项目文件。
-
-## 适合谁？
-
-Flash 也适用于日常工作、研究、文档和可复用能力。Standard 适合已经有一个软件想法，想请 AI 帮忙实现、又希望事情保持清楚的人，例如：
-
-- 准备启动新项目的产品经理。
-- 做个人项目、以后可能找人合作的你。
-- 想把工作经验做成工具的设计师、分析师或运营人员。
-- 不会写代码，但希望能看懂计划、提出修改意见的创业者。
-- 想让 AI 按明确要求工作的工程师。
-
-你负责说明需求、检查结果，并决定重要取舍；AI 帮你整理文件和拆分任务。
-
-## 它适合什么时候用？
-
-适合在想法还不清楚、不知道先做哪一步，或者准备把项目交给别人接手时使用。
-
-如果只是改错别字、修一个已经明确的小问题，直接让 AI 修改就好，不需要每次重新整理整个项目。重要的产品选择仍由你决定。
-
-## 选择 Standard 或 Flash
-
-- **Standard** 是现有的完整软件项目流程：澄清需求、记录架构和规则、定义接口，再实现并检查范围明确的任务。需要这套完整项目结构时使用。
-- **Flash** 是日常工作、研究、文档、软件和技能等可复用能力的统一轻量入口。任务需要理清要求或整理工作结构，但用不到 Standard 全套文件时使用。
-- **已经明确的小任务**直接执行并做相应检查，不必先进入任一种模式的启动问答。
-
-Flash 先整理一份简短的任务约定：目标、使用者或读者、背景、范围、约束、可观察的完成标准，以及重要未知项。预期结果与实施计划分开写：做法可以随新发现调整，完成与否仍按约定的结果检查。
-
-AI 按任务需要选择并组合相关组件：
-
-- **行为：**输入、输出、示例和预期行为
-- **证据与判断：**来源、比较标准、不确定性，以及得出结论的方法
-- **内容与结构：**读者、组织方式、必需内容和格式
-- **行动：**有用的步骤、依赖关系和结果检查
-
-它们是一个任务中可以组合的部分，不是互斥模式，也不是必须各建一份文件。持续维护的项目默认使用 `AGENTS.md` 加一份 `PLAN.md` 或简报，常见位置是 `docs/PLAN.md`。聊天、现有任务、`SKILL.md` 或引用的 schema 也可能已经承载了所需内容；按实际需要保留文件。
-
-可先看 [Flash 指南](constitution-skill/references/flash-mode.md)、[组件说明](constitution-skill/references/flash-components.md)或[场景示例](constitution-skill/references/flash-scenarios.md)。需要项目文件时，可选用 [AGENTS.md](constitution-skill/assets/flash-templates/AGENTS.md) 和 [PLAN.md](constitution-skill/assets/flash-templates/PLAN.md) 模板。
-
-可以改用下面的 Flash 提示词：
-
-```text
-请用 constitution-skill 的 Flash 模式，帮我比较三种收集客户意见的方法。
-读者是我们的小型产品团队。使用我提供的笔记，指出重要证据的缺口。
-先明确范围和一份有用的比较应呈现什么，再按任务需要选择组件。
-把预期结果与可以随工作进展调整的实施步骤分开。
-先用当前聊天或已有简报承载；项目文件有助于复用结果时再建立。
-```
-
-## 什么时候应该停止使用它？
-
-当项目已有清楚的计划、工程师或团队能接着维护时，就不必每次都调用这个技能。已经整理好的文件可以继续使用。
-
-以后遇到新的模糊需求，再请它帮忙整理即可。
-
-## 三大智能体兼容方式
-
-**选你已经在用的工具就好，不需要同时安装三个。** 三者都可以实现任务或检查改动。
-
-| 工具 | 怎样读取项目说明 |
-| --- | --- |
-| Codex | 读取 `AGENTS.md` |
-| Cursor | 当前版本可直接读取 `AGENTS.md`；有特别需要时再加专用规则 |
-| Claude Code | 当前版本可原生发现 `AGENTS.md`；添加兼容入口前，先检查已有的 Claude 专用文件 |
-
-通用规则保存在 `AGENTS.md`，避免改了一处、忘了另一处。新项目默认使用这个共享入口。已有项目的专用规则会保留，包括仍有用途的 Claude 专用说明。[详细兼容说明](constitution-skill/references/cross-agent-compatibility.md)供需要配置工具的读者参考。
-
-## 快速开始（推荐）
-
-先打开你的项目文件夹，再把这段话发给 AI：
+然后把下面这段话发给 AI：
 
 ```text
 请安装这个仓库里的 constitution-skill 技能：
@@ -152,55 +99,11 @@ https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution
 请按我正在使用的工具选择安装位置，并检查能否找到这个技能。
 ```
 
-安装后新开一个会话，可以试用上面的 Flash 提示词，或下面“最简单的使用方式（Standard）”里的提示词。如果找不到技能，请让 AI 检查安装位置。
+装好以后，新开一个对话，让工具加载这个技能，再试试下一节的提示词。如果 AI 说找不到技能，请它查一下装到了哪里。
 
-## 可选联动 Skill：`waymark`
+## 第一句话可以这样说
 
-如果你想先通过一问一答把想法讲清楚，可以使用我们团队开发的 [Waymark](https://github.com/CUHK-Business-School-AI-Hub/waymark)。它是 `grill-me` 的变种，对非技术人士更友好：你用日常语言描述工作，它会逐个提问，帮你理清谁来做、怎么做、遇到例外怎么办，再整理成可以照着执行的说明。
-
-如果接下来想把这套流程做成软件，再交给 `constitution-skill` 整理项目计划和开发任务。Waymark 是可选辅助，不是必需安装的依赖。
-
-组合使用时可以说：
-
-```text
-先用 waymark 帮我把实际工作流程和需求问清楚，用简单的话解释需要我决定的地方。
-如果确定要做成软件，再用 constitution-skill 把确认的内容写成项目计划和第一个小任务。
-```
-
-## 如果你想自己动手安装...
-
-以下命令假设你已下载本仓库，并在仓库根目录打开终端，适用于首次安装。如果已经安装过，请让 AI 先比较版本，避免覆盖自己的修改。
-
-### Codex
-
-安装到你的个人技能目录：
-
-```bash
-mkdir -p ~/.agents/skills
-cp -R constitution-skill ~/.agents/skills/constitution-skill
-```
-
-如果只想在一个项目里使用，把技能复制到目标项目的 `.agents/skills/constitution-skill/` 即可。
-
-### Cursor
-
-把 `constitution-skill/` 复制到目标项目的 `.agents/skills/` 文件夹。这里已有 Codex 的项目副本时，当前 Cursor 版本可以共用；也仍可使用 `.cursor/skills/`。
-
-### Claude Code
-
-把 `constitution-skill/` 复制到目标项目的 `.claude/skills/` 文件夹。共享项目说明保存在 `AGENTS.md`。当前 Claude Code 支持原生发现，但项目或上级目录中已有的 Claude 入口文件可能禁用这一功能。先检查已安装版本在该项目中实际读取了什么，详见[兼容说明](constitution-skill/references/cross-agent-compatibility.md)和 [Claude Code 官方文档](https://code.claude.com/docs/en/memory#agentsmd)。
-
-仅在项目确实需要兼容入口时，才用简短的 `CLAUDE.md` 导入，并保留已有的 Claude 专用规则：
-
-```markdown
-@AGENTS.md
-```
-
-安装后新开一个会话，检查技能是否可用。已有安装能正常使用时，先核实工具支持的位置，再决定是否迁移，不必重复复制。
-
-## 最简单的使用方式（Standard）
-
-把下面的例子换成你的想法即可：
+如果要做一个正式的软件项目（Standard），把下面的例子换成你自己的想法：
 
 ```text
 我想做一个给小团队用的客户意见收集工具，能整理大家最常提的需求。
@@ -210,13 +113,23 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 需要我决定的地方，请用简单的话解释；先不要写应用代码。
 ```
 
-你会得到一份能查看和修改的项目计划，以及下一步任务。Standard 项目的文件通常放在 `docs/` 下。轻量任务或项目可以使用上面的 Flash 提示词。
+AI 会问你一些问题。回答“我不知道”完全没问题，它应该给出一个稳妥的默认选择，并把它记成“假设”。最后你会拿到一份能看懂、能修改的计划，以及第一个任务。
 
-先看看它有没有理解你的意思，尤其是“暂时不做什么”和“怎样算完成”。不对的地方，直接让 AI 改。
+继续之前，先把计划读一遍。最值得看的是两处：第一版“暂时不做什么”，以及“怎样算完成”。哪里不对，用你自己的话告诉 AI，让它改文件。
 
-## 文档生成以后，怎么真正开始实现？
+如果是轻一点的任务（Flash），可以改用这段：
 
-确认计划后，先做第一个小任务。可以直接对 AI 说：
+```text
+请用 constitution-skill 的 Flash 模式，帮我比较三种收集客户意见的方法。
+结果是给我们的小产品团队看的。请用我提供的笔记，并指出还缺哪些重要证据。
+先说清楚比较的范围，以及一份有用的比较需要讲明白什么，再按这个任务的需要选择组件。
+把“要达到的结果”和“可以边做边调整的步骤”分开写。
+先在这个对话或已有的简报里整理；如果建一个项目文件能方便以后复用，再建。
+```
+
+## 计划写好以后，怎么真正做出来？
+
+对计划满意以后，就一个任务一个任务地做。可以这样对 AI 说：
 
 ```text
 请找到计划里的第一个任务，向我说明它要实现什么。
@@ -225,25 +138,138 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 做完后，请用简单的话说明做了什么、检查结果，以及我该怎样试用。
 ```
 
-每完成一个任务，看三件事：
+AI 汇报回来以后，看三件事：
 
-1. 结果是不是你想要的，有没有顺手加了不需要的功能？
-2. AI 实际做了哪些检查，还有什么没检查？
-3. 新做出的重要决定，是否已经写回项目文件？
+1. 这是你想要的吗？有没有加了你没要的东西？
+2. 它实际检查了什么，还有什么没检查？
+3. 如果它做了新的重要决定，有没有写回项目文件？
 
-可以请另一个 AI 或工程师检查改动，再继续下一项。写代码的许可不自动等于上线或删除正式数据的许可，这些操作按你们约定的权限处理。
+进入下一个任务之前，可以请另一个 AI 工具或者工程师帮忙检查一遍改动。你同意它做某个任务，不等于同意它把东西上线，也不等于同意它删除真实数据。这些操作要按你们事先约定的权限来。
 
-## 按产品形态组合默认方案（Standard 软件项目）
+## 你和 AI 怎么分工
 
-你不需要挑选内部模板。告诉 AI 你要做的是客户记录、审批流程、聊天助手，还是只在自己电脑上运行的小工具，它会选取相关说明。
+你决定要解决什么问题，那些改起来代价很大的决定也由你来拍板。AI 负责提问、写计划、一小步一小步地做，并告诉你它检查了什么。项目文件记下所有决定，重要的东西不会只留在某个聊天窗口里。
 
-项目已有技术方案时，优先沿用。新项目才会参考内置建议：例如网站可考虑 TypeScript/PostgreSQL，本地个人工具可考虑 Python/SQLite。它会解释为什么适合你，并记录需要调整的地方。
+## 看不懂那些词？
 
-这些是起点，具体选择仍取决于你的需求。
+有两份文档是专门写给没有技术背景的人的：
 
-## 核心原则
+- [新手入门说明](constitution-skill/references/rookie-onboarding_CN.md)：一个项目大概怎么走，每个文件是干什么的，每一步可以对 AI 说什么。
+- [新手词典](constitution-skill/references/rookie-wiki_CN.md)：用几句大白话解释做应用时常见的词，从 API、数据库，到部署和 Git。
 
-你决定要解决什么问题；AI 按确认的范围做事；每一步都要检查。以后还会用到的重要说明，保存在项目里。
+遇到看不懂的词，也可以直接问 AI：“假设我从来没写过代码，用一个生活里的例子给我解释一下。”
+
+## 常见产品的默认方案
+
+你不用自己挑模板，也不用自己选技术。告诉 AI 你要做的是什么，比如客户名单、审批流程、聊天助手，或者只在自己电脑上用的小工具，技能会自动找来对应的说明。
+
+如果你的项目已经用了某些技术，AI 会优先沿用。新项目则有几个经过检查的起点，比如网站可以用 TypeScript 加 PostgreSQL，只在自己电脑上跑的小工具可以用 Python 加 SQLite。它会解释为什么适合你，并把调整记下来。这些只是起点，最后还是看你的需求。
+
+## 可选搭档：Waymark
+
+如果你想在规划软件之前，先把想法聊清楚，可以试试我们团队开发的 [Waymark](https://github.com/CUHK-Business-School-AI-Hub/waymark)。它是 `grill-me` 的一个变种，对非技术背景的人更友好。你用日常的话描述自己的工作，它一次只问一个问题：谁来做、实际怎么做、出了岔子怎么办。最后，它会整理出一份大家照着就能执行的说明。
+
+如果接下来决定把这套流程做成软件，就交给 `constitution-skill` 写项目计划和开发任务。Waymark 是可选的，不装它也能用这个技能。两个一起用时，可以这样说：
+
+```text
+先用 waymark 帮我把实际工作流程和需求问清楚，用简单的话解释需要我决定的地方。
+如果确定要做成软件，再用 constitution-skill 把确认的内容写成项目计划和第一个小任务。
+```
+
+## 用哪个 AI 工具？
+
+用你手上已经有的那个就行，不需要三个都装。哪一个都可以做任务，也可以检查改动。
+
+| 工具 | 怎样找到项目说明 |
+| --- | --- |
+| Codex | 读取 `AGENTS.md` |
+| Cursor | 当前版本会读取 `AGENTS.md`；确实需要时，再加 Cursor 专用规则 |
+| Claude Code | 当前版本可以自己找到 `AGENTS.md`；加兼容入口之前，先看看已有的 Claude 专用文件 |
+
+通用规则只写在一份 `AGENTS.md` 里，这样改一条规则时，不会在别处留下过时的副本。新项目默认用这个共享文件。已有项目里的专用规则会保留，仍然有用的 Claude 专用说明也一样。具体怎么配置，见[兼容说明](constitution-skill/references/cross-agent-compatibility.md)（英文）。
+
+## 自己动手安装
+
+上面“快速开始”里的那段话是最省事的办法。如果你想自己装，先下载这个仓库，在仓库最外层的文件夹里打开终端（就是那个输入命令的窗口）。下面的步骤适用于第一次安装。如果你之前装过，请先让 AI 比较一下两个版本，免得覆盖你自己改过的内容。
+
+### Codex
+
+装到你的个人账户下：
+
+```bash
+mkdir -p ~/.agents/skills
+cp -R constitution-skill ~/.agents/skills/constitution-skill
+```
+
+如果只想在某一个项目里用，就把技能复制到那个项目的 `.agents/skills/constitution-skill/` 文件夹。
+
+### Cursor
+
+把 `constitution-skill/` 复制到目标项目的 `.agents/skills/` 文件夹。如果这里已经有给 Codex 用的项目副本，当前版本的 Cursor 可以直接共用。放在 `.cursor/skills/` 也可以。
+
+### Claude Code
+
+把 `constitution-skill/` 复制到目标项目的 `.claude/skills/` 文件夹，共享的项目说明仍然放在 `AGENTS.md`。当前版本的 Claude Code 可以自己找到 `AGENTS.md`，但如果项目或者上级文件夹里已经有 Claude 的入口文件，这个功能可能会被关掉。所以先看看你装的版本在这个项目里实际读取了什么，详见[兼容说明](constitution-skill/references/cross-agent-compatibility.md)和 [Claude Code 官方文档](https://code.claude.com/docs/en/memory#agentsmd)。
+
+只有项目确实需要兼容入口时，才加一个简短的 `CLAUDE.md` 来导入共享文件，已有的 Claude 专用规则要保留：
+
+```markdown
+@AGENTS.md
+```
+
+装好以后，新开一个对话，确认技能可以用。如果原来的安装已经能正常工作，先查清楚工具支持哪些位置，再决定要不要挪，没必要多复制几份。
+
+## 什么时候可以不用它了？
+
+当项目已经有清楚的计划，也有工程师或团队能接手维护，就不必每次改动都调用这个技能了。它写下的那些文件会继续为项目服务。以后遇到新的、还没想清楚的需求，再请它出来帮忙整理。
+
+## 关于检查脚本（ERROR、WARN、OK）
+
+技能里带着一个检查脚本，用来找出 Standard 项目文档里漏掉的东西，比如某个任务没写检查办法。它会给出三种结果：
+
+- `ERROR`：有地方需要改。
+- `WARN`：有地方值得看一眼，由你或 AI 决定怎么处理。
+- `OK`：这次文档结构检查没有发现问题。
+
+通过这项检查，不代表软件能用、测试通过了，或者可以上线了。脚本不会去运行任务里写的命令，也判断不了 Flash 的任务约定或计划写得好不好。在 Flash 模式下（`--mode flash`），它会检查共享的说明文件和引用，并且总会多给一条 WARN，提醒你另外检查任务本身。如果一个项目文件都没找到，它也会直说。
+
+如果已有的工具专用文件重复了共享规则，或者 Claude 专用的入口文件让 Claude Code 找不到 `AGENTS.md`，脚本也可能发出警告。看看这些文件还需不需要：有用的专用规则留着，确实需要兼容入口时，用简短的导入就好。仓库里的样例只用了一份共享的 `AGENTS.md`。
+
+不熟悉命令也没关系，让 AI 帮你运行，再请它解释结果就行。维护这个技能的开发者可以运行：
+
+```bash
+bash constitution-skill/scripts/check-governance.sh constitution-skill/assets/examples/feedback-inbox
+python3 constitution-skill/scripts/test_check_governance.py
+```
+
+## 更新记录
+
+### 2026-10-08
+
+- 新增 Flash，作为日常工作、调研、文档、软件和可复用能力的统一轻量入口；Standard 保留完整的软件项目流程。
+- 为没有技术背景的读者重写了这份 README 和新手入门说明，并新增三种语言的新手词典。
+- 更新 Claude Code 兼容说明：优先共用 `AGENTS.md`，先确认工具实际读取了什么，再按需要加简短的兼容入口。
+- 文件数和代码行数改为提醒检查难度的信号，不再强制拆分任务；放在一起检查更稳妥的相关改动，可以保持完整。
+- 保留原有的工作方式：沿用已确认的决定，自己选择谁来实现、谁来检查，验证要求和安全边界照样写清楚。
+
+### 2026-09-14
+
+- 已经说清楚的小修改，不必先走一遍规划流程。
+- 少问重复的问题：已有的决定直接沿用，确实有取舍时才比较方案。
+- 什么时候停更清楚：只要规划就不写代码；已经同意实施的任务，会做到约定的检查完成为止。和当前任务无关的旧问题单独说明。
+
+### 2026-09-12
+
+- 检查更可靠：修复了“任务漏写重要段落，也可能显示通过”的问题，并加入自动测试。
+- 交接更顺：已经确认过的任务，不再为同一个决定反复询问；实现和检查可以交给你常用的 AI 工具。
+- 安装说明更新：通用规则尽量只写一份，需要时才增加工具专用文件。
+- 文档更好读：少了术语，多了没有技术背景也能直接复制使用的提示词。
+
+### 2026-06-30
+
+- 做重要技术选择时，会写清楚有哪些方案、推荐哪个，以及以后改起来难不难。
+- 生成文件之后，会检查有没有说不清楚、互相矛盾或者遗漏的地方。
+- 每个任务都会写明：要做什么、哪些地方可以改，以及怎样检查是否完成。
 
 ## 仓库结构
 
@@ -252,41 +278,49 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 
 ```text
 .
-├─ README.md
-├─ README_CN.md
-├─ README_HK.md
+├─ README.md                          # 英文说明
+├─ README_CN.md                       # 本页
+├─ README_HK.md                       # 繁体中文（香港）
 ├─ LICENSE
-├─ constitution.md
+├─ constitution.md                    # 早期设计笔记
+├─ TODO_CASE_DERIVED_EVOLUTION.md     # 等待真实项目验证的改进想法
 └─ constitution-skill/
-   ├─ SKILL.md
+   ├─ SKILL.md                        # 技能的主说明
    ├─ agents/
    │  └─ openai.yaml
    ├─ references/
-   │  ├─ rookie-onboarding.md          # 给第一次做软件产品的人的概念入门
-   │  ├─ bootstrap-question-bank.md    # 该问什么问题
-   │  ├─ cross-agent-compatibility.md  # Codex / Cursor / Claude Code 适配映射
-   │  ├─ frontier-model-guidance.md    # portable Astra / Opus authoring guidance
-   │  ├─ governance-asset-guide.md     # 长期 vs 一次性资产、提升规则
-   │  ├─ anti-patterns.md              # 常见的治理反模式
-   │  ├─ task-sizing.md                # 范围完整、可验证任务的检查信号
-   │  ├─ retrofit-mode.md              # 把治理引入 legacy 仓库
-   │  ├─ governance-evolution.md       # 版本演进、ADR、归档
+   │  ├─ rookie-onboarding.md          # 新手入门说明
+   │  ├─ rookie-onboarding_CN.md
+   │  ├─ rookie-onboarding_HK.md
+   │  ├─ rookie-wiki.md                # 新手词典
+   │  ├─ rookie-wiki_CN.md
+   │  ├─ rookie-wiki_HK.md
    │  ├─ flash-mode.md                 # 跨任务类型的轻量入口
    │  ├─ flash-components.md           # 可选、可组合的任务组件
    │  ├─ flash-scenarios.md            # 组件选择的场景示例
-   │  ├─ wiki-record-crud-apps.md      # 记录型应用工程 wiki
-   │  ├─ wiki-linear-workflows.md      # 线性 / 持久化流程工程 wiki
-   │  ├─ wiki-conversational-assistants.md # 对话助手工程 wiki
-   │  ├─ product-pattern-routing.md    # profile/module/recipe 选择
+   │  ├─ bootstrap-question-bank.md    # 该问哪些问题
+   │  ├─ cross-agent-compatibility.md  # Codex / Cursor / Claude Code 配置
+   │  ├─ frontier-model-guidance.md    # portable Astra / Opus authoring guidance
+   │  ├─ governance-asset-guide.md     # 长期文件和一次性文件、提升规则
+   │  ├─ governance-review-rubrics.md  # 生成文档的就绪检查
+   │  ├─ governance-evolution.md       # 版本演进、决策记录、归档
+   │  ├─ anti-patterns.md              # 常见的错误做法
+   │  ├─ task-sizing.md                # 范围完整、可检查的任务的提醒信号
+   │  ├─ task-review-contract.md       # 怎样检查一个做完的任务
+   │  ├─ retrofit-mode.md              # 给已有代码补建文档
+   │  ├─ product-pattern-routing.md    # profile / module / recipe 选择
    │  ├─ profile-transactional-record-system.md
    │  ├─ module-identity-access.md
    │  ├─ module-llm-boundary.md
    │  ├─ module-deterministic-workflow.md
    │  ├─ recipe-typescript-web-postgres.md
-   │  └─ recipe-local-python-sqlite.md
+   │  ├─ recipe-local-python-sqlite.md
+   │  ├─ wiki-record-crud-apps.md      # 记录型应用的工程笔记
+   │  ├─ wiki-linear-workflows.md      # 分步骤流程的工程笔记
+   │  └─ wiki-conversational-assistants.md # 对话助手的工程笔记
    ├─ assets/
-   │  ├─ flash-templates/              # 可选 AGENTS.md 和 PLAN.md 起点
-   │  ├─ governance-templates/
+   │  ├─ flash-templates/              # 可选的 AGENTS.md 和 PLAN.md 起点
+   │  ├─ governance-templates/         # Standard 空白模板
    │  │  ├─ AGENTS.md
    │  │  ├─ CLAUDE.md
    │  │  ├─ SPEC.md
@@ -297,36 +331,17 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
    │  │  ├─ CONTRACTS_README.md
    │  │  ├─ cursor-project-governance.mdc
    │  │  └─ claude-project-governance.md
-   │  ├─ module-overlays/               # 可组合的治理与 contract 片段
-   │  ├─ templates/                     # 被提及时静默取用的 MVP 表面模板
+   │  ├─ module-overlays/              # 针对特定能力的补充片段
+   │  ├─ templates/                    # 常见产品类型的隐藏起点
    │  ├─ contracts-examples/           # 填好的 OpenAPI / JSON Schema / event / SQL / CLI / 文件格式范例
    │  └─ examples/
    │     └─ feedback-inbox/            # 完整填好的样例项目
    └─ scripts/
-      ├─ check-governance.sh           # 检查项目说明是否有漏项
-      └─ test_check_governance.py       # 检查脚本的自动测试
+      ├─ check-governance.sh           # 检查项目文档有没有漏项
+      └─ test_check_governance.py      # 检查脚本的自动测试
 ```
 
 </details>
-
-## 关于那条校验警告（WARN）
-
-技能带有一个检查脚本，帮助找出 Standard 项目说明中的漏项：
-
-- `ERROR`：有需要修正的问题，例如任务没有写检查方法。
-- `WARN`：需要留意的提醒，由你或 AI 判断怎样处理。
-- `OK`：本次文档结构检查未发现错误。
-
-**通过这项检查，不代表软件已经测试通过或可以上线。** 它不会替你运行任务中的命令，也不检查 Flash 的任务约定或计划；需要另行按结果标准核实。没有找到文件时，它会明确提醒。
-
-如果已有工具文件重复了共享规则，或 Claude 专用入口文件阻止原生发现 `AGENTS.md`，检查脚本可能发出警告。请判断这些文件是否仍有需要，保留有用的专用规则；确需兼容入口时，使用简短导入。仓库样例使用共享的 `AGENTS.md` 入口。
-
-如果你不熟悉命令，让 AI 运行并解释结果即可。维护本技能的开发者可以运行：
-
-```bash
-bash constitution-skill/scripts/check-governance.sh constitution-skill/assets/examples/feedback-inbox
-python3 constitution-skill/scripts/test_check_governance.py
-```
 
 ## 许可证
 

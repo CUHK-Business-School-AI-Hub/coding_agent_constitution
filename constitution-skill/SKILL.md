@@ -85,7 +85,7 @@ Use the steps relevant to the request; this is not a requirement to complete eve
    - Load `references/frontier-model-guidance.md` only when adapting this skill for Astra or Opus; keep model tuning out of generated project governance unless the project needs it.
    - Use `references/anti-patterns.md` to avoid common failure modes in each governance file.
    - Use `references/governance-evolution.md` for versioning, ADR superseded chains, and archival.
-   - Point first-time product builders to `references/rookie-onboarding.md` so the engineering vocabulary in the generated files is approachable.
+   - Point first-time product builders to `references/rookie-onboarding.md` so the engineering vocabulary in the generated files is approachable, and to `references/rookie-wiki.md` when a single unfamiliar term needs a plain-language gloss.
    - Point learning-minded solo founders to the relevant `references/wiki-*.md` pages after templates are applied. The wiki is for engineering understanding; it is not a substitute for bounded tasks or governance assets.
 
 5. Ask only the questions needed to remove dangerous ambiguity.
@@ -255,6 +255,7 @@ constitution-skill/
 │   ├── flash-components.md              # composable, on-demand task structure
 │   ├── flash-scenarios.md               # representative compositions and checks
 │   ├── rookie-onboarding.md             # concept primer for first-time product builders
+│   ├── rookie-wiki.md                   # plain-language glossary of common app-building terms
 │   ├── wiki-record-crud-apps.md         # engineering wiki for record apps
 │   ├── wiki-linear-workflows.md         # engineering wiki for workflows
 │   ├── wiki-conversational-assistants.md # engineering wiki for chat assistants

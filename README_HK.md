@@ -2,9 +2,9 @@
 
 # Coding Agent Constitution
 
-**把任務說清楚，選好工作結構，再檢查 AI 交付的結果。**
+**讓 AI 先聽明白你要甚麼才動手，做完也查得清楚。**
 
-[English](README.md) · [簡體中文](README_CN.md)
+[English](README.md) · [简体中文](README_CN.md)
 
 [![Agent Skill](https://img.shields.io/badge/Agent%20Skill-SKILL.md-111827)](#)
 [![Codex](https://img.shields.io/badge/Codex-compatible-10a37f)](#)
@@ -14,137 +14,84 @@
 
 </div>
 
----
-
-## 最近更新 - 2026-10-08
-
-- 新增 Flash，作為日常工作、研究、文檔、軟件和可重用能力的統一輕量入口；Standard 保留完整軟件項目流程。
-- 更新 Claude Code 兼容說明：優先共用 `AGENTS.md`，先檢查工具實際讀取了甚麼，再按需要加入簡短的兼容入口。
-- 統一入門說明：檔案數和程式碼行數用來提醒檢查難度，不再強制拆分任務；一起驗證更安全的相關改動，可以保持完整。
-- 保留現有工作方式：沿用已確認的決定，自選實作和檢查工具，明確驗證要求與安全邊界。
-
-## 最近更新 - 2026-09-14
-
-- 更準確地判斷何時需要這個技能：已經說清楚的小修改，不必先走一遍規劃流程。
-- 少問重複問題：已有決定直接沿用，有實際取捨時才比較方案。
-- 更清楚地判斷何時完成：只要規劃就不寫程式；已同意實作的任務，會做到約定的檢查完成。與目前任務無關的舊問題分開說明。
-
-## 最近更新 - 2026-09-12
-
-- 檢查更可靠：修復了「任務漏寫重要段落，也可能顯示通過」的問題，並加入自動測試。
-- 使用更順暢：已經確認的任務，不再為同一個決定反覆詢問；實作和檢查可以交給你常用的 AI 工具。
-- 安裝說明已更新：通用規則盡量只寫一份，有需要才增加工具專用檔案。
-- 文檔更易讀：減少術語，補充可以直接複製使用的提示詞。
-
-## 最近更新 - 2026-06-30
-
-- 做重要技術選擇時，會寫清楚有哪些方案、推薦哪個，以及日後是否容易調整。
-- 產生檔案後，會檢查有沒有說不清楚、互相矛盾或遺漏的地方。
-- 每個任務會寫明：要做甚麼、哪些地方可以改，以及怎樣檢查是否完成。
+> 最近更新（2026-10-08）：新增輕量的 Flash 模式，重寫了新手入門說明，並新增一份新手詞典。較早的變更見[更新紀錄](#更新紀錄)。
 
 ## 這是甚麼？
 
-這是一個給 **Codex、Cursor、Claude Code** 使用的免費開源技能（Agent Skill）。你可以把它理解成一份給 AI 用的工作指南：Standard 用於完整軟件項目規劃，Flash 用於不同工作中的輕量任務。
+Coding Agent Constitution 是一個免費開源的技能（skill），供三款 AI 編程工具使用：Codex（OpenAI 出品）、Cursor（內置 AI 的程式碼編輯器）和 Claude Code（Anthropic 出品）。這幾款工具可以打開你電腦上某個資料夾裏的檔案，幫你修改、執行命令、寫程式。技能就是一套寫給 AI 看的說明，工具遇到相關要求時會去讀它。你可以把它想像成新同事上班第一天，你交給他的那本「我們團隊是這樣做事的」。
 
-做 Standard 軟件項目時，例如你說：
+裝好這個技能之後，AI 寫程式之前會先做些準備：問清楚你想達到甚麼目的，把你的回答寫進項目資料夾，再把工作拆成一個個小步驟，每一步都附帶檢查方法。下星期你回來繼續、開一個新對話，或者換另一個 AI 工具，都可以從這些紀錄接上，不用全靠你自己記住。
 
-> 我想做一個工具，幫小團隊收集客戶意見，但不知道從哪裏開始。
+你不需要懂得寫程式。你要做的，是講清楚想要甚麼，讀一讀 AI 寫回來的內容，在重要的地方拍板。
 
-它會先幫你理清三個問題：**給誰用、先做甚麼、做到怎樣算完成**，再把答案儲存在項目資料夾。日後換一個對話、換一個 AI，或者交給工程師，都能接着做。
+## 它可以幫你解決甚麼問題？
 
-Standard 模式通常會得到這些檔案，你不需要先學會它們的名稱：
+如果你試過直接叫 AI「幫我做出來」，以下情況你可能不會陌生：
 
-| 檔案 | 簡單解釋 |
+- 想法還未想清楚，它已經做了一大堆，還順手加了你沒有要求的功能。
+- 每開一個新對話都由零開始，背景又要從頭講一次。
+- 它說「做好了」，你卻不知道它究竟檢查過甚麼。
+- 過了幾個星期，沒有人記得某樣東西當初為甚麼這樣做，包括你自己。
+
+這個技能把計劃和重要決定寫成普通的文字檔案，放在你的項目裏。你自己、一個新對話、另一個 AI 工具，或者日後加入的工程師，打開這些檔案就知道事情做到哪一步。
+
+## 按需要選擇工作方式
+
+這個技能有兩種工作方式，也知道甚麼時候不應插手。
+
+| 你的需要 | 會發生甚麼 | 例子 |
+| --- | --- | --- |
+| 一個已經講清楚的小改動 | AI 直接修改，做相應檢查，不走規劃流程 | 「把註冊頁面上的錯字改好。」 |
+| Flash：日常工作，需要先理順 | AI 先寫一份簡短的任務約定，只補充這個任務用得着的結構 | 「幫我們團隊比較三種收集客戶意見的方法。」 |
+| Standard：一個正式的軟件項目 | AI 先把想法問清楚，寫出整套項目文件，再規劃一個個小任務 | 「我想做一個幫小團隊收集客戶意見的工具，但不知道從哪裏開始。」 |
+
+這些名稱不用記。講清楚你要甚麼、希望 AI 幫到甚麼程度，它會自己選一種方式，並用一兩句話告訴你原因。如果你手上已經有一套程式碼，但沒有這些文件，還有一個 Retrofit（補建）模式：由你快要修改的那部分程式碼開始，逐步把文件補上。
+
+### Flash 怎樣運作
+
+Flash 適合日常工作、資料搜集、寫文件、做小型軟件，也適合做可以重複使用的能力，例如技能。它由一份簡短的任務約定開始（文件裏叫 task contract），寫清楚以下幾件事：
+
+- 目標是甚麼，結果給誰用
+- 背景情況，要用到哪些資料
+- 哪些在範圍之內，哪些不做
+- 限制條件，例如截止日期、格式、預算
+- 做到甚麼程度才算完成，怎樣檢查
+- 未想清楚的問題，以及暫時的假設
+
+約定定下的是「怎樣才算成功」。至於怎樣做到，可以邊做邊調整，但不可以悄悄降低標準，也不可以為了遷就做法而把目標換掉。
+
+視乎任務需要，AI 可能再補充以下一種或幾種細節：
+
+- 行為：用在會重複運行的東西上，例如腳本、軟件功能或技能。輸入甚麼、輸出甚麼、舉幾個例子、遇到錯誤輸入時怎樣處理。
+- 證據與判斷：用在資料搜集和提出建議上。要回答哪些問題、用哪些來源、按甚麼標準比較、結論有多大把握。
+- 內容與結構：用在文件、投影片和訊息上。寫給誰看、最想表達甚麼、大綱和格式。
+- 行動：用在真正要改動某樣東西的時候，例如更改會議時間、更新一條紀錄、發出一份報告。具體改甚麼、事前要符合甚麼條件、按甚麼次序做、怎樣確認真的改好了。
+
+一個任務可以同時用上幾種，而且每一種都不要求另建檔案。很多時候，在對話裏講清楚已經足夠。如果是持續進行的項目，一般由一個 `AGENTS.md` 檔案加一份簡短的任務說明開始，任務說明通常放在 `docs/PLAN.md`。
+
+想了解更多，可以看 [Flash 指南](constitution-skill/references/flash-mode.md)、[組件說明](constitution-skill/references/flash-components.md)和[場景例子](constitution-skill/references/flash-scenarios.md)（這三份是英文）。可選用的起步模板有 [AGENTS.md](constitution-skill/assets/flash-templates/AGENTS.md) 和 [PLAN.md](constitution-skill/assets/flash-templates/PLAN.md)。
+
+### Standard 怎樣運作
+
+Standard 是做軟件項目的完整流程。AI 會先問你要解決甚麼問題、給誰用、第一版必須做到甚麼，然後把以下這類檔案寫進你的項目，一般放在 `docs/` 資料夾。這些檔案名稱不用預先記住。
+
+| 檔案 | 裏面寫甚麼 |
 | --- | --- |
-| `SPEC.md` | 要做甚麼，暫時不做甚麼 |
-| `ARCH.md` | 各部分怎樣配合，為甚麼這樣選技術 |
-| `RULES.md` | 開發時要遵守的規則 |
-| `CONTRACTS/` | 不同部分交換資料時，約定好格式和行為 |
-| `TASKS/` | 下一步要完成的小任務，以及檢查方法 |
-| `AGENTS.md` | 給 AI 的項目說明 |
+| `SPEC.md` | 要做甚麼、給誰用、這一版暫時不做甚麼 |
+| `ARCH.md` | 各部分怎樣配合，為甚麼選用這些技術 |
+| `RULES.md` | 每次改動都要遵守的規則，包括測試和安全方面 |
+| `CONTRACTS/` | 各部分之間傳遞資料的精確約定，例如 API 和數據庫的格式 |
+| `DECISIONS/` | 很難反悔的重大決定，以及當時比較過哪些方案 |
+| `TASKS/` | 接下來的一個個小任務，每個都附帶檢查方法 |
+| `AGENTS.md` | 寫給所有 AI 工具的項目說明 |
 
-檔案數量會按項目情況調整，Flash 可以採用下文所述的更輕量結構。有需要時，還會為你使用的工具產生讀取說明。
+實際有哪些檔案，視乎項目情況。想看看寫好之後的樣子，可以打開 [Feedback Inbox](constitution-skill/assets/examples/feedback-inbox/)，這是一個所有檔案都已填好的樣例項目。
 
-想了解這些概念，可以看[第一次做軟件產品的入門說明](constitution-skill/references/rookie-onboarding_HK.md)，也可以直接看下面的快速開始。
+## 快速開始
 
-## 為甚麼需要它？
+先在你的 AI 編程工具裏打開項目資料夾。項目資料夾就是你電腦上一個普通的資料夾，用來存放這個項目的所有檔案。如果是由零開始，開一個空資料夾就可以。
 
-直接請 AI 寫程式，有時會遇到這些問題：
-
-- 需求還未想清楚，就已經做了很多功能。
-- 換一個對話或工具，又要從頭解釋。
-- 不知道 AI 按甚麼要求做，也不知道怎樣檢查結果。
-
-Standard 先把需求和重要決定寫下來，再拆成小任務。每做完一步，檢查結果，有用的新發現也寫回項目檔案。
-
-## 適合邊個用？
-
-Flash 也適用於日常工作、研究、文檔和可重用能力。Standard 適合已經有一個軟件想法，想請 AI 幫忙實現、又希望事情保持清楚的人，例如：
-
-- 準備啟動新項目的產品經理。
-- 做個人項目、日後可能找人合作的你。
-- 想把工作經驗做成工具的設計師、分析師或營運人員。
-- 不會寫程式，但希望能看懂計劃、提出修改意見的創業者。
-- 想讓 AI 按明確要求工作的工程師。
-
-你負責說明需求、檢查結果，並決定重要取捨；AI 幫你整理檔案和拆分任務。
-
-## 甚麼時候適合用？
-
-適合在想法還不清楚、不知道先做哪一步，或者準備把項目交給別人接手時使用。
-
-如果只是改錯字、修一個已經明確的小問題，直接讓 AI 修改就可以，不需要每次重新整理整個項目。重要的產品選擇仍由你決定。
-
-## 選擇 Standard 或 Flash
-
-- **Standard** 是現有的完整軟件項目流程：釐清需求、記錄架構和規則、定義介面，再實作並檢查範圍明確的任務。需要這套完整項目結構時使用。
-- **Flash** 是日常工作、研究、文檔、軟件和技能等可重用能力的統一輕量入口。任務需要釐清要求或整理工作結構，但用不到 Standard 全套檔案時使用。
-- **已經明確的小任務**直接執行並做相應檢查，不必先進入任何一種模式的啟動問答。
-
-Flash 先整理一份簡短的任務約定：目標、使用者或讀者、背景、範圍、限制、可觀察的完成標準，以及重要未知項。預期結果與實作計劃分開寫：做法可以隨新發現調整，完成與否仍按約定的結果檢查。
-
-AI 按任務需要選擇並組合相關組件：
-
-- **行為：**輸入、輸出、例子和預期行為
-- **證據與判斷：**來源、比較標準、不確定性，以及得出結論的方法
-- **內容與結構：**讀者、組織方式、必需內容和格式
-- **行動：**有用的步驟、依賴關係和結果檢查
-
-它們是一個任務中可以組合的部分，不是互斥模式，也不是必須各建一份檔案。持續維護的項目預設使用 `AGENTS.md` 加一份 `PLAN.md` 或簡報，常見位置是 `docs/PLAN.md`。對話、現有任務、`SKILL.md` 或引用的 schema 也可能已經承載了所需內容；按實際需要保留檔案。
-
-可先看 [Flash 指南](constitution-skill/references/flash-mode.md)、[組件說明](constitution-skill/references/flash-components.md)或[場景例子](constitution-skill/references/flash-scenarios.md)。需要項目檔案時，可選用 [AGENTS.md](constitution-skill/assets/flash-templates/AGENTS.md) 和 [PLAN.md](constitution-skill/assets/flash-templates/PLAN.md) 模板。
-
-可以改用下面的 Flash 提示詞：
-
-```text
-請用 constitution-skill 的 Flash 模式，幫我比較三種收集客戶意見的方法。
-讀者是我們的小型產品團隊。使用我提供的筆記，指出重要證據的缺口。
-先明確範圍和一份有用的比較應呈現甚麼，再按任務需要選擇組件。
-把預期結果與可以隨工作進展調整的實作步驟分開。
-先用目前對話或已有簡報承載；項目檔案有助於重用結果時再建立。
-```
-
-## 幾時應該停止用？
-
-當項目已有清楚的計劃、工程師或團隊能接着維護時，就不必每次都使用這個技能。已經整理好的檔案可以繼續使用。
-
-日後遇到新的模糊需求，再請它幫忙整理即可。
-
-## 三大智能體兼容方式
-
-**選你已經在用的工具就可以，不需要同時安裝三個。** 三者都可以實作任務或檢查改動。
-
-| 工具 | 怎樣讀取項目說明 |
-| --- | --- |
-| Codex | 讀取 `AGENTS.md` |
-| Cursor | 目前版本可直接讀取 `AGENTS.md`；有特別需要才加專用規則 |
-| Claude Code | 目前版本可原生發現 `AGENTS.md`；加入兼容入口前，先檢查已有的 Claude 專用檔案 |
-
-通用規則儲存在 `AGENTS.md`，避免改了一處、忘了另一處。新項目預設使用這個共享入口。已有項目的專用規則會保留，包括仍有用途的 Claude 專用說明。[詳細兼容說明](constitution-skill/references/cross-agent-compatibility.md)供需要設定工具的讀者參考。
-
-## 快速開始（推薦）
-
-先打開你的項目資料夾，再把這段話發給 AI：
+然後把以下這段話發給 AI：
 
 ```text
 請安裝這個倉庫裏的 constitution-skill 技能：
@@ -152,55 +99,11 @@ https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution
 請按我正在使用的工具選擇安裝位置，並檢查能否找到這個技能。
 ```
 
-安裝後開一個新對話，可以試用上面的 Flash 提示詞，或下面「最簡單的使用方式（Standard）」裏的提示詞。如果找不到技能，請讓 AI 檢查安裝位置。
+裝好之後，開一個新對話，讓工具載入這個技能，再試試下一節的提示詞。如果 AI 說找不到技能，請它查一查裝到了哪裏。
 
-## 可選聯動 Skill：`waymark`
+## 第一句話可以這樣說
 
-如果你想先透過一問一答把想法講清楚，可以使用我們團隊開發的 [Waymark](https://github.com/CUHK-Business-School-AI-Hub/waymark)。它是 `grill-me` 的變種，對非技術人士更友善：你用日常語言描述工作，它會逐個提問，幫你理清誰來做、怎樣做、遇到例外怎樣處理，再整理成可以跟着執行的說明。
-
-如果接下來想把這套流程做成軟件，再交給 `constitution-skill` 整理項目計劃和開發任務。Waymark 是可選輔助，不是必須安裝的依賴。
-
-配合使用時可以說：
-
-```text
-先用 waymark 幫我把實際工作流程和需求問清楚，用淺白文字解釋需要我決定的地方。
-如果確定要做成軟件，再用 constitution-skill 把確認的內容寫成項目計劃和第一個小任務。
-```
-
-## 如果你想自己動手安裝...
-
-以下命令假設你已下載本倉庫，並在倉庫根目錄打開終端，適用於首次安裝。如果已經安裝過，請讓 AI 先比較版本，避免覆蓋自己的修改。
-
-### Codex
-
-安裝到你的個人技能目錄：
-
-```bash
-mkdir -p ~/.agents/skills
-cp -R constitution-skill ~/.agents/skills/constitution-skill
-```
-
-如果只想在一個項目裏使用，把技能複製到目標項目的 `.agents/skills/constitution-skill/` 即可。
-
-### Cursor
-
-把 `constitution-skill/` 複製到目標項目的 `.agents/skills/` 資料夾。這裏已有 Codex 的項目副本時，目前 Cursor 版本可以共用；也仍可使用 `.cursor/skills/`。
-
-### Claude Code
-
-把 `constitution-skill/` 複製到目標項目的 `.claude/skills/` 資料夾。共享項目說明儲存在 `AGENTS.md`。目前 Claude Code 支援原生發現，但項目或上級目錄中已有的 Claude 入口檔案可能停用這項功能。先檢查已安裝版本在該項目中實際讀取了甚麼，詳見[兼容說明](constitution-skill/references/cross-agent-compatibility.md)和 [Claude Code 官方文檔](https://code.claude.com/docs/en/memory#agentsmd)。
-
-只在項目確實需要兼容入口時，才用簡短的 `CLAUDE.md` 匯入，並保留已有的 Claude 專用規則：
-
-```markdown
-@AGENTS.md
-```
-
-安裝後開一個新對話，檢查技能是否可用。已有安裝能正常使用時，先核實工具支援的位置，再決定是否遷移，不必重複複製。
-
-## 最簡單的使用方式（Standard）
-
-把下面的例子換成你的想法即可：
+如果要做一個正式的軟件項目（Standard），把以下例子換成你自己的想法：
 
 ```text
 我想做一個給小團隊用的客戶意見收集工具，能整理大家最常提的需求。
@@ -210,13 +113,23 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 需要我決定的地方，請用淺白文字解釋；先不要寫應用程式碼。
 ```
 
-你會得到一份能查看和修改的項目計劃，以及下一步任務。Standard 項目的檔案通常放在 `docs/` 下。輕量任務或項目可以使用上面的 Flash 提示詞。
+AI 會問你一些問題。答「我不知道」完全沒問題，它應該提出一個穩妥的預設選擇，並把它記為「假設」。最後你會得到一份看得懂、可以修改的計劃，以及第一個任務。
 
-先看看它有沒有理解你的意思，尤其是「暫時不做甚麼」和「怎樣算完成」。不對的地方，直接讓 AI 改。
+繼續之前，先把計劃讀一遍。最值得留意的是兩處：第一版「暫時不做甚麼」，以及「怎樣才算完成」。哪裏不對，用你自己的說法告訴 AI，請它修改檔案。
 
-## 文件生成之後，怎樣真正開始實現？
+如果是較輕的任務（Flash），可以改用這段：
 
-確認計劃後，先做第一個小任務。可以直接對 AI 說：
+```text
+請用 constitution-skill 的 Flash 模式，幫我比較三種收集客戶意見的方法。
+結果是給我們的小型產品團隊看的。請用我提供的筆記，並指出還欠缺哪些重要證據。
+先講清楚比較的範圍，以及一份有用的比較需要說明甚麼，再按這個任務的需要選擇組件。
+把「要達到的結果」和「可以邊做邊調整的步驟」分開寫。
+先在這個對話或現有的任務說明裏整理；如果建立項目檔案方便日後重用，才建立。
+```
+
+## 計劃寫好之後，怎樣真正做出來？
+
+對計劃滿意之後，就一個任務接一個任務地做。可以這樣對 AI 說：
 
 ```text
 請找到計劃裏的第一個任務，向我說明它要實現甚麼。
@@ -225,25 +138,138 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 完成後，請用淺白文字說明做了甚麼、檢查結果，以及我該怎樣試用。
 ```
 
-每完成一個任務，看三件事：
+AI 匯報之後，看三件事：
 
-1. 結果是不是你想要的，有沒有順手加了不需要的功能？
-2. AI 實際做了哪些檢查，還有甚麼未檢查？
-3. 新做出的重要決定，是否已經寫回項目檔案？
+1. 這是你想要的嗎？有沒有加入了你沒有要求的東西？
+2. 它實際檢查了甚麼，還有甚麼未檢查？
+3. 如果它作出了新的重要決定，有沒有寫回項目檔案？
 
-可以請另一個 AI 或工程師檢查改動，再繼續下一項。寫程式的許可不自動等於上線或刪除正式資料的許可，這些操作按你們約定的權限處理。
+開始下一個任務之前，可以請另一個 AI 工具或者工程師檢查一次改動。你同意它做某個任務，不等於同意它把東西上線，也不等於同意它刪除真實資料。這些操作要按你們事先約定的權限處理。
 
-## 按產品形態組合預設方案（Standard 軟件項目）
+## 你和 AI 怎樣分工
 
-你不需要挑選內部模板。告訴 AI 你要做的是客戶記錄、審批流程、聊天助手，還是只在自己電腦上執行的小工具，它會選取相關說明。
+你決定要解決甚麼問題，那些改起來代價很大的決定也由你拍板。AI 負責發問、寫計劃、一小步一小步地做，並告訴你它檢查了甚麼。項目檔案記下所有決定，重要的東西不會只留在某個聊天視窗裏。
 
-項目已有技術方案時，優先沿用。新項目才會參考內置建議：例如網站可考慮 TypeScript/PostgreSQL，本地個人工具可考慮 Python/SQLite。它會解釋為甚麼適合你，並記錄需要調整的地方。
+## 看不明白那些詞？
 
-這些是起點，具體選擇仍取決於你的需求。
+有兩份文件是專門寫給沒有技術背景的人：
 
-## 核心原則
+- [新手入門說明](constitution-skill/references/rookie-onboarding_HK.md)：一個項目大致怎樣進行，每個檔案有甚麼用，每一步可以對 AI 說甚麼。
+- [新手詞典](constitution-skill/references/rookie-wiki_HK.md)：用幾句淺白的話解釋做應用程式時常見的詞，由 API、數據庫，到部署和 Git。
 
-你決定要解決甚麼問題；AI 按確認的範圍做事；每一步都要檢查。日後還會用到的重要說明，儲存在項目裏。
+遇到看不明白的詞，也可以直接問 AI：「假設我從來沒寫過程式，用一個日常生活的例子解釋給我聽。」
+
+## 常見產品的預設方案
+
+你不用自己挑選模板，也不用自己選技術。告訴 AI 你要做的是甚麼，例如客戶名單、審批流程、聊天機械人，或者只在自己電腦上用的小工具，技能會自動找來相應的說明。
+
+如果你的項目已經用了某些技術，AI 會優先沿用。新項目則有幾個經過檢查的起點，例如網站可以用 TypeScript 加 PostgreSQL，只在自己電腦上運行的小工具可以用 Python 加 SQLite。它會解釋為甚麼適合你，並把調整記錄下來。這些只是起點，最後仍然取決於你的需要。
+
+## 可選拍檔：Waymark
+
+如果你想在規劃軟件之前，先把想法理清楚，可以試試我們團隊開發的 [Waymark](https://github.com/CUHK-Business-School-AI-Hub/waymark)。它是 `grill-me` 的變種，對非技術背景的人更友善。你用日常的說法描述自己的工作，它每次只問一個問題：誰負責、實際怎樣做、出了問題怎麼辦。最後，它會整理出一份大家跟着就能執行的說明。
+
+如果之後決定把這套流程做成軟件，就交給 `constitution-skill` 寫項目計劃和開發任務。Waymark 是可選的，不裝它也能用這個技能。兩個一起用時，可以這樣說：
+
+```text
+先用 waymark 幫我把實際工作流程和需求問清楚，用淺白文字解釋需要我決定的地方。
+如果確定要做成軟件，再用 constitution-skill 把確認的內容寫成項目計劃和第一個小任務。
+```
+
+## 應該用哪個 AI 工具？
+
+用你手上已有的那個就可以，不需要三個都裝。任何一個都可以做任務，也可以檢查改動。
+
+| 工具 | 怎樣找到項目說明 |
+| --- | --- |
+| Codex | 讀取 `AGENTS.md` |
+| Cursor | 目前版本會讀取 `AGENTS.md`；確實有需要時，才加 Cursor 專用規則 |
+| Claude Code | 目前版本可以自己找到 `AGENTS.md`；加入兼容入口之前，先看看已有的 Claude 專用檔案 |
+
+通用規則只寫在一份 `AGENTS.md` 裏，這樣修改一條規則時，不會在別處留下過時的副本。新項目預設使用這個共用檔案。已有項目裏的專用規則會保留，仍然有用的 Claude 專用說明也一樣。具體怎樣設定，見[兼容說明](constitution-skill/references/cross-agent-compatibility.md)（英文）。
+
+## 自己動手安裝
+
+上面「快速開始」那段話是最方便的方法。如果你想自己安裝，先下載這個倉庫，在倉庫最外層的資料夾打開終端機（就是輸入命令的那個視窗）。以下步驟適用於首次安裝。如果你之前裝過，請先讓 AI 比較兩個版本，以免覆蓋你自己改過的內容。
+
+### Codex
+
+安裝到你的個人帳戶：
+
+```bash
+mkdir -p ~/.agents/skills
+cp -R constitution-skill ~/.agents/skills/constitution-skill
+```
+
+如果只想在某一個項目裏使用，就把技能複製到那個項目的 `.agents/skills/constitution-skill/` 資料夾。
+
+### Cursor
+
+把 `constitution-skill/` 複製到目標項目的 `.agents/skills/` 資料夾。如果這裏已有給 Codex 用的項目副本，目前版本的 Cursor 可以直接共用。放在 `.cursor/skills/` 也可以。
+
+### Claude Code
+
+把 `constitution-skill/` 複製到目標項目的 `.claude/skills/` 資料夾，共用的項目說明仍然放在 `AGENTS.md`。目前版本的 Claude Code 可以自己找到 `AGENTS.md`，但如果項目或者上層資料夾已經有 Claude 的入口檔案，這項功能可能會被停用。所以先看看你安裝的版本在這個項目裏實際讀取了甚麼，詳見[兼容說明](constitution-skill/references/cross-agent-compatibility.md)和 [Claude Code 官方文件](https://code.claude.com/docs/en/memory#agentsmd)。
+
+只有項目確實需要兼容入口時，才加一個簡短的 `CLAUDE.md` 來匯入共用檔案，並保留已有的 Claude 專用規則：
+
+```markdown
+@AGENTS.md
+```
+
+裝好之後，開一個新對話，確認技能可以使用。如果原有的安裝已經運作正常，先查清楚工具支援哪些位置，再決定要不要搬，不必多複製幾份。
+
+## 甚麼時候可以不用它？
+
+當項目已經有清楚的計劃，也有工程師或團隊能夠接手維護，就不必每次改動都使用這個技能。它寫下的檔案會繼續為項目服務。日後遇到新的、未想清楚的需求，再請它出來幫忙整理。
+
+## 關於檢查腳本（ERROR、WARN、OK）
+
+技能附有一個檢查腳本，用來找出 Standard 項目文件裏遺漏的東西，例如某個任務沒有寫檢查方法。它會給出三種結果：
+
+- `ERROR`：有地方需要修正。
+- `WARN`：有地方值得留意，由你或 AI 決定怎樣處理。
+- `OK`：這次文件結構檢查沒有發現問題。
+
+通過這項檢查，不代表軟件能用、測試已經通過，或者可以上線。腳本不會執行任務裏寫的命令，也無法判斷 Flash 的任務約定或計劃寫得好不好。在 Flash 模式下（`--mode flash`），它會檢查共用的說明檔案和引用，並且總會多給一條 WARN，提醒你另外檢查任務本身。如果一個項目檔案都找不到，它也會直接講明。
+
+如果已有的工具專用檔案重複了共用規則，或者 Claude 專用的入口檔案令 Claude Code 找不到 `AGENTS.md`，腳本也可能發出警告。看看這些檔案還需不需要：有用的專用規則保留，確實需要兼容入口時，用簡短的匯入就可以。倉庫裏的樣例只用了一份共用的 `AGENTS.md`。
+
+不熟悉命令也沒關係，讓 AI 幫你執行，再請它解釋結果就可以。維護這個技能的開發者可以執行：
+
+```bash
+bash constitution-skill/scripts/check-governance.sh constitution-skill/assets/examples/feedback-inbox
+python3 constitution-skill/scripts/test_check_governance.py
+```
+
+## 更新紀錄
+
+### 2026-10-08
+
+- 新增 Flash，作為日常工作、資料搜集、文件、軟件和可重用能力的統一輕量入口；Standard 保留完整的軟件項目流程。
+- 為沒有技術背景的讀者重寫了這份 README 和新手入門說明，並新增三種語言的新手詞典。
+- 更新 Claude Code 兼容說明：優先共用 `AGENTS.md`，先確認工具實際讀取了甚麼，再按需要加入簡短的兼容入口。
+- 檔案數和程式碼行數改為提醒檢查難度的訊號，不再強制拆分任務；放在一起檢查更穩妥的相關改動，可以保持完整。
+- 保留原有的工作方式：沿用已確認的決定，自己選擇誰負責實現、誰負責檢查，驗證要求和安全界線照樣寫清楚。
+
+### 2026-09-14
+
+- 已經講清楚的小修改，不必先走一遍規劃流程。
+- 少問重複的問題：已有的決定直接沿用，確實有取捨時才比較方案。
+- 何時停下來更清楚：只要規劃就不寫程式；已經同意實行的任務，會做到約定的檢查完成為止。與目前任務無關的舊問題分開說明。
+
+### 2026-09-12
+
+- 檢查更可靠：修正了「任務漏寫重要段落，也可能顯示通過」的問題，並加入自動測試。
+- 交接更順暢：已經確認的任務，不再為同一個決定反覆詢問；實現和檢查可以交給你常用的 AI 工具。
+- 安裝說明更新：通用規則盡量只寫一份，有需要才增加工具專用檔案。
+- 文件更易讀：術語少了，多了沒有技術背景也能直接複製使用的提示詞。
+
+### 2026-06-30
+
+- 作出重要技術選擇時，會寫清楚有哪些方案、推薦哪一個，以及日後修改難不難。
+- 產生檔案之後，會檢查有沒有講不清楚、互相矛盾或者遺漏的地方。
+- 每個任務都會寫明：要做甚麼、哪些地方可以改，以及怎樣檢查是否完成。
 
 ## 倉庫結構
 
@@ -252,41 +278,49 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 
 ```text
 .
-├─ README.md
-├─ README_CN.md
-├─ README_HK.md
+├─ README.md                          # 英文說明
+├─ README_CN.md                       # 簡體中文
+├─ README_HK.md                       # 本頁
 ├─ LICENSE
-├─ constitution.md
+├─ constitution.md                    # 早期設計筆記
+├─ TODO_CASE_DERIVED_EVOLUTION.md     # 有待真實項目驗證的改進構思
 └─ constitution-skill/
-   ├─ SKILL.md
+   ├─ SKILL.md                        # 技能的主要說明
    ├─ agents/
    │  └─ openai.yaml
    ├─ references/
-   │  ├─ rookie-onboarding.md          # 給第一次做軟件產品的人的概念入門
-   │  ├─ bootstrap-question-bank.md    # 應該問甚麼問題
-   │  ├─ cross-agent-compatibility.md  # Codex / Cursor / Claude Code 適配映射
-   │  ├─ frontier-model-guidance.md    # portable Astra / Opus authoring guidance
-   │  ├─ governance-asset-guide.md     # 長期 vs 一次性資產、提升規則
-   │  ├─ anti-patterns.md              # 常見的治理反模式
-   │  ├─ task-sizing.md                # 範圍完整、可驗證任務的檢查訊號
-   │  ├─ retrofit-mode.md              # 把治理引入 legacy 倉庫
-   │  ├─ governance-evolution.md       # 版本演進、ADR、歸檔
+   │  ├─ rookie-onboarding.md          # 新手入門說明
+   │  ├─ rookie-onboarding_CN.md
+   │  ├─ rookie-onboarding_HK.md
+   │  ├─ rookie-wiki.md                # 新手詞典
+   │  ├─ rookie-wiki_CN.md
+   │  ├─ rookie-wiki_HK.md
    │  ├─ flash-mode.md                 # 跨任務類型的輕量入口
    │  ├─ flash-components.md           # 可選、可組合的任務組件
    │  ├─ flash-scenarios.md            # 組件選擇的場景例子
-   │  ├─ wiki-record-crud-apps.md      # 記錄型應用工程 wiki
-   │  ├─ wiki-linear-workflows.md      # 線性 / 持久化流程工程 wiki
-   │  ├─ wiki-conversational-assistants.md # 對話助手工程 wiki
-   │  ├─ product-pattern-routing.md    # profile/module/recipe 選擇
+   │  ├─ bootstrap-question-bank.md    # 應該問哪些問題
+   │  ├─ cross-agent-compatibility.md  # Codex / Cursor / Claude Code 設定
+   │  ├─ frontier-model-guidance.md    # portable Astra / Opus authoring guidance
+   │  ├─ governance-asset-guide.md     # 長期檔案與一次性檔案、提升規則
+   │  ├─ governance-review-rubrics.md  # 生成文件的就緒檢查
+   │  ├─ governance-evolution.md       # 版本演進、決策紀錄、歸檔
+   │  ├─ anti-patterns.md              # 常見的錯誤做法
+   │  ├─ task-sizing.md                # 範圍完整、可檢查任務的提醒訊號
+   │  ├─ task-review-contract.md       # 怎樣檢查一個完成了的任務
+   │  ├─ retrofit-mode.md              # 為已有程式碼補建文件
+   │  ├─ product-pattern-routing.md    # profile / module / recipe 選擇
    │  ├─ profile-transactional-record-system.md
    │  ├─ module-identity-access.md
    │  ├─ module-llm-boundary.md
    │  ├─ module-deterministic-workflow.md
    │  ├─ recipe-typescript-web-postgres.md
-   │  └─ recipe-local-python-sqlite.md
+   │  ├─ recipe-local-python-sqlite.md
+   │  ├─ wiki-record-crud-apps.md      # 紀錄型應用的工程筆記
+   │  ├─ wiki-linear-workflows.md      # 分步驟流程的工程筆記
+   │  └─ wiki-conversational-assistants.md # 對話助手的工程筆記
    ├─ assets/
-   │  ├─ flash-templates/              # 可選 AGENTS.md 和 PLAN.md 起點
-   │  ├─ governance-templates/
+   │  ├─ flash-templates/              # 可選的 AGENTS.md 和 PLAN.md 起點
+   │  ├─ governance-templates/         # Standard 空白模板
    │  │  ├─ AGENTS.md
    │  │  ├─ CLAUDE.md
    │  │  ├─ SPEC.md
@@ -297,36 +331,17 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
    │  │  ├─ CONTRACTS_README.md
    │  │  ├─ cursor-project-governance.mdc
    │  │  └─ claude-project-governance.md
-   │  ├─ module-overlays/               # 可組合嘅治理同 contract 片段
-   │  ├─ templates/                     # 被提到時靜默取用嘅 MVP 表面模板
+   │  ├─ module-overlays/              # 針對特定能力的補充片段
+   │  ├─ templates/                    # 常見產品類型的隱藏起點
    │  ├─ contracts-examples/           # 填好的 OpenAPI / JSON Schema / event / SQL / CLI / 檔案格式範例
    │  └─ examples/
    │     └─ feedback-inbox/            # 完整填好的樣例項目
    └─ scripts/
-      ├─ check-governance.sh           # 檢查項目說明是否有遺漏
-      └─ test_check_governance.py       # 檢查腳本的自動測試
+      ├─ check-governance.sh           # 檢查項目文件有沒有遺漏
+      └─ test_check_governance.py      # 檢查腳本的自動測試
 ```
 
 </details>
-
-## 關於那條校驗警告（WARN）
-
-技能附有一個檢查腳本，幫助找出 Standard 項目說明中的遺漏：
-
-- `ERROR`：有需要修正的問題，例如任務沒有寫檢查方法。
-- `WARN`：需要留意的提醒，由你或 AI 判斷怎樣處理。
-- `OK`：本次文檔結構檢查未發現錯誤。
-
-**通過這項檢查，不代表軟件已經測試通過或可以上線。** 它不會替你執行任務中的命令，也不檢查 Flash 的任務約定或計劃；需要另行按結果標準核實。沒有找到檔案時，它會明確提醒。
-
-如果已有工具檔案重複了共享規則，或 Claude 專用入口檔案阻止原生發現 `AGENTS.md`，檢查腳本可能發出警告。請判斷這些檔案是否仍有需要，保留有用的專用規則；確需兼容入口時，使用簡短匯入。倉庫樣例使用共享的 `AGENTS.md` 入口。
-
-如果你不熟悉命令，讓 AI 執行並解釋結果即可。維護本技能的開發者可以執行：
-
-```bash
-bash constitution-skill/scripts/check-governance.sh constitution-skill/assets/examples/feedback-inbox
-python3 constitution-skill/scripts/test_check_governance.py
-```
 
 ## 授權
 
