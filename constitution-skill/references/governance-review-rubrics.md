@@ -1,6 +1,6 @@
 # Governance Review Rubrics
 
-Use these rubrics after creating or changing governance assets. The goal is to catch ambiguity, contradictions, oversized scope, hidden chat context, and missing execution evidence before implementation starts.
+Use these rubrics after creating or changing governance assets. The goal is to catch ambiguity, contradictions, oversized scope, hidden chat context, and missing execution evidence before implementation starts. The rubrics below apply to Standard and Retrofit assets. Review Flash contracts and outcomes with the task-specific checklist in [Flash mode](flash-mode.md#review-and-completion), including when a contract lives in the conversation or an existing brief.
 
 ## Severity
 

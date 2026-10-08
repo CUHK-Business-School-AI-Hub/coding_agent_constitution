@@ -20,9 +20,23 @@
 # Usage:
 #   scripts/check-governance.sh              # run in current repo root
 #   scripts/check-governance.sh path/to/repo
+#   scripts/check-governance.sh --mode flash path/to/repo
+# Flash checks shared adapters/references/dated metadata, not Standard document schemas.
+# Flexible Flash contract content and outcome evidence need task-specific review.
 
 set -u
 
+MODE=standard
+if [ "${1:-}" = "--mode" ]; then
+    case "${2:-}" in
+        standard|flash) MODE="$2"; shift 2 ;;
+        *) printf 'error: --mode requires standard or flash\n' >&2; exit 2 ;;
+    esac
+fi
+if [ "$#" -gt 1 ] || { [ "$#" -eq 1 ] && [[ "$1" == --* ]]; }; then
+    printf 'usage: check-governance.sh [--mode standard|flash] [project-root]\n' >&2
+    exit 2
+fi
 ROOT="${1:-.}"
 if [ ! -d "$ROOT" ]; then
     printf "error: '%s' is not a directory\n" "$ROOT" >&2
@@ -144,6 +158,7 @@ fi
 TASK_DIRS="docs/TASKS TASKS"
 TASK_REQUIRED=("Goal" "Source Context" "Scope" "Interfaces" "Acceptance Criteria" "Verification" "Governance Drift Check")
 
+if [ "$MODE" = standard ]; then
 for dir in $TASK_DIRS; do
     if [ -d "$dir" ]; then
         for f in "$dir"/*.md; do
@@ -175,6 +190,8 @@ for rules_path in docs/RULES.md RULES.md; do
     check_required_sections "$rules_path" \
         "Coding Rules" "Testing Rules" "Security And Safety Rules"
 done
+
+fi
 
 # 4. Contract files referenced from ARCH.md / RULES.md must exist --------------
 
@@ -253,6 +270,8 @@ fi
 
 # 6. Task execution-contract content -----------------------------------------
 
+if [ "$MODE" = standard ]; then
+
 for dir in $TASK_DIRS; do
     if [ -d "$dir" ]; then
         for f in "$dir"/*.md; do
@@ -274,6 +293,8 @@ for dir in $TASK_DIRS; do
     fi
 done
 
+fi
+
 # 7. Placeholder and vague wording -------------------------------------------
 
 scan_governance_text() {
@@ -293,6 +314,7 @@ scan_governance_text() {
     done
 }
 
+if [ "$MODE" = standard ]; then
 scan_governance_text \
     AGENTS.md CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md \
     docs/SPEC.md docs/ARCH.md docs/RULES.md \
@@ -307,6 +329,8 @@ for dir in docs/TASKS TASKS docs/DECISIONS DECISIONS docs/CONTRACTS CONTRACTS; d
         done
     fi
 done
+
+fi
 
 # 8. Product pattern declarations ---------------------------------------------
 
@@ -357,10 +381,12 @@ check_product_shape() {
     done
 }
 
-for arch_path in docs/ARCH.md ARCH.md; do
-    [ -f "$arch_path" ] || continue
-    check_product_shape "$arch_path"
-done
+if [ "$MODE" = standard ]; then
+    for arch_path in docs/ARCH.md ARCH.md; do
+        [ -f "$arch_path" ] || continue
+        check_product_shape "$arch_path"
+    done
+fi
 
 # 9. Last-reviewed staleness ---------------------------------------------------
 
@@ -406,15 +432,23 @@ if [ -d "docs/CONTRACTS" ]; then
     scan_for_stale $(ls docs/CONTRACTS/*.md 2>/dev/null)
 fi
 
-# Do not present an empty scan or an unchecked Minimal plan as full validation.
+# Do not present an empty scan or a flexible brief as full validation.
 found_governance=0
 for f in AGENTS.md CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md docs/SPEC.md SPEC.md docs/ARCH.md ARCH.md docs/RULES.md RULES.md \
     docs/TASKS/*.md TASKS/*.md docs/CONTRACTS/* CONTRACTS/* .cursor/rules/*.mdc .claude/rules/*.md; do
     [ -f "$f" ] && found_governance=1
 done
-if [ -f docs/PLAN.md ]; then
-    report_warn "Minimal docs/PLAN.md is not structurally checked by this lint; review its scope, acceptance criteria, and verification separately."
-elif [ "$found_governance" -eq 0 ]; then
+found_brief=0
+for f in docs/PLAN.md PLAN.md docs/BRIEF.md BRIEF.md; do
+    if [ -f "$f" ]; then
+        found_brief=1
+        report_warn "$f is not structurally checked by this lint; review its task contract and outcome evidence separately."
+    fi
+done
+if [ "$MODE" = flash ]; then
+    report_warn "Flash task-contract content and completion require task-specific review; Standard document-section checks were not run."
+fi
+if [ "$found_governance" -eq 0 ] && [ "$found_brief" -eq 0 ]; then
     report_warn "No governance files found. No project readiness check was performed."
 fi
 

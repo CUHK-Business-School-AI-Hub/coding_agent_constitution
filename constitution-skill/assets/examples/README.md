@@ -13,3 +13,5 @@ To use one of these examples:
 3. Run `scripts/check-governance.sh` to confirm structure.
 
 Examples are intentionally opinionated. They reflect one defensible set of decisions, not the only set.
+
+For lightweight task-contract walkthroughs across software, reusable skills, research, documents, and actions, see [Flash scenarios](../../references/flash-scenarios.md). Optional compact starters live in [flash-templates](../flash-templates/). The `feedback-inbox` set remains a Standard example.

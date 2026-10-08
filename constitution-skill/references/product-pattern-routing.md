@@ -1,7 +1,8 @@
 # Product Pattern Routing
 
-Use this guide after choosing Standard, Retrofit, or Minimal mode. Mode controls
-the governance footprint; product pattern controls the content inside it.
+Use this guide for software product design after choosing Standard, Retrofit, or Flash. Mode controls the governance footprint; product pattern controls software-specific content. Flash task components describe the work needed to reach an outcome; the profiles, capability modules, and recipes here describe the software being built. Non-software tasks do not need this guide.
+
+For Flash, extract only applicable design questions, behavior, interfaces, and checks from this guide and selected profile/module/recipe references. Their universal templates, required governance file layouts, overlay destinations, and Standard/Retrofit question workflow belong to those full-project modes. Put useful Flash detail in existing canonical sources or the brief; do not reproduce a full file set merely to use a software module.
 
 ## Contents
 
@@ -24,7 +25,7 @@ Select:
 Do not force a known profile onto a product that does not fit. Use the universal
 templates and record `custom` when the product shape is genuinely different.
 
-Record the selection in `ARCH.md`, or in `docs/PLAN.md` for Minimal mode (do not create an ARCH file just for routing):
+In Standard and Retrofit, record the selection in `ARCH.md`. In Flash, record only applicable software selections in the existing brief or architecture source; do not create an ARCH file just for routing:
 
 ```markdown
 ## Product Shape
@@ -141,7 +142,7 @@ goal and the migration cost has human approval.
 | Local document classifier | custom | LLM boundary | local Python + SQLite |
 | Internal approval system | transactional record system | identity and access, deterministic workflow | TypeScript web + PostgreSQL |
 
-## Question Budget
+## Question Budget (Standard And Retrofit)
 
 Ask only questions that change a durable decision. Prefer these defaults:
 

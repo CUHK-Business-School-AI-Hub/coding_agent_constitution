@@ -2,7 +2,7 @@
 
 # Coding Agent Constitution
 
-**Turn your software idea into a clear plan, then let AI build it one step at a time.**
+**Make the task clear, choose a useful structure, and check what AI delivers.**
 
 [Simplified Chinese](README_CN.md) · [Traditional Chinese (Hong Kong)](README_HK.md)
 
@@ -18,6 +18,7 @@
 
 ## Recent Updates - 2026-10-08
 
+- Added Flash as a unified lightweight entry for daily work, research, documents, software, and reusable capabilities. Standard keeps the full software-project workflow.
 - Updated Claude Code compatibility: start with shared `AGENTS.md`; add a thin fallback only after checking instruction discovery.
 - Aligned beginner guidance: file and line counts guide review, rather than forcing a task split. Keep related work together when it is safer to verify as one change.
 - Preserved the existing workflow: reuse approved decisions, choose your implementer and reviewer, and keep checks and safety boundaries explicit.
@@ -43,15 +44,15 @@
 
 ## What Is This?
 
-Coding Agent Constitution is a free, open-source skill for **Codex, Cursor, and Claude Code**. Think of it as a working guide for your AI assistant.
+Coding Agent Constitution is a free, open-source skill for **Codex, Cursor, and Claude Code**. Think of it as a working guide for your AI assistant, with Standard for full software-project planning and Flash for lightweight tasks across different kinds of work.
 
-For example, you might say:
+For a software project in Standard mode, you might say:
 
 > I want a tool that helps a small team collect customer feedback, but I do not know where to start.
 
 The skill helps you answer three questions: **who is it for, what should come first, and how will we know it works?** It saves the answers in your project folder so a new conversation, another AI tool, or an engineer can pick up the work.
 
-You will usually get these files. You do not need to learn the names first:
+In Standard mode, you will usually get these files. You do not need to learn the names first:
 
 | File | What it means |
 | --- | --- |
@@ -62,7 +63,7 @@ You will usually get these files. You do not need to learn the names first:
 | `TASKS/` | Small next steps with a way to check each result |
 | `AGENTS.md` | Project instructions for AI tools |
 
-The number of files depends on the project. A small personal project can use just two main files. Instructions for specific tools are added when needed.
+The number of files depends on the project. Flash can use a much smaller footprint, described below. Instructions for specific tools are added when needed.
 
 Read the [beginner guide](constitution-skill/references/rookie-onboarding.md) if you want to learn the terms, or go straight to Quick Start below.
 
@@ -74,11 +75,11 @@ Asking AI to start coding immediately can lead to a few familiar problems:
 - A new conversation or tool needs everything explained again.
 - You cannot tell what instructions the AI followed or how to check its work.
 
-This skill writes down the requirements and important decisions first, then breaks the work into small tasks. After each step, check the result and save useful discoveries back into the project.
+Standard writes down the requirements and important decisions first, then breaks the work into small tasks. After each step, check the result and save useful discoveries back into the project.
 
 ## Who This Is For
 
-For people who have a software idea and want AI help while keeping the work understandable:
+Flash also supports daily work, research, documents, and reusable capabilities. Standard is for people who have a software idea and want AI help while keeping the work understandable:
 
 - Product managers starting a new project.
 - People building a personal project who may bring in collaborators later.
@@ -93,6 +94,35 @@ You explain the need, check the result, and make important tradeoffs. The AI hel
 Use it when your idea is unclear, you do not know what to build first, or you are preparing to hand the project to someone else.
 
 For a typo or a small, well-understood bug, ask the AI to make the change directly. You do not need to plan the whole project again. Important product decisions remain yours.
+
+## Choose Standard Or Flash
+
+- **Standard** is the existing full software-project workflow: clarify requirements, record architecture and rules, define interfaces, then implement and check bounded tasks. Use it when you need that full project structure.
+- **Flash** is the unified lightweight entry for daily work, research, documents, software, and reusable capabilities such as skills. Use it when a task needs clarification or a useful working structure without the full Standard file set.
+- **Small, clear tasks** go straight to the work and relevant checks. They do not need a bootstrap conversation in either mode.
+
+Flash starts with a short task contract: the goal, intended user or audience, context, scope, constraints, observable completion criteria, and important unknowns. Keep the desired outcome separate from the implementation plan: the plan can change as you learn, while completion is checked against the agreed outcome.
+
+The agent selects and combines only the components the task needs:
+
+- **Behavioral:** inputs, outputs, examples, and expected behavior
+- **Evidence and judgment:** sources, comparison criteria, uncertainty, and how a conclusion will be reached
+- **Content and structure:** audience, organization, required content, and format
+- **Action:** useful steps, dependencies, and checks of the result
+
+These are composable parts of one task, not exclusive modes or compulsory files. For a persistent project, the default is `AGENTS.md` plus a `PLAN.md` or brief, often `docs/PLAN.md`. A chat, existing task, `SKILL.md`, or referenced schema may already hold what is needed; keep the footprint appropriate to the work.
+
+Start with the [Flash guide](constitution-skill/references/flash-mode.md), [component guidance](constitution-skill/references/flash-components.md), or [scenario examples](constitution-skill/references/flash-scenarios.md). Optional project starting points are [AGENTS.md](constitution-skill/assets/flash-templates/AGENTS.md) and [PLAN.md](constitution-skill/assets/flash-templates/PLAN.md).
+
+A Flash prompt you can adapt:
+
+```text
+Use constitution-skill in Flash mode to help me compare three approaches to collecting customer feedback.
+The audience is our small product team. Use the notes I provide and identify important missing evidence.
+Define the scope and what a useful comparison must show, then choose the components needed for this task.
+Keep the desired outcome separate from the steps you may revise as you work.
+Use this conversation or an existing brief unless a project file would help us reuse the result.
+```
 
 ## When To Stop Using It
 
@@ -122,7 +152,7 @@ https://github.com/CUHK-Business-School-AI-Hub/coding_agent_constitution
 Choose the installation location for the tool I am using and check that it can find the skill.
 ```
 
-After installation, start a new conversation and try the prompt under “The Simplest Prompt” below. If the skill is not found, ask the AI to check its installation location.
+After installation, start a new conversation and try the Flash prompt above or “The Simplest Prompt (Standard)” below. If the skill is not found, ask the AI to check its installation location.
 
 ## Optional Companion Skill: `waymark`
 
@@ -170,19 +200,19 @@ Only if the project needs a fallback, use a thin `CLAUDE.md` import, preserving 
 
 Start a new conversation and check that the skill is available. Keep existing working installations until you have checked your tool's supported paths; do not create extra copies unnecessarily.
 
-## The Simplest Prompt
+## The Simplest Prompt (Standard)
 
 Replace this example with your idea:
 
 ```text
 I want a tool for small teams to collect customer feedback and summarize common requests.
 I do not know how to choose the technology.
-Use constitution-skill to explain what the first version should and should not do.
+Use constitution-skill in Standard mode to explain what the first version should and should not do.
 Save the plan in my project, then define the first small task and how to check it.
 Explain decisions I need to make in plain language. Do not write application code yet.
 ```
 
-You will get a project plan you can read and change, plus the next task. Files for a standard project usually live under `docs/`; a small personal project may only need `AGENTS.md` and `docs/PLAN.md`.
+You will get a project plan you can read and change, plus the next task. Standard project files usually live under `docs/`. For a lightweight task or project, use the Flash prompt above.
 
 Check whether the plan matches your intent, especially what it leaves out and how it defines success. Ask the AI to correct anything it misunderstood.
 
@@ -206,7 +236,7 @@ After each task, check three things:
 
 Another AI or an engineer can review the changes before the next task. Permission to implement does not automatically authorize deployment or deleting production data; those actions follow your agreed permissions.
 
-## Product-Aware Defaults
+## Product-Aware Defaults (Standard Software Projects)
 
 You do not need to choose internal templates. Describe whether you need customer records, an approval process, a chat assistant, or a tool that runs only on your computer. The skill selects the relevant guidance.
 
@@ -244,7 +274,9 @@ You decide what problem to solve. The AI works within the agreed scope. Check ea
    │  ├─ task-sizing.md                # review signals for coherent, verifiable tasks
    │  ├─ retrofit-mode.md              # applying governance to a legacy repo
    │  ├─ governance-evolution.md       # versioning, ADRs, archival
-   │  ├─ minimal-mode.md               # solo or throwaway lightweight setup
+   │  ├─ flash-mode.md                 # lightweight entry across task types
+   │  ├─ flash-components.md           # optional composable task components
+   │  ├─ flash-scenarios.md            # examples of selecting components
    │  ├─ wiki-record-crud-apps.md      # engineering wiki for record apps
    │  ├─ wiki-linear-workflows.md      # engineering wiki for workflows
    │  ├─ wiki-conversational-assistants.md # engineering wiki for chat assistants
@@ -256,6 +288,7 @@ You decide what problem to solve. The AI works within the agreed scope. Check ea
    │  ├─ recipe-typescript-web-postgres.md
    │  └─ recipe-local-python-sqlite.md
    ├─ assets/
+   │  ├─ flash-templates/              # optional AGENTS.md and PLAN.md starting points
    │  ├─ governance-templates/
    │  │  ├─ AGENTS.md
    │  │  ├─ CLAUDE.md
@@ -281,13 +314,13 @@ You decide what problem to solve. The AI works within the agreed scope. Check ea
 
 ## About the Validation Warning
 
-The skill includes a script that looks for missing information in project documents:
+The skill includes a script that looks for missing information in Standard project documents:
 
 - `ERROR`: something needs fixing, such as a task without a verification section.
 - `WARN`: something deserves attention; you or the AI should decide how to handle it.
 - `OK`: this document structure check found no errors.
 
-**Passing this check does not mean the software has passed its tests or is ready to deploy.** The script does not execute task commands or check the lightweight `docs/PLAN.md`; review those separately. It reports when there are no files to check.
+**Passing this check does not mean the software has passed its tests or is ready to deploy.** The script does not execute task commands or check Flash task contracts or plans; review their outcome criteria separately. It reports when there are no files to check.
 
 The checker can warn when existing tool files repeat shared rules or Claude-specific entry files prevent native `AGENTS.md` discovery. Review whether those files are needed; preserve useful tool-specific rules and use a thin import when a fallback is necessary. The bundled example uses a shared `AGENTS.md` entrypoint.
 

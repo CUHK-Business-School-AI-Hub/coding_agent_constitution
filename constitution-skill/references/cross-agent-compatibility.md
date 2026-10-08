@@ -4,11 +4,11 @@ Use this guide when configuring instruction discovery, installing the skill, or 
 
 ## One Canonical Source
 
-Keep shared instructions in `AGENTS.md`, and product details in the relevant `docs/SPEC.md`, `docs/ARCH.md`, `docs/RULES.md`, and `docs/CONTRACTS/` entries. Prefer native discovery in supported Codex, Cursor, and Claude Code clients. Do not generate a second ruleset or add `CLAUDE.md` merely because Claude Code is used.
+For persistent project instructions, keep one canonical `AGENTS.md`. In Standard and Retrofit, keep product details in the relevant `docs/SPEC.md`, `docs/ARCH.md`, `docs/RULES.md`, and `docs/CONTRACTS/` entries. In Flash, point to the existing brief, task, `SKILL.md`, schemas, or other relevant canonical context; discovery does not require a Standard file set. Prefer native discovery in supported Codex, Cursor, and Claude Code clients. Do not generate a second ruleset or add `CLAUDE.md` merely because Claude Code is used.
 
 Preserve existing project-specific rules. Do not delete a working adapter from a user's repository until its unique guidance is preserved and the replacement loading path is verified. The bundled Feedback Inbox example demonstrates the native `AGENTS.md` layout; optional adapter templates remain available for other setups.
 
-Either implementation or review can use any of the three tools. Both roles follow the same bounded task, interfaces, authorization, and verification evidence; reviews separate `Spec Compliance` from `Implementation Quality`.
+Either implementation or review can use any of the three tools. In Standard and Retrofit, both roles follow the same bounded task, interfaces, authorization, and verification evidence; reviews separate `Spec Compliance` from `Implementation Quality`. In Flash, both roles use the shared outcome contract, selected component details, and evidence appropriate to the result.
 
 ## Skill Installation Is Separate
 

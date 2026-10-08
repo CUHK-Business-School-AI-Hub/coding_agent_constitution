@@ -1,4 +1,4 @@
 interface:
   display_name: "Constitution Skill"
-  short_description: "Create product-aware governance before coding"
-  default_prompt: "Use $constitution-skill to turn my product idea into product-aware governance files and one bounded implementation task before coding."
+  short_description: "Clarify tasks with Flash or project governance"
+  default_prompt: "Use $constitution-skill to clarify my requested outcome, choose Flash or the appropriate project-governance workflow, and capture only the context needed to carry out and check the task."

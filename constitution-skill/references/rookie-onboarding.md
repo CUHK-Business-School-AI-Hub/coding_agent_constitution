@@ -2,19 +2,31 @@
 
 [简体中文](rookie-onboarding_CN.md) · [繁體中文（香港）](rookie-onboarding_HK.md)
 
-A short concept primer for anyone shipping a software product for the first time. Helpful if you are a product manager starting a new project, a side-project builder, a domain expert who is learning to ship code, or generally new to the moving parts of a software product.
+A short introduction to Flash, followed by a Standard concept primer for anyone shipping a software product for the first time. Helpful if you are a product manager starting a new project, a side-project builder, a domain expert who is learning to ship code, or generally new to the moving parts of a software product.
 
 You do not need to write code to use the constitution skill. You will, however, encounter the concepts below in the files it produces. The point of this page is to give you a working grasp of each one in 15 to 20 minutes, so the rest of the skill reads as a tool rather than as a wall of jargon.
 
 This is not a glossary that hides terminology. It is a short reading list that makes the terminology friendlier.
 
-## Reading Order
+## Start With The Right Amount Of Structure
+
+**Small, clear tasks** can be done and checked directly, without a bootstrap conversation. **Standard** keeps the full software-project workflow explained in sections 1–10 below. **Flash** is the unified lightweight entry for daily work, research, documents, software, and reusable capabilities such as skills.
+
+For Flash, start with a short task contract: goal, user or audience, context, scope, constraints, observable completion criteria, and important unknowns. The outcome says what must be achieved; the implementation plan says how to get there and can be revised as you learn.
+
+The agent chooses optional components as needed: **behavioral** (inputs, outputs, examples), **evidence and judgment** (sources, criteria, uncertainty), **content and structure** (audience, organization, format), and **action** (steps, dependencies, outcome checks). A task can combine several; these are neither exclusive modes nor compulsory files.
+
+For a persistent project, start with `AGENTS.md` plus a `PLAN.md` or brief, often `docs/PLAN.md`. Use a chat, existing task, `SKILL.md`, or schema reference instead when it already carries the needed context. Check the actual result against the task contract, not just whether every planned step was attempted.
+
+Read the [Flash guide](flash-mode.md), [components](flash-components.md), and [scenarios](flash-scenarios.md). Optional [AGENTS.md](../assets/flash-templates/AGENTS.md) and [PLAN.md](../assets/flash-templates/PLAN.md) templates are available if files help your work.
+
+## Reading Order For Standard
 
 Skim the whole page once. Come back to a section when you see the term in one of the governance files.
 
 ## 1. Spec, Architecture, Rules, Contracts
 
-These are the four kinds of durable documents the skill helps you produce. They answer four different questions.
+These are the four kinds of durable documents Standard helps you produce. They answer four different questions.
 
 - **Spec** answers *what does the product do for the user?*
   Goals, users, non-goals, acceptance criteria. No code in here.
@@ -104,7 +116,7 @@ Tests do two jobs:
 - They catch regressions: code that used to work but stopped working.
 - They are the only honest answer to "is this task done?"
 
-In the skill, every task file has a `## Verification` section with exact commands to run. Those commands include tests. You do not need to write tests yourself, but you should refuse to mark a task as done if its verification step has not been run.
+In Standard, every task file has a `## Verification` section with exact commands to run. Those commands include tests. You do not need to write tests yourself, but you should refuse to mark a task as done if its verification step has not been run.
 
 ## 9. Review
 
@@ -130,7 +142,7 @@ Whenever you find yourself explaining the same thing twice (to an AI agent, to a
 
 The point is not bureaucracy. The point is that anything you have to repeat is something the next person (or agent, or future-you) will not know without being told.
 
-## What Next
+## What Next In Standard
 
 After you have read this once:
 

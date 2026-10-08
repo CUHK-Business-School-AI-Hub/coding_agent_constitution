@@ -1,9 +1,11 @@
 """Regression tests for the public lint command; Python standard library only."""
 
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 import unittest
+from urllib.parse import unquote, urlsplit
 
 
 SCRIPT = Path(__file__).with_name("check-governance.sh")
@@ -32,7 +34,7 @@ Check one result.
 
 
 class GovernanceLintTests(unittest.TestCase):
-    def run_lint(self, task=None, files=None):
+    def run_lint(self, task=None, files=None, mode=None):
         with tempfile.TemporaryDirectory(prefix="constitution-test-") as tmp:
             root = Path(tmp)
             inputs = dict(files or {})
@@ -43,7 +45,8 @@ class GovernanceLintTests(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(content.encode())
             return subprocess.run(
-                ["bash", str(SCRIPT), str(root)], text=True, capture_output=True
+                ["bash", str(SCRIPT)] + (["--mode", mode] if mode else []) + [str(root)],
+                text=True, capture_output=True
             )
 
     def assert_rejected(self, task, reason):
@@ -121,10 +124,60 @@ class GovernanceLintTests(unittest.TestCase):
         self.assertIn("No governance files found", result.stdout)
         self.assertNotIn("checks passed", result.stdout)
 
-    def test_minimal_plan_is_explicitly_outside_lint_coverage(self):
-        result = self.run_lint(files={"docs/PLAN.md": "# Plan\n"})
-        self.assertIn("not structurally checked", result.stdout)
+    def test_flexible_briefs_are_explicitly_outside_lint_coverage(self):
+        for path in ("docs/PLAN.md", "PLAN.md", "docs/BRIEF.md", "BRIEF.md"):
+            with self.subTest(path=path):
+                result = self.run_lint(files={path: "# Brief\n"})
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("not structurally checked", result.stdout)
+                self.assertNotIn("checks passed", result.stdout)
+
+    def test_explicit_standard_retains_default_validation(self):
+        invalid = TASK.replace("## Interfaces", "Interfaces")
+        default = self.run_lint(invalid)
+        explicit = self.run_lint(invalid, mode="standard")
+        self.assertEqual(default.returncode, 1)
+        self.assertEqual(explicit.returncode, default.returncode)
+        self.assertEqual(explicit.stdout, default.stdout)
+
+    def test_flash_does_not_require_standard_sections_or_commands(self):
+        result = self.run_lint(
+            task="# Memo edit\nShorten supplied memo; compare figures and inspect rendering.\n",
+            files={"docs/ARCH.md": "# Existing context\nUse the existing document template.\n"},
+            mode="flash",
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("missing sections", result.stdout)
+        self.assertNotIn("exact non-empty command", result.stdout)
+        self.assertNotIn("Product Shape", result.stdout)
+        self.assertIn("Standard document-section checks were not run", result.stdout)
         self.assertNotIn("checks passed", result.stdout)
+
+    def test_flash_keeps_free_form_unknowns_without_standard_headings(self):
+        brief = "# Research brief\n## Outcome\nCompare supplied options.\n## Unknowns\n- TODO: confirm delivery date before a dated recommendation.\n"
+        result = self.run_lint(task=brief, mode="flash")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("placeholder", result.stdout)
+        self.assertIn("task-specific review", result.stdout)
+
+    def test_flash_keeps_shared_adapter_findings(self):
+        result = self.run_lint(files={"CLAUDE.md": "@AGENTS.md\n"}, mode="flash")
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn("AGENTS.md is missing", result.stdout)
+        self.assertIn("task-specific review", result.stdout)
+
+    def test_flash_does_not_claim_conversation_contract_was_checked(self):
+        result = self.run_lint(mode="flash")
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("No governance files found", result.stdout)
+        self.assertIn("task-specific review", result.stdout)
+        self.assertNotIn("checks passed", result.stdout)
+
+    def test_invalid_cli_mode_and_extra_arguments_are_rejected(self):
+        for args in (("--mode",), ("--mode", "other"), ("--unknown",), (".", ".")):
+            with self.subTest(args=args):
+                result = subprocess.run(["bash", str(SCRIPT), *args], text=True, capture_output=True)
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
 
     def test_native_agents_needs_no_claude_adapter(self):
         result = self.run_lint(files={"AGENTS.md": "# Shared instructions\n"})
@@ -204,16 +257,109 @@ class ShippedInstructionContractTests(unittest.TestCase):
             self.assertFalse((EXAMPLE / path).exists(), path)
         self.assertTrue(self.read("assets/governance-templates/CLAUDE.md").startswith("@AGENTS.md\n"))
 
-    def test_minimal_mode_exclusions_and_execution_contract(self):
+    def test_flash_routes_away_from_standard_bootstrap(self):
         skill = self.read("SKILL.md")
-        minimal = self.read("references/minimal-mode.md")
-        self.assertIn("only when all safety exclusions", skill)
-        self.assertIn("only when all of these safety exclusions", minimal)
-        for phrase in ("No real or persistent user data", "No authentication, payments",
-                       "No public API consumers", "No production deployment", "## Product Shape",
-                       "### Interfaces", "Expected evidence:", "### Governance Drift"):
-            self.assertIn(phrase, minimal)
-        self.assertNotIn("at least three", skill + minimal)
+        flash = self.read("references/flash-mode.md")
+        self.assertIn("go directly to `references/flash-mode.md`", skill)
+        self.assertIn("not its bootstrap sequence", skill)
+        self.assertIn("## Workflow (Standard And Retrofit)", skill)
+        self.assertIn("A clear small task can proceed directly", flash)
+        self.assertIn("planning-only", flash)
+        self.assertIn("blocked or pending state", flash)
+
+    def test_flash_common_contract_and_revisable_plan(self):
+        flash = self.read("references/flash-mode.md")
+        for label in ("Goal", "User or audience", "Context", "Scope", "Constraints",
+                      "Observable completion", "Unknowns"):
+            self.assertIn("**" + label + ":**", flash)
+        for phrase in ("Outcome Versus Implementation Plan", "in the conversation",
+                       "not an exact file set", "rather than reproducing them",
+                       "not four exclusive modes or four compulsory files"):
+            self.assertIn(phrase, flash)
+
+    def test_flash_components_have_triggers_and_matching_evidence(self):
+        components = self.read("references/flash-components.md")
+        names = ("Behavioral Contract", "Evidence And Judgment Framework",
+                 "Content And Structure Blueprint", "Action Contract")
+        for name in names:
+            section = components.split("## " + name + "\n", 1)[1].split("\n## ", 1)[0]
+            with self.subTest(component=name):
+                self.assertIn("**Use when:**", section)
+                self.assertIn("**Completion evidence:**", section)
+        for detail in ("Inputs and invocation", "Outputs", "State", "Examples", "Questions",
+                       "Sources", "Criteria", "Uncertainty", "Audience", "Message", "Outline",
+                       "Presentation", "Target", "Current-to-desired state", "Preconditions",
+                       "Sequence", "Result confirmation"):
+            self.assertIn(detail, components)
+
+    def test_flash_software_routing_and_review_stay_optional(self):
+        flash = self.read("references/flash-mode.md")
+        routing = self.read("references/product-pattern-routing.md")
+        discovery = self.read("references/cross-agent-compatibility.md")
+        rubric = self.read("references/governance-review-rubrics.md")
+        self.assertIn("they are not Flash's task components", flash)
+        self.assertIn("do not need an app stack", flash)
+        self.assertIn("do not reproduce a full file set", routing)
+        self.assertIn("discovery does not require a Standard file set", discovery)
+        self.assertIn("rubrics below apply to Standard and Retrofit", rubric)
+
+    def test_flash_templates_are_optional_and_not_app_specific(self):
+        plan = self.read("assets/flash-templates/PLAN.md")
+        agents = self.read("assets/flash-templates/AGENTS.md")
+        self.assertIn("Optional Flash starter", plan)
+        self.assertIn("Optional Flash starter", agents)
+        self.assertIn("## Outcome Contract", plan)
+        self.assertIn("## Implementation Plan", plan)
+        self.assertIn("## Evidence And Status", plan)
+        self.assertNotIn("## Product Shape", plan + agents)
+        self.assertNotIn("## Stack", plan + agents)
+        self.assertIn("existing task/brief", plan)
+
+    def test_flash_scenarios_are_explicit_static_walkthroughs(self):
+        scenarios = self.read("references/flash-scenarios.md")
+        names = ("usage_monitor: A Continuing Software Tool", "A Reusable Skill",
+                 "Research Plus Slides", "A One-Off Document Edit", "Reschedule And Notify",
+                 "A Weekly Analysis And Report Agent")
+        for number, name in enumerate(names, 1):
+            section = scenarios.split(f"## {number}. {name}\n", 1)[1].split("\n## ", 1)[0]
+            with self.subTest(scenario=name):
+                for label in ("Common contract", "Components", "Footprint", "Revisable plan", "Outcome checks"):
+                    self.assertIn(f"**{label}:**", section)
+        self.assertIn("do not report live actions", scenarios)
+        self.assertIn("cannot demonstrate how a model selects components", scenarios)
+        self.assertIn("Do not bootstrap `AGENTS.md`", scenarios)
+        self.assertIn("These share one goal and context", scenarios)
+
+    def test_three_language_entrypoints_link_flash_and_standard(self):
+        for filename in ("README.md", "README_CN.md", "README_HK.md"):
+            content = (self.root.parent / filename).read_text()
+            with self.subTest(file=filename):
+                for term in ("Standard", "Flash", "references/flash-mode.md", "references/flash-components.md",
+                             "references/flash-scenarios.md", "assets/flash-templates/PLAN.md"):
+                    self.assertIn(term, content)
+        for filename in ("rookie-onboarding.md", "rookie-onboarding_CN.md", "rookie-onboarding_HK.md"):
+            content = self.read("references/" + filename)
+            with self.subTest(file=filename):
+                for term in ("Standard", "Flash", "flash-mode.md"):
+                    self.assertIn(term, content)
+
+    def test_local_markdown_links_resolve(self):
+        # Actual local Markdown destinations only; fenced sample project text is not a link manifest.
+        for path in self.root.parent.rglob("*.md"):
+            fenced = False
+            for line in path.read_text().splitlines():
+                if line.lstrip().startswith(("```", "~~~")):
+                    fenced = not fenced
+                    continue
+                if fenced:
+                    continue
+                for destination in re.findall(r"\]\(([^)]+)\)", line):
+                    target = destination.split(' "', 1)[0].strip("<>")
+                    parsed = urlsplit(target)
+                    if parsed.scheme or parsed.netloc or not parsed.path:
+                        continue
+                    with self.subTest(file=str(path.relative_to(self.root.parent)), link=target):
+                        self.assertTrue((path.parent / unquote(parsed.path)).exists(), target)
 
     def test_sizing_and_retrofit_do_not_force_mechanical_stops(self):
         sizing = self.read("references/task-sizing.md")
