@@ -38,7 +38,7 @@ Two things to know:
 - Once your product has live users, every schema change touches their data. Adding a column is usually safe. Changing the meaning of a column, removing a column, or renaming a column is often risky.
 - Migrations are forward-only in most teams. If you make a mistake, you write another migration to fix it; you do not edit the past.
 
-This is why the skill marks any schema change as "Approval Required". You do not need to write migrations. You do need to notice when one is happening.
+This is why new or changed schema decisions need explicit approval. If an approved task already specifies the schema change, the agent can implement it without asking again for the same decision. Applying a migration to production follows separate permissions. You do not need to write migrations, but you should notice when one is happening.
 
 ## 3. APIs And Contracts
 
@@ -62,15 +62,15 @@ Two different things that are often grouped together.
 - **Authorization (authz)** is "what are you allowed to do?"
   "Only the team owner can delete a workspace." "Free users can see ten feedback items per month."
 
-Both are subtle and easy to get wrong. The most common failure modes are leaking data across users and accidentally granting too much access. This is why the skill marks any change to authn or authz as "Approval Required". You should treat these areas as places where you slow down, even if the change looks small.
+Both are subtle and easy to get wrong. The most common failure modes are leaking data across users and accidentally granting too much access. New or changed authn or authz decisions need explicit approval, even when the change looks small. An approved task covers its stated implementation; ask again if the scope or risk changes. Keep the relevant security checks.
 
 ## 5. Bounded Task And Vertical Slice
 
-A **bounded task** is a piece of work small enough that one person (or one AI agent) can finish it in one session and someone else can review it. The skill defines hard limits: roughly five files, three hundred lines of changed code, three verification commands.
+A **bounded task** has one clear outcome, an agreed scope, and checks that show whether it works. Another person or agent should be able to review it as a coherent change. Counts such as five files or roughly three hundred changed lines are review signals, not hard limits or automatic reasons to stop. Split work when that reduces risk or makes it easier to verify; keep related changes together when splitting would leave an inconsistent result. Run all necessary checks, even if that takes more than three commands.
 
 A **vertical slice** is a piece of product that goes all the way through the stack: a small UI change plus the API change plus the database change, all delivered together, all working end to end.
 
-Both ideas push against the intuition of "let's just build the whole feature". They are how teams ship without breaking the product. When the skill asks you to write a task file, you are practicing this discipline.
+Both ideas help define a result that can be checked and reviewed without unrelated work getting mixed in. A complete vertical slice may span several files or layers and still be one sensible task. When the skill asks you to write a task file, you are practicing this discipline.
 
 ## 6. Environment: Production, Staging, Development
 
@@ -80,7 +80,7 @@ A modern software product usually runs in three places.
 - **Staging** is a copy of the product that runs in the cloud, looking like production but with fake data. Used to test before showing real users.
 - **Production** is the real product. Real users. Real data. Real consequences.
 
-The skill marks any production deployment change as "Approval Required" because the blast radius is large. Most casual mistakes are caught in staging; the ones that reach production are the ones that matter.
+Production deployment needs explicit authorization because the blast radius is large. Permission to implement or test a change does not authorize deploying it. Most casual mistakes are caught in staging; the ones that reach production are the ones that matter.
 
 You will see these three names in `ARCH.md` and in deployment files. The reason for the separation is purely safety.
 
@@ -91,7 +91,7 @@ Some decisions can be undone for free. Others cost you a lot to undo.
 - Reversible: picking a font, naming a button, choosing the loop syntax inside a function.
 - Irreversible (or expensive to undo): the shape of your database, the URL of your public API, your authentication model, your payment provider integration, how you handle user deletion, your data retention policy.
 
-The skill's "Approval Required" list is exactly the irreversible category. When you read that list, you are reading "decisions that the AI agent must not make alone".
+The skill's "Approval Required" list highlights decisions that are risky or expensive to reverse. The agent must not make new decisions in these areas alone. Once you approve a decision and its implementation scope, it should not ask again for that same decision; changed scope, changed risk, and separate operational permissions still need attention.
 
 A useful habit: when an agent is about to make a choice, ask yourself "if this turns out wrong, how bad is it to change later?" If the answer is "easy", let the agent run. If the answer is "painful" or "we would need to migrate users", pause.
 
@@ -115,7 +115,7 @@ A **review** is a second person (or a second agent) reading a change before it i
 - Did it cross any of the boundaries listed in `ARCH.md` and `RULES.md`?
 - Did it touch any of the "Approval Required" surfaces without explicit approval?
 
-When the skill talks about Cursor reviewing diffs or a human reviewer approving merges, this is what is being described. Review is not gatekeeping; it is the cheapest place to catch problems.
+Codex, Cursor, or Claude Code can implement a task or review its changes. Choose roles based on the available tools and the work, not a fixed tool assignment. Review should inspect evidence and catch problems; human approval still governs important decisions and merges under the project's rules.
 
 ## 10. The Promotion Habit
 

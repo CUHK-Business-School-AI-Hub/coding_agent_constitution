@@ -6,17 +6,16 @@ This mode keeps the same principles (document before implementation, bounded tas
 
 ## When To Use Minimal Mode
 
-Choose minimal mode when at least three of these are true:
+Minimal mode is eligible only when all of these safety exclusions are satisfied:
 
-- Single contributor.
-- Expected lifespan under 3 months.
-- One coding agent in active use (not three).
-- No external API consumers.
-- No production deployment.
-- No persistent user data.
-- No auth, payments, or destructive operations.
+- No real or persistent user data.
+- No authentication, payments, money handling, or destructive operations.
+- No public API consumers or externally consumed webhook contracts.
+- No production deployment or traffic.
 
-If any of the excluded items appear later (you add auth, you onboard a teammate, you start receiving real user data), upgrade to standard mode by promoting the minimal file into split governance files.
+Then assess fit: a single contributor, one active coding agent, short lifespan, and a small reversible scope are useful signals. They never override the exclusions. A local script with synthetic data may fit; a solo weekend app collecting customer data does not.
+
+If an excluded surface appears later, upgrade before implementing it. Also reassess the footprint when collaborators or multiple active agents need a durable handoff.
 
 ## The Minimal File Set
 
@@ -27,7 +26,7 @@ AGENTS.md
 docs/PLAN.md
 ```
 
-Optionally, one more if the active agent is Claude Code:
+Optionally, one more only when the installed client needs a compatibility adapter (see `cross-agent-compatibility.md`):
 
 ```text
 CLAUDE.md
@@ -79,6 +78,12 @@ One paragraph: what this is, who uses it, why it exists.
 ## Intent
 What problem this codebase solves. Update when product direction shifts.
 
+## Product Shape
+- Base profile: custom
+- Capability modules: none
+- Technology recipe: none
+- Deviations and rationale: state the actual stack choice and why it fits.
+
 ## Current Slice
 The single thing being worked on right now. Replace as work progresses.
 
@@ -89,11 +94,20 @@ One outcome.
 - Touch:
 - Do not touch:
 
+### Interfaces
+- Consumes: name the local inputs and formats, or None.
+- Produces: name the local outputs and formats, or None.
+- Public contracts touched: None (promote before adding an external interface).
+
 ### Acceptance
 - Observable result.
 
 ### Verification
-- Exact command.
+- Command: exact command.
+  - Expected evidence: exit status and observable result.
+
+### Governance Drift
+- Update this plan or AGENTS.md for changed intent, decisions, interfaces, or recurring rules; otherwise state why no update is needed.
 
 ## Backlog
 - Short bulleted list of next things, no detail until they become the current slice.
@@ -107,15 +121,16 @@ The `Decisions Log` is the minimal-mode ADR. One line per decision is enough at 
 
 ## Promotion Triggers
 
-Move out of minimal mode as soon as one of these happens. Do not delay.
+Promote before crossing a safety exclusion. For growth signals, reassess how much durable context the next contributor or task needs.
 
 | Trigger | Promotion |
 | --- | --- |
-| You hire a contributor or invite reviewers | Split `AGENTS.md` into proper SPEC/ARCH/RULES |
-| You add real user data | Add `RULES.md` with data rules; add `CONTRACTS/` if any storage schema is defined |
+| You hire a contributor or invite reviewers | Reassess handoff needs; split product and architecture context into SPEC/ARCH/RULES when useful |
+| You add real or persistent user data | Promote; add `RULES.md` with data rules and `CONTRACTS/` for storage schemas |
+| You add auth, money handling, or destructive operations | Promote before implementation; record approval and safety boundaries |
 | You add a public API or webhook | Add `docs/CONTRACTS/` |
-| You add a second active coding agent | Add tool-specific adapter files (`CLAUDE.md`, `.cursor/rules/`) |
-| `docs/PLAN.md` grows past ~200 lines | Split into `SPEC.md` + `docs/TASKS/` |
+| You add a second active coding agent | Reassess shared context and split durable docs as needed; add adapters only if discovery or tool-specific behavior requires them |
+| `docs/PLAN.md` becomes hard to navigate (around 200 lines is a signal) | Split into `SPEC.md` + `docs/TASKS/` when that improves use and maintenance |
 | You deploy to production | Add `ARCH.md` with operational concerns |
 
 Promotion is a one-task job: file `docs/TASKS/001-promote-governance.md`, split, retire `docs/PLAN.md` into specific files.
@@ -135,7 +150,7 @@ The skill's standard approval rules still apply. An explicitly approved task cov
 
 Be honest about the tradeoff. Minimal mode gives up:
 
-- Strong cross-agent compatibility (only one adapter file).
+- Separate long-lived task and review records (native instruction discovery remains available).
 - Long-term historical clarity (no ADR chain).
 - Explicit module boundaries (single-file project assumed).
 - Drift detection scripts (too little surface to be worth running).

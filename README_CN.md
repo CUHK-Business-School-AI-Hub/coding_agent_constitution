@@ -16,6 +16,12 @@
 
 ---
 
+## 最近更新 - 2026-10-08
+
+- 更新 Claude Code 兼容说明：优先共用 `AGENTS.md`，先检查工具实际读取了什么，再按需添加简短的兼容入口。
+- 统一入门说明：文件数和代码行数用于提醒检查难度，不再强制拆分任务；一起验证更安全的相关改动，可以保持完整。
+- 保留现有工作方式：沿用已确认的决定，自选实现和检查工具，明确验证要求与安全边界。
+
 ## 最近更新 - 2026-09-14
 
 - 更准确地判断何时需要这个技能：已经说清楚的小修改，不必先走一遍规划流程。
@@ -102,9 +108,9 @@
 | --- | --- |
 | Codex | 读取 `AGENTS.md` |
 | Cursor | 当前版本可直接读取 `AGENTS.md`；有特别需要时再加专用规则 |
-| Claude Code | 通过 `CLAUDE.md` 读取共享说明 |
+| Claude Code | 当前版本可原生发现 `AGENTS.md`；添加兼容入口前，先检查已有的 Claude 专用文件 |
 
-通用规则尽量只保留一份，避免改了一处、忘了另一处。已有项目的专用规则会保留。[详细兼容说明](constitution-skill/references/cross-agent-compatibility.md)供需要配置工具的读者参考。
+通用规则保存在 `AGENTS.md`，避免改了一处、忘了另一处。新项目默认使用这个共享入口。已有项目的专用规则会保留，包括仍有用途的 Claude 专用说明。[详细兼容说明](constitution-skill/references/cross-agent-compatibility.md)供需要配置工具的读者参考。
 
 ## 快速开始（推荐）
 
@@ -152,7 +158,9 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 
 ### Claude Code
 
-把 `constitution-skill/` 复制到目标项目的 `.claude/skills/` 文件夹。共享项目说明时，`CLAUDE.md` 可以用这一行读取：
+把 `constitution-skill/` 复制到目标项目的 `.claude/skills/` 文件夹。共享项目说明保存在 `AGENTS.md`。当前 Claude Code 支持原生发现，但项目或上级目录中已有的 Claude 入口文件可能禁用这一功能。先检查已安装版本在该项目中实际读取了什么，详见[兼容说明](constitution-skill/references/cross-agent-compatibility.md)和 [Claude Code 官方文档](https://code.claude.com/docs/en/memory#agentsmd)。
+
+仅在项目确实需要兼容入口时，才用简短的 `CLAUDE.md` 导入，并保留已有的 Claude 专用规则：
 
 ```markdown
 @AGENTS.md
@@ -227,9 +235,10 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
    │  ├─ rookie-onboarding.md          # 给第一次做软件产品的人的概念入门
    │  ├─ bootstrap-question-bank.md    # 该问什么问题
    │  ├─ cross-agent-compatibility.md  # Codex / Cursor / Claude Code 适配映射
+   │  ├─ frontier-model-guidance.md    # portable Astra / Opus authoring guidance
    │  ├─ governance-asset-guide.md     # 长期 vs 一次性资产、提升规则
    │  ├─ anti-patterns.md              # 常见的治理反模式
-   │  ├─ task-sizing.md                # 量化的 bounded task 限制
+   │  ├─ task-sizing.md                # 范围完整、可验证任务的检查信号
    │  ├─ retrofit-mode.md              # 把治理引入 legacy 仓库
    │  ├─ governance-evolution.md       # 版本演进、ADR、归档
    │  ├─ minimal-mode.md               # 单人 / 极简项目的轻量模式
@@ -277,7 +286,7 @@ cp -R constitution-skill ~/.agents/skills/constitution-skill
 
 **通过这项检查，不代表软件已经测试通过或可以上线。** 它不会替你运行任务中的命令，也不检查轻量模式的 `docs/PLAN.md`；这些需要另外核实。没有找到文件时，它会明确提醒。
 
-样例中的“规则重复”警告，意思是有些说明在多个工具文件里各写了一遍。旧项目可以保留确有用途的副本，但修改时要保持一致；新项目优先共用 `AGENTS.md`。
+如果已有工具文件重复了共享规则，或 Claude 专用入口文件阻止原生发现 `AGENTS.md`，检查脚本可能发出警告。请判断这些文件是否仍有需要，保留有用的专用规则；确需兼容入口时，使用简短导入。仓库样例使用共享的 `AGENTS.md` 入口。
 
 如果你不熟悉命令，让 AI 运行并解释结果即可。维护本技能的开发者可以运行：
 

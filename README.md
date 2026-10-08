@@ -16,6 +16,12 @@
 
 ---
 
+## Recent Updates - 2026-10-08
+
+- Updated Claude Code compatibility: start with shared `AGENTS.md`; add a thin fallback only after checking instruction discovery.
+- Aligned beginner guidance: file and line counts guide review, rather than forcing a task split. Keep related work together when it is safer to verify as one change.
+- Preserved the existing workflow: reuse approved decisions, choose your implementer and reviewer, and keep checks and safety boundaries explicit.
+
 ## Recent Updates - 2026-09-14
 
 - Clearer skill selection: small, well-defined edits no longer enter the planning workflow first.
@@ -102,9 +108,9 @@ Use it again when a new, unclear requirement needs working through.
 | --- | --- |
 | Codex | Reads `AGENTS.md` |
 | Cursor | Current versions read `AGENTS.md`; add dedicated rules only when needed |
-| Claude Code | Reads shared instructions through `CLAUDE.md` |
+| Claude Code | Current versions can discover `AGENTS.md` natively; check existing Claude-specific files before adding a fallback |
 
-Keep common rules in one place so a change does not leave another copy out of date. Preserve existing project-specific rules. See the [compatibility guide](constitution-skill/references/cross-agent-compatibility.md) for configuration details.
+Keep common rules in `AGENTS.md` so a change does not leave another copy out of date. Start new projects with this shared entrypoint. Preserve existing project-specific rules, including useful Claude-specific guidance. See the [compatibility guide](constitution-skill/references/cross-agent-compatibility.md) for configuration details.
 
 ## Quick Start (Recommended)
 
@@ -154,7 +160,9 @@ Copy `constitution-skill/` into the target project's `.agents/skills/` folder. A
 
 ### Claude Code
 
-Copy `constitution-skill/` into the target project's `.claude/skills/` folder. For shared project instructions, `CLAUDE.md` can import them with:
+Copy `constitution-skill/` into the target project's `.claude/skills/` folder. Keep shared project instructions in `AGENTS.md`. Current Claude Code supports native discovery, but existing project or ancestor Claude entry files can disable it. First check what the installed version loads in this project; see the [compatibility guide](constitution-skill/references/cross-agent-compatibility.md) and [Claude Code documentation](https://code.claude.com/docs/en/memory#agentsmd).
+
+Only if the project needs a fallback, use a thin `CLAUDE.md` import, preserving any existing Claude-specific rules:
 
 ```markdown
 @AGENTS.md
@@ -230,9 +238,10 @@ You decide what problem to solve. The AI works within the agreed scope. Check ea
    │  ├─ rookie-onboarding.md          # concept primer for first-time product builders
    │  ├─ bootstrap-question-bank.md    # which questions to ask
    │  ├─ cross-agent-compatibility.md  # Codex / Cursor / Claude Code adapter mapping
+   │  ├─ frontier-model-guidance.md    # portable Astra / Opus authoring guidance
    │  ├─ governance-asset-guide.md     # durable vs disposable, promotion rules
    │  ├─ anti-patterns.md              # common failure modes to avoid
-   │  ├─ task-sizing.md                # quantifiable bounded-task rules
+   │  ├─ task-sizing.md                # review signals for coherent, verifiable tasks
    │  ├─ retrofit-mode.md              # applying governance to a legacy repo
    │  ├─ governance-evolution.md       # versioning, ADRs, archival
    │  ├─ minimal-mode.md               # solo or throwaway lightweight setup
@@ -280,7 +289,7 @@ The skill includes a script that looks for missing information in project docume
 
 **Passing this check does not mean the software has passed its tests or is ready to deploy.** The script does not execute task commands or check the lightweight `docs/PLAN.md`; review those separately. It reports when there are no files to check.
 
-The example's “repeated rules” warning means some instructions appear in more than one tool file. Existing projects may retain copies that serve a purpose, but keep them consistent when editing. New projects should share `AGENTS.md` where possible.
+The checker can warn when existing tool files repeat shared rules or Claude-specific entry files prevent native `AGENTS.md` discovery. Review whether those files are needed; preserve useful tool-specific rules and use a thin import when a fallback is necessary. The bundled example uses a shared `AGENTS.md` entrypoint.
 
 If you are unfamiliar with commands, ask the AI to run the check and explain the result. Developers maintaining this skill can run:
 

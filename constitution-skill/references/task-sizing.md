@@ -6,7 +6,7 @@ Use this guide to keep bounded tasks small enough for one agent pass and one rev
 
 Use these signals to estimate review effort. They are starting points, not hard limits.
 
-| Signal | Limit |
+| Signal | Review threshold |
 | --- | --- |
 | Files touched | > 5 production files |
 | Diff size | > ~300 changed lines (excluding generated files, lockfiles, fixtures) |
@@ -16,7 +16,7 @@ Use these signals to estimate review effort. They are starting points, not hard 
 | Verification commands | > 3 distinct commands |
 | Distinct review concerns | > 1 (e.g., auth AND payments) |
 
-Crossing one signal may be acceptable. Crossing two suggests splitting. Crossing three requires splitting or a documented reason why one atomic change is safer. Run all checks required by the change even when there are more than three commands.
+Use these signals together with risk, independent outcomes, reviewability, and atomicity. Several signals warrant a closer look, not an automatic stop or split. Split independently useful changes when that reduces risk; keep coupled contract, implementation, test, and documentation updates together when splitting would leave an invalid intermediate state. Document why an unusually large task is still one coherent change. Run all checks required by the change even when there are more than three commands.
 
 ## Soft Limits
 
@@ -37,18 +37,18 @@ Useful mental anchors when scoping the next task.
 | Schema-aligned endpoint implementation | 1-3 files, ~80-200 lines, 2-3 tests |
 | Add one form to existing UI | 2-4 files, ~100-250 lines, 1-2 tests |
 | Wire one external service adapter | 2-3 files, ~100-200 lines, contract test + integration test |
-| Refactor with no behavior change | 3-5 files, ~100-300 lines, no new tests required, must pass existing |
+| Refactor with no behavior change | 3-5 files, ~100-300 lines, regression coverage as needed, must pass required checks |
 | Bug fix with regression test | 1-2 production files, 1 test file, ~30-80 lines |
 
-If the next task does not fit any anchor, ask: "can it be reframed as one of these?" If not, it is likely too coarse.
+These anchors are examples, not a mandatory taxonomy. A task outside them can still be bounded if its outcome, risk, rollback boundary, and verification are clear.
 
 ## Splitting Patterns
 
 ### Pattern 1: Slice By Layer
 
-Bad: `001-add-feedback-feature.md` (DB + API + UI + tests + docs).
+Too broad when each layer can deliver an independently useful result: `001-add-feedback-feature.md` (DB + API + UI + tests + docs). Do not split a small atomic vertical slice merely because it crosses layers.
 
-Good:
+Possible split when these intermediate states are valid:
 - `001-add-feedback-db-schema.md`
 - `002-add-feedback-api-endpoints.md`
 - `003-add-feedback-list-ui.md`
@@ -104,7 +104,7 @@ Some tasks legitimately exceed these signals. Acceptable reasons:
 In those cases:
 
 - Add a `## Size Justification` section to the task.
-- Quote which limit was crossed and why.
+- Name the review signals crossed and why the change should stay atomic.
 - Ask the reviewer to verify the invariant and rollback boundary; mechanical or generated changes may be spot-checked.
 
 ## Interface Clarity
@@ -122,12 +122,7 @@ If no interface is created or changed, write `None`. Do not leave names, payload
 
 ## Acceptance Criteria Sizing
 
-Each task should have 2-6 acceptance criteria. Fewer means under-specified. More means under-scoped.
-
-- 0-1: cannot verify, expand.
-- 2-3: typical.
-- 4-6: complex but acceptable.
-- 7+: task is doing too much; split.
+Usually 2-6 acceptance criteria are enough. The count is a review signal: one precise criterion may cover a simple task, and more than six may be needed for one atomic change. Split for independent outcomes, not to reach a count. Every criterion should name an observable result.
 
 ## Verification Sizing
 

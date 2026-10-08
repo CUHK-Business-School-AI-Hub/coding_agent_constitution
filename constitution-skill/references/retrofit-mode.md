@@ -17,7 +17,7 @@ The order is:
 
 ## Phase 0: Inventory
 
-Spend one session purely reading. Produce a short `docs/inventory.md` (disposable) with:
+Inspect the relevant seam and its dependencies before editing. Reuse existing evidence; there is no mandatory read-only session. If useful, capture a short `docs/inventory.md` (disposable) with:
 
 - Repo layout (top-level folders, what they roughly do).
 - Build, test, lint, deploy commands actually in use.
@@ -25,7 +25,7 @@ Spend one session purely reading. Produce a short `docs/inventory.md` (disposabl
 - Known sensitive surfaces: payments, auth, migrations, external integrations.
 - Known fragile areas: tests that flake, modules everyone fears to touch.
 
-Do not write SPEC or ARCH yet. The inventory is scaffolding; archive or delete it once durable docs cover its content.
+Once the seam is understood, continue to its governance and any authorized implementation in the same session. The inventory is optional scaffolding; archive or delete it once durable docs cover its content.
 
 ## Phase 1: Root AGENTS.md First
 
@@ -35,8 +35,8 @@ Include only:
 
 - Where to find docs, even if they are partial.
 - Commands for build, test, lint, run.
-- Which folders or files are sensitive ("ask before touching `services/payments/*`").
-- Which behaviors require human approval (auth, schema, billing, destructive ops).
+- Which folders or files are sensitive and what authorization already covers them (for example, `services/payments/*`).
+- Which new or expanded decisions require human approval (auth, schema, billing, destructive ops). Do not reconfirm the same approved implementation scope; deployment and destructive production operations still require their execution permissions.
 - A `## Conventions In Doubt` section listing patterns the agent should follow when it sees ambiguity.
 
 Keep it under 100 lines. Resist the urge to write a complete project description.

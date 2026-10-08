@@ -1,6 +1,6 @@
 <!--
 Owner: feedback-team
-Last Reviewed: 2026-05-12
+Last Reviewed: 2026-10-08
 Status: Active
 -->
 
@@ -47,17 +47,16 @@ Status: Active
 
 ## Agent Rules
 
-- Read `AGENTS.md`, `docs/SPEC.md`, `docs/ARCH.md`, and the relevant `docs/TASKS/*.md` before implementation.
+- Follow `AGENTS.md`; read the relevant task and only the source documents needed for its scope.
 - Implement only the requested task; do not opportunistically refactor adjacent code.
 - Run the verification commands listed in the task before declaring it complete.
 - Do not claim done, fixed, passing, or complete without fresh verification evidence: command, exit status, and relevant output summary.
-- Summarize files changed, checks run, governance docs changed or not changed, residual risks, and what Cursor/human should review.
-- Do not change public APIs, database schemas, authentication, billing, destructive operations, or production deployment without explicit human approval.
+- Summarize files changed, checks run, governance docs changed or not changed, residual risks, and what the reviewer/human should check.
+- Follow the approval boundaries in `AGENTS.md`: reuse explicit approval for the stated implementation scope, and ask about new or expanded risky decisions. Deployment and destructive production operations require their execution permissions.
 
 ## Review Rules
 
 - Reviewers separately assess Spec Compliance and Implementation Quality.
-- Cursor enforces architectural boundaries via `.cursor/rules/project-governance.mdc`.
-- Claude Code review uses `.claude/rules/project-governance.md`.
+- All reviewers use the canonical `AGENTS.md` and relevant architecture, contract, and task context.
 - Human reviewer must check: contract drift, dependency justification, security rule compliance, and verification evidence.
 - A PR is not mergeable until at least one human review has approved.

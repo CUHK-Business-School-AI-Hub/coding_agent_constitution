@@ -70,6 +70,11 @@ Stand up the Fastify service with health check, request logging, env loading, an
 - Command: `pnpm test -- tests/api/feedback-post.test.ts tests/integration/feedback-repo.test.ts`
   - Expected evidence: exits 0; happy path, validation-error, and repository insert tests pass.
 
+- Command: `pnpm test`
+  - Expected evidence: exits 0; the full required unit and integration suite passes.
+- Command: `pnpm test:contract`
+  - Expected evidence: exits 0; implemented handlers match the OpenAPI contract.
+
 ## Governance Drift Check
 
 - SPEC changed? No; this task implements the existing Customer Submits Feedback workflow.
@@ -78,6 +83,10 @@ Stand up the Fastify service with health check, request logging, env loading, an
 - RULES/AGENTS changed? No expected change; promote any repeated setup/review rule only if discovered during implementation.
 - If no durable docs changed, why is that safe? The task is the first implementation slice for already-authored contracts and architecture.
 
+## Size Justification
+
+This first runnable vertical slice spans setup, API, domain, persistence, and tests. Keep them together so the declared endpoint and schema have one verifiable implementation; do not leave a scaffold that claims an endpoint works before persistence and error handling exist. Review module boundaries and the initial migration carefully. File and command counts are review signals, not permission to omit required checks.
+
 ## Risks
 
 - First-time scaffold; lint/test config may need iteration.
@@ -85,5 +94,5 @@ Stand up the Fastify service with health check, request logging, env loading, an
 
 ## Handoff Notes
 
-- Cursor should review: that the handler does not call the repo directly, that no `any` types leak, and that error envelope matches `Error` schema exactly.
+- Reviewer should check: that the handler does not call the repo directly, that no `any` types leak, and that error envelope matches `Error` schema exactly.
 - Human should decide: choice of token-issuance approach (out of scope for this task but blocks Task 002).

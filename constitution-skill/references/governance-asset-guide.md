@@ -76,7 +76,7 @@ Avoid project marketing copy.
 
 ### CLAUDE.md
 
-Use as the Claude Code adapter:
+Use only when native `AGENTS.md` discovery is unavailable or an existing Claude-specific setup needs an adapter (see `cross-agent-compatibility.md`):
 
 - import shared guidance with `@AGENTS.md`
 - add Claude-specific behavior only when needed
@@ -107,7 +107,7 @@ Use for modular Claude Code rules:
 - path-scoped rules
 - topic-specific coding, testing, security, or API rules
 
-Keep `CLAUDE.md` as the entrypoint and `.claude/rules/` as modular detail.
+Keep shared rules in `AGENTS.md`; use `.claude/rules/` only for necessary Claude-specific modular detail. A `CLAUDE.md` entrypoint is optional, and its presence affects native discovery.
 
 ## Disposable Assets
 

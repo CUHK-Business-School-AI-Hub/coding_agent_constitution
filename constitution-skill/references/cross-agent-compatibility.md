@@ -1,112 +1,70 @@
 # Cross-Agent Compatibility
 
-Use this guide when making the generated governance assets work across Codex, Cursor, and Claude Code.
+Use this guide when configuring instruction discovery, installing the skill, or migrating tool adapters. Tool discovery and model behavior are separate concerns; an Opus model does not by itself determine which files Claude Code loads.
 
-## Compatibility Principle
+## One Canonical Source
 
-Keep one shared source of truth and create thin adapters for each tool:
+Keep shared instructions in `AGENTS.md`, and product details in the relevant `docs/SPEC.md`, `docs/ARCH.md`, `docs/RULES.md`, and `docs/CONTRACTS/` entries. Prefer native discovery in supported Codex, Cursor, and Claude Code clients. Do not generate a second ruleset or add `CLAUDE.md` merely because Claude Code is used.
 
-- Shared canonical instructions: `AGENTS.md`
-- Product/architecture/rules/contracts: `docs/SPEC.md`, `docs/ARCH.md`, `docs/RULES.md`, `docs/CONTRACTS/`
-- Codex adapter: `AGENTS.md`
-- Cursor: reads `AGENTS.md`; optional `.cursor/rules/project-governance.mdc` for tool-specific or scoped rules
-- Claude Code adapter: `CLAUDE.md` importing `@AGENTS.md`, plus optional `.claude/rules/*.md`
+Preserve existing project-specific rules. Do not delete a working adapter from a user's repository until its unique guidance is preserved and the replacement loading path is verified. The bundled Feedback Inbox example demonstrates the native `AGENTS.md` layout; optional adapter templates remain available for other setups.
 
-Avoid copying long rules into three places. Duplicated rules drift.
+Either implementation or review can use any of the three tools. Both roles follow the same bounded task, interfaces, authorization, and verification evidence; reviews separate `Spec Compliance` from `Implementation Quality`.
 
-Apply governance review consistently across tools:
+## Skill Installation Is Separate
 
-- Implementers follow the bounded task file and report verification evidence.
-- Reviewers check task compliance, architecture boundaries, contracts, tests, and governance drift.
-- Assign either role to Codex, Cursor, or Claude Code according to the user's toolchain.
-- All tools should separate `Spec Compliance` from `Implementation Quality` during review.
+Use a supported discovery location for the actual tool:
 
-## Skill Installation Targets
+- Codex: `.agents/skills/constitution-skill/SKILL.md` in a project, or `~/.agents/skills/constitution-skill/SKILL.md` for a user.
+- Cursor: `.agents/skills/constitution-skill/SKILL.md` or `.cursor/skills/constitution-skill/SKILL.md`.
+- Claude Code: `.claude/skills/constitution-skill/SKILL.md`.
 
-For project-local installation, prefer the tool-native path the user is actually using:
+Native `AGENTS.md` support does not imply Claude Code discovers skills in `.agents/skills/`. Keep the distributed package a plain skill folder; reuse one installation only when the clients actually discover that location. Do not move or duplicate an existing working install without checking it.
 
-- Codex: `.agents/skills/constitution-skill/SKILL.md` for a project, or `~/.agents/skills/constitution-skill/SKILL.md` for a user.
-- Claude Code: `.claude/skills/constitution-skill/SKILL.md`
-- Cursor: the same `.agents/skills/constitution-skill/SKILL.md` project copy, or `.cursor/skills/constitution-skill/SKILL.md`.
+## Codex And Cursor
 
-For open-source distribution, keep the package itself as a plain skill folder with `SKILL.md`, `references/`, and `assets/`. Users or installers can copy it into the right tool directory.
+- Codex reads `AGENTS.md`; use nested files only for genuinely distinct directory rules.
+- Current Cursor reads root and nested `AGENTS.md`. Add `.cursor/rules/*.mdc` only for necessary tool-specific or scoped behavior, using `globs` and `alwaysApply` appropriately.
+- `.vscode/` contains editor configuration, not shared agent governance.
+- Keep the instruction entry short: map to relevant task and source documents instead of importing every specification.
 
-## Codex
+## Claude Code Native Discovery
 
-Use `AGENTS.md` for repository instructions:
+Official documentation checked on 2026-10-08 documents native support via the built-in `agents-md` plugin, introduced in Claude Code 2.1.277. Later releases fixed early provider and telemetry-related limitations (2.1.281). Check the actual installed release and plugin state rather than assuming every installation has this support; an older-client upgrade can require another session before the plugin is available.
 
-- Keep it concise and agent-focused.
-- Include setup, test, coding, review, and approval rules.
-- Reference durable docs instead of pasting large specs into `AGENTS.md`.
-- Require command, exit status, and output summary before claiming done, fixed, passing, or complete.
-- Ask implementers to report whether `SPEC.md`, `ARCH.md`, `CONTRACTS/`, `RULES.md`, or `AGENTS.md` changed or did not need to change.
-- Use nested `AGENTS.md` files only when subdirectories need distinct rules.
+With the default plugin behavior:
 
-## Cursor
+- Root-to-working-directory `AGENTS.md` and `.claude/AGENTS.md` files load. Descendant instructions load when Claude reads files in those directories.
+- A project or ancestor `CLAUDE.md`, `.claude/CLAUDE.md`, or `CLAUDE.local.md` suppresses native AGENTS discovery for that project. Descendants with their own Claude entries similarly use those entries.
+- User-wide or managed Claude instructions and `.claude/rules/` do not by themselves trigger that project-level suppression.
+- Do not assume Codex discovery semantics: `AGENTS.override.md`, `AGENTS.local.md`, or instruction files in `.agents/` are not native Claude instruction entrypoints. `--add-dir` loading and `InstructionsLoaded` hooks also differ; consult the current official guide for those cases.
+- Imports outside the project may need the user's approval. Never bypass an import permission prompt.
 
-Use Cursor Project Rules for persistent project behavior:
+### Optional Compatibility Adapter
 
-- Store rules under `.cursor/rules/`.
-- Prefer `.mdc` files with YAML frontmatter.
-- Use `alwaysApply: true` for governance rules that must be included every session.
-- Use `globs` for path-scoped rules.
-- Use Cursor skills under `.cursor/skills/<skill-name>/SKILL.md` for task-specific workflows.
-- Current Cursor versions read root and nested `AGENTS.md` directly. Add Project Rules only when additional scope or tool-specific behavior is needed.
-- Include implementation or review guidance according to the assigned role; neither role requires a particular tool.
+When native discovery is unavailable, disabled, or an existing Claude-specific setup must remain, keep a thin root `CLAUDE.md`:
 
-Cursor is based on VS Code, but `.vscode/` is not the main agent-governance location. Use `.vscode/` only for editor settings, extensions, launch configs, or tasks.
-
-## Claude Code
-
-Use `CLAUDE.md` for project instructions:
-
-- Keep root `CLAUDE.md` thin.
-- Import shared instructions with `@AGENTS.md` when `AGENTS.md` already exists.
-- Add Claude-specific guidance below the import only when necessary.
-- Use `.claude/rules/*.md` for modular rules; rules without `paths` frontmatter are loaded broadly.
-- Use path-scoped frontmatter when a rule only applies to certain files.
-- Keep Claude rules thin and aligned with `AGENTS.md`; put Claude-specific behavior in `.claude/rules/` only when it cannot live in shared governance.
-
-## File Map
-
-This map shows available entrypoints. Create adapters only for tools in use; `.cursor/rules/` and `.claude/rules/` are optional. Preserve existing project-specific rules:
-
-```text
-project-root/
-├─ AGENTS.md
-├─ CLAUDE.md
-├─ docs/
-│  ├─ SPEC.md
-│  ├─ ARCH.md
-│  ├─ RULES.md
-│  ├─ CONTRACTS/
-│  │  └─ README.md
-│  └─ TASKS/
-│     └─ 001-<slug>.md
-├─ .cursor/
-│  └─ rules/
-│     └─ project-governance.mdc
-└─ .claude/
-   └─ rules/
-      └─ project-governance.md
+```markdown
+@AGENTS.md
 ```
 
-If a repo needs the constitution skill itself to be project-local, add one of:
+For an adapter in `.claude/CLAUDE.md`, the equivalent relative import is `@../AGENTS.md`. Add only unique Claude-specific guidance. A prose instruction saying "read AGENTS.md" is not the same as the supported import syntax. Do not create an adapter and then expect default native discovery to load additional AGENTS files: the adapter changes the discovery path. Verify needed nested rules as well as the root.
 
-```text
-.agents/skills/constitution-skill/SKILL.md  # Codex and current Cursor
-.claude/skills/constitution-skill/SKILL.md  # Claude Code
-```
+Use `.claude/rules/*.md` only for necessary Claude-specific modular or path-scoped behavior. Do not duplicate shared governance there. Custom plugin configuration may change coexistence behavior; inspect it instead of assuming the default.
 
-Use one project-local skill copy rather than multiple duplicated copies when the user's toolchain can discover a shared location.
+## Installation And Migration Check
 
-## Compatibility Check
+1. Inspect the actual tool version, project and ancestor entry files, and existing unique rules.
+2. Choose one loading path: native discovery for a supported setup, or an explicit thin import where needed.
+3. Start a fresh session and inspect actual loading evidence. In Claude Code, use `/context` to inspect launch context and available plugin/debug diagnostics to verify the intended AGENTS files were injected; `/memory` is not proof of native AGENTS loading. Read a file in each required nested scope and verify its rules load then, rather than expecting every descendant at startup. Also confirm the skill is available separately.
+4. Only after verification, remove redundant adapters if that migration is authorized. If no live client is available, report discovery as unverified and leave existing working adapters intact.
 
-Reviewed against official documentation on 2026-09-12:
+The structural checker can flag local orphan adapters and common shadowing/import mistakes. It cannot establish plugin state, ancestor settings outside the checked root, custom coexistence configuration, approval of external imports, or actual runtime loading.
 
-- [Codex skills](https://learn.chatgpt.com/docs/build-skills)
-- [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+## References
+
+- [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md) and [skills](https://learn.chatgpt.com/docs/build-skills)
 - [Cursor rules](https://cursor.com/docs/rules) and [skills](https://cursor.com/docs/skills)
-- [Claude Code memory and imports](https://code.claude.com/docs/en/memory)
+- [Claude Code AGENTS.md discovery](https://code.claude.com/docs/en/memory#agentsmd) and [differences from CLAUDE.md](https://code.claude.com/docs/en/memory#where-agentsmd-differs-from-claudemd)
+- [Built-in agents-md plugin](https://github.com/anthropics/claude-code/blob/main/mods/agents-md/README.md)
 
-These tools differ in when nested instructions load; do not assume identical discovery behavior. After installation, start a new session and confirm the skill appears and the expected project instructions are loaded. Older installations may use other paths, including `~/.codex/skills`; verify the actual client before moving or duplicating them.
+For model-specific authoring considerations, load `frontier-model-guidance.md` only when relevant.

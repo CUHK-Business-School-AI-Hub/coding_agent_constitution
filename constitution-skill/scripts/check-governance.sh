@@ -3,7 +3,7 @@
 # Detect common governance-asset problems in a project that uses the constitution skill.
 #
 # Checks performed:
-#   1. AGENTS.md presence when CLAUDE.md or .cursor/rules exist (avoid orphan adapters).
+#   1. Canonical AGENTS.md presence and common local Claude entry shadowing.
 #   2. Required sections present in each TASKS/*.md file.
 #   3. Required sections present in SPEC.md, ARCH.md, RULES.md.
 #   4. Contract files referenced by ARCH.md/RULES.md actually exist.
@@ -59,7 +59,9 @@ has_agents=0
 [ -f "AGENTS.md" ] && has_agents=1
 
 has_claude=0
-[ -f "CLAUDE.md" ] && has_claude=1
+for f in CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md; do
+    [ -f "$f" ] && has_claude=1
+done
 
 has_cursor_rules=0
 if [ -d ".cursor/rules" ] && ls .cursor/rules/*.mdc >/dev/null 2>&1; then
@@ -109,7 +111,7 @@ check_required_sections() {
     shift
     [ -f "$file" ] || return 0
     for sec in "$@"; do
-        if ! markdown_text "$file" | grep -Fxq "## $sec"; then
+        if ! markdown_text "$file" | grep -Fx "## $sec" >/dev/null; then
             missing="$missing '$sec'"
         fi
     done
@@ -117,6 +119,25 @@ check_required_sections() {
         report_error "$file missing sections:$missing"
     fi
 }
+
+# Default native Claude AGENTS discovery is suppressed by a project Claude entry.
+# Recognize the common explicit root imports; do not claim to resolve every import
+# graph, ancestor setting, plugin configuration, or live-client loading state.
+if [ "$has_agents" -eq 1 ] && [ "$has_claude" -eq 1 ]; then
+    imports_agents=0
+    for f in CLAUDE.md CLAUDE.local.md; do
+        [ -f "$f" ] || continue
+        if markdown_text "$f" | grep -E '^[[:space:]]*@([.]/)?AGENTS[.]md[[:space:]]*$' >/dev/null; then
+            imports_agents=1
+        fi
+    done
+    if [ -f .claude/CLAUDE.md ] && markdown_text .claude/CLAUDE.md | grep -E '^[[:space:]]*@[.][.]/AGENTS[.]md[[:space:]]*$' >/dev/null; then
+        imports_agents=1
+    fi
+    if [ "$imports_agents" -eq 0 ]; then
+        report_warn "Claude project entry files can suppress native AGENTS.md discovery, and no direct canonical import was recognized. Verify loading or use a thin @AGENTS.md adapter (relative to its location); indirect imports/custom plugin settings need manual review."
+    fi
+fi
 
 # 2. TASKS sections ------------------------------------------------------------
 
@@ -174,7 +195,7 @@ done
 # each file, sort+unique, then look for cross-file overlap above a threshold.
 
 dup_inputs=""
-for f in AGENTS.md CLAUDE.md; do
+for f in AGENTS.md CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md; do
     [ -f "$f" ] && dup_inputs="$dup_inputs $f"
 done
 if [ "$has_cursor_rules" -eq 1 ]; then
@@ -273,7 +294,7 @@ scan_governance_text() {
 }
 
 scan_governance_text \
-    AGENTS.md CLAUDE.md \
+    AGENTS.md CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md \
     docs/SPEC.md docs/ARCH.md docs/RULES.md \
     SPEC.md ARCH.md RULES.md
 
@@ -373,7 +394,7 @@ scan_for_stale() {
 }
 
 scan_for_stale \
-    AGENTS.md CLAUDE.md \
+    AGENTS.md CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md \
     docs/SPEC.md docs/ARCH.md docs/RULES.md \
     SPEC.md ARCH.md RULES.md
 if [ -d "docs/DECISIONS" ]; then
@@ -387,7 +408,7 @@ fi
 
 # Do not present an empty scan or an unchecked Minimal plan as full validation.
 found_governance=0
-for f in AGENTS.md CLAUDE.md docs/SPEC.md SPEC.md docs/ARCH.md ARCH.md docs/RULES.md RULES.md \
+for f in AGENTS.md CLAUDE.md .claude/CLAUDE.md CLAUDE.local.md docs/SPEC.md SPEC.md docs/ARCH.md ARCH.md docs/RULES.md RULES.md \
     docs/TASKS/*.md TASKS/*.md docs/CONTRACTS/* CONTRACTS/* .cursor/rules/*.mdc .claude/rules/*.md; do
     [ -f "$f" ] && found_governance=1
 done

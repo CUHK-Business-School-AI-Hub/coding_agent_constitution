@@ -67,7 +67,7 @@ name.
 
 - What should Codex be allowed to modify without asking?
 - What should require human approval?
-- What should Cursor review after Codex changes it?
+- What should the reviewer check after the implementer changes it?
 - Which checks must pass before a change is considered ready?
 - What repeated instruction should become `RULES.md`, `AGENTS.md`, or `.cursor/rules/`?
 

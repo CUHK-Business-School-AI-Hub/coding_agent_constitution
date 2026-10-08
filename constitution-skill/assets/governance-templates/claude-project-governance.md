@@ -1,12 +1,6 @@
-# Project Governance Rules
+# Claude-Specific Rules
 
-- Treat `AGENTS.md` as the shared project instruction source.
-- Check changes against `docs/SPEC.md`, `docs/ARCH.md`, and `docs/RULES.md`.
-- Read the relevant `docs/TASKS/*.md` before implementation.
-- Check task interfaces, public contract boundaries, verification evidence, and governance drift expectations.
-- Flag changes that cross module boundaries without updating `docs/ARCH.md`.
-- Flag public API, schema, event, or file format changes without a matching `docs/CONTRACTS/` update.
-- Flag new behavior without acceptance criteria or tests.
-- Flag completion claims without command, exit status, and relevant output summary.
-- During review, separate Spec Compliance from Implementation Quality.
-- Follow the approval boundaries in `AGENTS.md`, including existing task authorization.
+<!-- Optional: generate only for necessary Claude-specific behavior. Add paths frontmatter when the rule should be scoped. Keep shared governance in AGENTS.md and verify its discovery separately; this modular file is not a replacement for canonical instruction loading. -->
+
+- Follow the applicable shared instructions in `AGENTS.md`.
+- Add only the project-specific Claude behavior that cannot live in shared governance; remove this template guidance when filling the file.

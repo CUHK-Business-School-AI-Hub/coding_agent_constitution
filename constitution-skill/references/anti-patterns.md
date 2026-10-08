@@ -107,7 +107,7 @@ Use this guide to recognize and avoid the common ways governance assets fail. Fo
 ### Three Copies Of The Same Rules
 - Looks like: nearly identical content in `AGENTS.md`, `CLAUDE.md`, and `.cursor/rules/project-governance.mdc`.
 - Fails because: edits land in one file, others drift.
-- Do instead: keep `AGENTS.md` canonical. `CLAUDE.md` imports via `@AGENTS.md`. Cursor rule is short and Cursor-specific.
+- Do instead: keep `AGENTS.md` canonical and use native discovery. If a Claude compatibility adapter is needed, import via `@AGENTS.md`. Any Cursor rule is short and Cursor-specific.
 
 ### Tool-Agnostic Bloat In Tool-Specific File
 - Looks like: long generic project description in `.cursor/rules/`.

@@ -126,10 +126,115 @@ class GovernanceLintTests(unittest.TestCase):
         self.assertIn("not structurally checked", result.stdout)
         self.assertNotIn("checks passed", result.stdout)
 
+    def test_native_agents_needs_no_claude_adapter(self):
+        result = self.run_lint(files={"AGENTS.md": "# Shared instructions\n"})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("WARN", result.stdout)
+
+    def test_claude_entries_without_canonical_file_are_orphans(self):
+        for entry in ("CLAUDE.md", ".claude/CLAUDE.md", "CLAUDE.local.md"):
+            with self.subTest(entry=entry):
+                result = self.run_lint(files={entry: "# Project instructions\n"})
+                self.assertEqual(result.returncode, 1, result.stdout)
+                self.assertIn("AGENTS.md is missing", result.stdout)
+
+    def test_shadowing_entries_without_import_warn(self):
+        for entry in ("CLAUDE.md", ".claude/CLAUDE.md", "CLAUDE.local.md"):
+            with self.subTest(entry=entry):
+                result = self.run_lint(files={"AGENTS.md": "# Shared\n", entry: "Read AGENTS.md.\n"})
+                self.assertEqual(result.returncode, 0, result.stdout)
+                self.assertIn("can suppress native", result.stdout)
+
+    def test_supported_thin_imports_do_not_warn(self):
+        for entry, content in (("CLAUDE.md", "@AGENTS.md\n"),
+                               ("CLAUDE.md", "@./AGENTS.md  \r\n"),
+                               (".claude/CLAUDE.md", "@../AGENTS.md\n"),
+                               ("CLAUDE.local.md", "@AGENTS.md\n")):
+            with self.subTest(entry=entry, content=content):
+                result = self.run_lint(files={"AGENTS.md": "# Shared\n", entry: content})
+                self.assertEqual(result.returncode, 0, result.stdout)
+                self.assertNotIn("can suppress native", result.stdout)
+
+    def test_import_examples_do_not_hide_shadowing(self):
+        for content in ("```markdown\n@AGENTS.md\n```\n", "Use `@AGENTS.md`.\n", "@OTHER-AGENTS.md\n"):
+            with self.subTest(content=content):
+                result = self.run_lint(files={"AGENTS.md": "# Shared\n", "CLAUDE.md": content})
+                self.assertIn("can suppress native", result.stdout)
+
+    def test_claude_rules_alone_do_not_suppress_native_discovery(self):
+        result = self.run_lint(files={"AGENTS.md": "# Shared\n", ".claude/rules/style.md": "# Local style\n"})
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertNotIn("can suppress native", result.stdout)
+
     def test_bundled_example_remains_compatible(self):
         result = subprocess.run(["bash", str(SCRIPT), str(EXAMPLE)], text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertNotIn("ERROR", result.stdout)
+
+
+class ShippedInstructionContractTests(unittest.TestCase):
+    """Static asset consistency checks, not model-behavior evaluations."""
+
+    root = SCRIPT.parent.parent
+
+    def read(self, path):
+        return (self.root / path).read_text()
+
+    def test_astra_routing_and_authorization_are_preserved(self):
+        skill = self.read("SKILL.md")
+        for phrase in ("Skip already-scoped code changes", "planning, produce the requested documents and stop",
+                       "Do not load every document", "there is no minimum count",
+                       "do not ask again for the same decision", "Fix findings introduced by this change"):
+            self.assertIn(phrase, skill)
+
+    def test_example_and_template_keep_portable_execution_boundaries(self):
+        for path in ("assets/governance-templates/AGENTS.md", "assets/examples/feedback-inbox/AGENTS.md"):
+            with self.subTest(path=path):
+                content = self.read(path)
+                for phrase in ("planning-only", "explicitly approved task", "production deployment",
+                               "background work", "blocked/pending", "do not grant authority"):
+                    self.assertIn(phrase.lower(), content.lower())
+                self.assertNotIn("stop and split", content)
+                self.assertNotIn("Always read", content)
+                self.assertNotIn("What Cursor should review", content)
+
+    def test_example_has_one_canonical_entry(self):
+        self.assertTrue((EXAMPLE / "AGENTS.md").exists())
+        for path in ("CLAUDE.md", ".claude/rules/project-governance.md", ".cursor/rules/project-governance.mdc"):
+            self.assertFalse((EXAMPLE / path).exists(), path)
+        self.assertTrue(self.read("assets/governance-templates/CLAUDE.md").startswith("@AGENTS.md\n"))
+
+    def test_minimal_mode_exclusions_and_execution_contract(self):
+        skill = self.read("SKILL.md")
+        minimal = self.read("references/minimal-mode.md")
+        self.assertIn("only when all safety exclusions", skill)
+        self.assertIn("only when all of these safety exclusions", minimal)
+        for phrase in ("No real or persistent user data", "No authentication, payments",
+                       "No public API consumers", "No production deployment", "## Product Shape",
+                       "### Interfaces", "Expected evidence:", "### Governance Drift"):
+            self.assertIn(phrase, minimal)
+        self.assertNotIn("at least three", skill + minimal)
+
+    def test_sizing_and_retrofit_do_not_force_mechanical_stops(self):
+        sizing = self.read("references/task-sizing.md")
+        retrofit = self.read("references/retrofit-mode.md")
+        self.assertIn("not an automatic stop or split", sizing)
+        self.assertIn("no mandatory read-only session", retrofit)
+        self.assertNotIn("Crossing three requires", sizing)
+        self.assertNotIn("Spend one session purely reading", retrofit)
+
+    def test_discovery_verification_does_not_rely_on_memory_editor(self):
+        guide = self.read("references/cross-agent-compatibility.md")
+        self.assertIn("`/memory` is not proof", guide)
+        self.assertIn("Read a file in each required nested scope", guide)
+
+    def test_opus_guidance_is_sourced_and_not_a_claim_of_evaluation(self):
+        guide = self.read("references/frontier-model-guidance.md")
+        self.assertIn("https://platform.claude.com/docs/en/", guide)
+        self.assertIn("They cannot prove a model follows them", guide)
+        self.assertIn("execution harness", guide)
+        for path in ("assets/governance-templates/AGENTS.md", "assets/examples/feedback-inbox/AGENTS.md"):
+            self.assertNotIn("Opus 5.5", self.read(path))
 
 
 if __name__ == "__main__":

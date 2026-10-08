@@ -1,18 +1,12 @@
 ---
-description: Project governance and review rules for coding agents. Apply when implementing, reviewing, or planning changes in this repository.
-globs: "**/*"
-alwaysApply: true
+description: Optional Cursor-specific project behavior; narrow this description and scope when filling the rule.
+globs: ""
+alwaysApply: false
 ---
 
-# Project Governance Rules
+# Cursor-Specific Rules
 
-- Check changes against `docs/SPEC.md`, `docs/ARCH.md`, and `docs/RULES.md`.
-- Read the relevant `docs/TASKS/*.md` before implementation.
-- Check task interfaces, public contract boundaries, verification evidence, and governance drift expectations.
-- Flag changes that cross module boundaries without updating `docs/ARCH.md`.
-- Flag public API, schema, event, or file format changes without a matching `docs/CONTRACTS/` update.
-- Flag new behavior without acceptance criteria or tests.
-- Flag completion claims without command, exit status, and relevant output summary.
-- During review, separate Spec Compliance from Implementation Quality.
-- Prefer small local rewrites during review; do not perform broad rewrites unless the task explicitly asks for them.
-- Escalate risky changes to the human before merge.
+<!-- Generate only when native AGENTS.md needs additional Cursor-specific or scoped behavior. Set appropriate globs or alwaysApply for that actual need, and remove this template guidance. -->
+
+- Follow the applicable shared instructions in `AGENTS.md`.
+- Add only project-specific Cursor behavior; do not duplicate shared task, review, or approval rules here.

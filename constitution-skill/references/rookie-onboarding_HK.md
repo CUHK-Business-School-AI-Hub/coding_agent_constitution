@@ -38,7 +38,7 @@
 - 一旦產品上了線、有了真實用戶，每次 schema 改動都會動到他們的資料。加一欄通常是安全的；改變某欄的含義、刪除某欄、為某欄改名，往往是有風險的。
 - 大多數團隊的 migration 只能往前。錯咗就寫下一個 migration 去修，不會回頭改過去的腳本。
 
-這就是為甚麼 skill 把任何 schema 改動都列為 "Approval Required"。你不需要識寫 migration，但需要能睇得出別人正在做這件事。
+因此，新增或改變 schema 的決定需要明確批准。如果已批准的任務已經寫清楚這項改動，agent 可以按範圍實作，不必為同一決定再次詢問。把 migration 套用到正式環境，仍須按獨立的操作權限處理。你不需要識寫 migration，但需要能睇得出別人正在做這件事。
 
 ## 3. APIs 同 Contracts
 
@@ -62,15 +62,15 @@
 - **Authorization（authz）** 回答的是：「你被允許做甚麼？」
   「只有 team owner 可以刪除 workspace。」「免費用戶每月最多睇 10 條 feedback。」
 
-兩者都好微妙，都容易做錯。最常見的失敗方式是：用戶之間資料洩露，或者意外地放開了過多權限。這就是為甚麼 skill 把任何 authn / authz 改動都列為 "Approval Required"。即使睇起來是小改動，在這兩塊也要放慢。
+兩者都好微妙，都容易做錯。最常見的失敗方式是：用戶之間資料洩露，或者意外地放開了過多權限。因此，新增或改變 authn / authz 的決定需要明確批准，即使睇起來只是小改動。已批准的任務涵蓋其寫明的實作範圍；範圍或風險改變時才需要再次確認，相關安全檢查仍要完成。
 
 ## 5. Bounded Task 同 Vertical Slice
 
-**Bounded task** 是指一項小到一個人（或一個 AI agent）在一次工作中能做完、別人能 review 的工作。Skill 設了硬限制：大致 5 個檔案、300 行程式碼改動、3 條 verification 命令以內。
+**Bounded task** 是一項有明確結果、約定範圍和檢查方法的工作，別人能把它作為一個完整改動來 review。5 個檔案或約 300 行程式碼改動這類數量，只用來提醒檢查難度，不是硬限制，也不是自動停工的理由。拆分能降低風險或更容易驗證時才拆；如果拆開會令結果前後不一致，就把相關改動放在一起。所有必要檢查都要執行，即使超過 3 條命令。
 
 **Vertical slice** 是一段貫穿整個技術棧的產品工作：一小段 UI 改動 + 對應的 API 改動 + 對應的 database 改動，作為一個整體交付，端到端跑得通。
 
-兩個想法都是在對抗「一口氣把整個 feature 做完」這種直覺。它們是團隊能持續交付又唔會把產品搞壞的方法。當 skill 叫你寫一個 task 檔案時，你就在練這個習慣。
+這兩個概念都幫你定義一個可檢查、可 review 的結果，避免混入無關工作。完整的 vertical slice 可以跨多個檔案或技術層，仍然是一個合理的任務。當 skill 叫你寫一個 task 檔案時，你就在練這個習慣。
 
 ## 6. 環境：Production、Staging、Development
 
@@ -80,7 +80,7 @@
 - **Staging** 是 production 的一份副本，跑在雲上，長得像 production，但裡面是測試資料。用來在面對真實用戶之前先驗證。
 - **Production** 是真正運行的產品。真實用戶。真實資料。真實後果。
 
-Skill 把任何 production 部署變更都列為 "Approval Required"，因為出問題的影響面太大。絕大多數粗心錯誤會被 staging 攔住；穿到 production 的，才是真正重要的那批。
+Production 部署需要明確授權，因為出問題的影響面太大。獲准實作或測試某項改動，不等於獲准上線。絕大多數粗心錯誤會被 staging 攔住；穿到 production 的，才是真正重要的那批。
 
 你會在 `ARCH.md` 同部署檔案裡見到這三個名。它們分開的原因，純粹是為了安全。
 
@@ -91,7 +91,7 @@ Skill 把任何 production 部署變更都列為 "Approval Required"，因為出
 - Reversible：換字體、為按鈕起名、函數內部用邊種 loop。
 - Irreversible（或撤銷好貴）：database 結構、public API 的 URL、authentication 模型、支付供應商整合、用戶刪除如何處理、資料保留策略。
 
-Skill 的 "Approval Required" 清單，正好就是這類 irreversible 的事。當你在讀那個清單時，你其實是在讀「AI agent 唔可以自己單獨決定的事」。
+Skill 的 "Approval Required" 清單標出了風險高或難以撤銷的決定。Agent 不可以在這些領域獨自作出新決定。你已批准某個決定及其實作範圍後，不必為同一決定反覆確認；範圍變化、風險變化和獨立的操作權限仍要留意。
 
 一個好習慣：每當 agent 準備做一個選擇，問一句：「如果這選錯了，以後改返去有幾痛？」——答案是「好簡單」就放手；答案是「好痛」或「要做用戶資料遷移」就暫停。
 
@@ -115,7 +115,7 @@ Tests 做兩件事：
 - 它有沒有越過 `ARCH.md` 同 `RULES.md` 裡列的邊界？
 - 它有沒有在沒批准的情況下，碰了 "Approval Required" 列表裡的東西？
 
-當 skill 提到 Cursor review diff、或者人類 reviewer 批准合併，講的就是這件事。Review 唔係把門，係發現問題成本最低的位置。
+Codex、Cursor 或 Claude Code 都可以實作任務或檢查改動。按現有工具和實際工作選擇角色，不固定分配給某個工具。Review 應該查看證據、發現問題；重要決定和合併仍須遵守項目的人類審批規則。
 
 ## 10. The Promotion Habit
 
